@@ -1,6 +1,6 @@
 import { eq, and, desc, inArray, sql } from "drizzle-orm";
 import { db } from "../db";
-import { recipes, recipeOutputQualities, recipeReagentSlots, recipeReagentSlotOptions, commoditySnapshots, items } from "../db/schema";
+import { professions, recipes, recipeOutputQualities, recipeReagentSlots, recipeReagentSlotOptions, commoditySnapshots, items } from "../db/schema";
 
 // ─── Types ───────────────────────────────────────────────────────────
 
@@ -40,6 +40,10 @@ interface RecipeProfitResult {
   recipeId: number;
   recipeName: string;
   qualityTierType: string;
+  affectedByMulticraft: boolean;
+  affectedByResourcefulness: boolean;
+  professionId: number;
+  professionName: string;
   scenarios: RankScenario[];
 }
 
@@ -48,6 +52,8 @@ interface ProfessionRecipeCost {
   recipeName: string;
   categoryId: number | null;
   qualityTierType: string;
+  affectedByMulticraft: boolean;
+  affectedByResourcefulness: boolean;
   scenarios: RankScenario[];
 }
 
@@ -187,6 +193,10 @@ export async function computeRecipeProfit(recipeId: number, regionId: string): P
   const [recipe] = await db.select().from(recipes).where(eq(recipes.id, recipeId));
   if (!recipe) throw new Error(`Recipe ${recipeId} not found`);
 
+  // Load profession name
+  const [profession] = await db.select({ name: professions.name }).from(professions).where(eq(professions.id, recipe.professionId));
+  const professionName = profession?.name ?? "Unknown";
+
   // Compute cost for both ranks
   const [costRank1, costRank2] = await Promise.all([computeRecipeCost(recipeId, regionId, 1), computeRecipeCost(recipeId, regionId, 2)]);
 
@@ -245,6 +255,10 @@ export async function computeRecipeProfit(recipeId: number, regionId: string): P
     recipeId,
     recipeName: recipe.name,
     qualityTierType: recipe.qualityTierType,
+    affectedByMulticraft: recipe.affectedByMulticraft,
+    affectedByResourcefulness: recipe.affectedByResourcefulness,
+    professionId: recipe.professionId,
+    professionName,
     scenarios: [buildScenario(1, costRank1, outputRank1ItemId), buildScenario(2, costRank2, outputRank2ItemId)],
   };
 }
@@ -259,6 +273,8 @@ export async function computeProfessionRecipeCosts(professionId: number, regionI
       name: recipes.name,
       categoryId: recipes.categoryId,
       qualityTierType: recipes.qualityTierType,
+      affectedByMulticraft: recipes.affectedByMulticraft,
+      affectedByResourcefulness: recipes.affectedByResourcefulness,
       outputItemId: recipes.outputItemId,
       outputQuantityMin: recipes.outputQuantityMin,
     })
@@ -436,6 +452,8 @@ export async function computeProfessionRecipeCosts(professionId: number, regionI
       recipeName: recipe.name,
       categoryId: recipe.categoryId,
       qualityTierType: recipe.qualityTierType,
+      affectedByMulticraft: recipe.affectedByMulticraft,
+      affectedByResourcefulness: recipe.affectedByResourcefulness,
       scenarios: [buildScenario(1, costRank1, outputRank1ItemId), buildScenario(2, costRank2, outputRank2ItemId)],
     });
   }

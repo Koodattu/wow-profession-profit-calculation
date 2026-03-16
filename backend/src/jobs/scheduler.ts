@@ -1,6 +1,7 @@
 import cron from "node-cron";
 import { db } from "../db";
-import { professions } from "../db/schema";
+import { professions, commoditySnapshots } from "../db/schema";
+import { sql } from "drizzle-orm";
 import { ACTIVE_REGIONS } from "../config/regions";
 import { syncCommodities, syncAllRealmAuctions } from "../services/auction-sync";
 import { syncConnectedRealms } from "../services/realm-sync";
@@ -38,29 +39,44 @@ export function startScheduler(): void {
 }
 
 export async function runInitialSync(): Promise<void> {
-  const existing = await db.select({ id: professions.id }).from(professions).limit(1);
+  const existingGame = await db.select({ id: professions.id }).from(professions).limit(1);
 
-  if (existing.length > 0) {
-    console.log("[Scheduler] Data already present, skipping initial sync");
+  if (existingGame.length === 0) {
+    console.log("[Scheduler] No game data found, running full initial sync...");
+    try {
+      console.log("[Scheduler] Initial sync: importing game data");
+      await importGameData();
+
+      for (const regionId of ACTIVE_REGIONS) {
+        console.log(`[Scheduler] Initial sync: connected realms for ${regionId}`);
+        await syncConnectedRealms(regionId);
+
+        console.log(`[Scheduler] Initial sync: commodities for ${regionId}`);
+        await syncCommodities(regionId);
+      }
+    } catch (err) {
+      console.error("[Scheduler] Initial sync failed:", err);
+    }
+    console.log("[Scheduler] Initial sync complete");
     return;
   }
 
-  console.log("[Scheduler] No data found, running initial sync...");
+  // Game data present — check if price data is also present
+  const [{ count }] = await db.select({ count: sql<number>`count(*)::int` }).from(commoditySnapshots);
 
-  try {
-    console.log("[Scheduler] Initial sync: importing game data");
-    await importGameData();
-
-    for (const regionId of ACTIVE_REGIONS) {
-      console.log(`[Scheduler] Initial sync: connected realms for ${regionId}`);
-      await syncConnectedRealms(regionId);
-
-      console.log(`[Scheduler] Initial sync: commodities for ${regionId}`);
-      await syncCommodities(regionId);
+  if (count === 0) {
+    console.log("[Scheduler] Game data present but no price data — syncing auction data...");
+    try {
+      for (const regionId of ACTIVE_REGIONS) {
+        await syncConnectedRealms(regionId);
+        await syncCommodities(regionId);
+      }
+    } catch (err) {
+      console.error("[Scheduler] Price sync failed:", err);
     }
-  } catch (err) {
-    console.error("[Scheduler] Initial sync failed:", err);
+    console.log("[Scheduler] Price sync complete");
+    return;
   }
 
-  console.log("[Scheduler] Initial sync complete");
+  console.log("[Scheduler] Data already present, skipping initial sync");
 }
