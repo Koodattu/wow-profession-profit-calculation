@@ -1,0 +1,1 @@
+ALTER TABLE "recipe_output_qualities" ALTER COLUMN "item_quality" DROP NOT NULL;

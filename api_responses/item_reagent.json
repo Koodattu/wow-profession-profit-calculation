@@ -1,0 +1,106 @@
+﻿{
+    "_links":  {
+                   "self":  {
+                                "href":  "https://eu.api.blizzard.com/data/wow/item/210796?namespace=static-12.0.1_65617-eu"
+                            }
+               },
+    "id":  210796,
+    "name":  "Mycobloom",
+    "quality":  {
+                    "type":  "COMMON",
+                    "name":  "Common"
+                },
+    "level":  70,
+    "required_level":  1,
+    "media":  {
+                  "key":  {
+                              "href":  "https://eu.api.blizzard.com/data/wow/media/item/210796?namespace=static-12.0.1_65617-eu"
+                          },
+                  "id":  210796
+              },
+    "item_class":  {
+                       "key":  {
+                                   "href":  "https://eu.api.blizzard.com/data/wow/item-class/7?namespace=static-12.0.1_65617-eu"
+                               },
+                       "name":  "Tradeskill",
+                       "id":  7
+                   },
+    "item_subclass":  {
+                          "key":  {
+                                      "href":  "https://eu.api.blizzard.com/data/wow/item-class/7/item-subclass/9?namespace=static-12.0.1_65617-eu"
+                                  },
+                          "name":  "Herb",
+                          "id":  9
+                      },
+    "inventory_type":  {
+                           "type":  "NON_EQUIP",
+                           "name":  "Non-equippable"
+                       },
+    "purchase_price":  2500,
+    "sell_price":  500,
+    "max_count":  0,
+    "is_equippable":  false,
+    "is_stackable":  true,
+    "description":  "Gathered by players with the Herbalism skill. Can be bought and sold on the Auction House.",
+    "preview_item":  {
+                         "item":  {
+                                      "key":  {
+                                                  "href":  "https://eu.api.blizzard.com/data/wow/item/210796?namespace=static-12.0.1_65617-eu"
+                                              },
+                                      "id":  210796
+                                  },
+                         "quality":  {
+                                         "type":  "COMMON",
+                                         "name":  "Common"
+                                     },
+                         "name":  "Mycobloom",
+                         "media":  {
+                                       "key":  {
+                                                   "href":  "https://eu.api.blizzard.com/data/wow/media/item/210796?namespace=static-12.0.1_65617-eu"
+                                               },
+                                       "id":  210796
+                                   },
+                         "item_class":  {
+                                            "key":  {
+                                                        "href":  "https://eu.api.blizzard.com/data/wow/item-class/7?namespace=static-12.0.1_65617-eu"
+                                                    },
+                                            "name":  "Tradeskill",
+                                            "id":  7
+                                        },
+                         "item_subclass":  {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/item-class/7/item-subclass/9?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Herb",
+                                               "id":  9
+                                           },
+                         "inventory_type":  {
+                                                "type":  "NON_EQUIP",
+                                                "name":  "Non-equippable"
+                                            },
+                         "sell_price":  {
+                                            "value":  500,
+                                            "display_strings":  {
+                                                                    "header":  "Sell Price:",
+                                                                    "gold":  "0",
+                                                                    "silver":  "5",
+                                                                    "copper":  "0"
+                                                                }
+                                        },
+                         "description":  "Gathered by players with the Herbalism skill. Can be bought and sold on the Auction House.",
+                         "is_subclass_hidden":  true,
+                         "crafting_reagent":  "Crafting Reagent"
+                     },
+    "purchase_quantity":  1,
+    "modified_crafting":  {
+                              "id":  348,
+                              "category":  {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/category/508?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Mycobloom",
+                                               "id":  508
+                                           },
+                              "description":  "Mycobloom"
+                          }
+}

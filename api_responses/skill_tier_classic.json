@@ -1,0 +1,950 @@
+﻿{
+    "_links":  {
+                   "self":  {
+                                "href":  "https://eu.api.blizzard.com/data/wow/profession/171/skill-tier/2485?namespace=static-12.0.1_65617-eu"
+                            }
+               },
+    "id":  2485,
+    "name":  "Classic Alchemy",
+    "minimum_skill_level":  1,
+    "maximum_skill_level":  300,
+    "categories":  [
+                       {
+                           "name":  "Potions",
+                           "recipes":  [
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/1377?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Minor Healing Potion",
+                                               "id":  1377
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/1379?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Minor Mana Potion",
+                                               "id":  1379
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/1380?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Minor Rejuvenation Potion",
+                                               "id":  1380
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/1383?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Swiftness Potion",
+                                               "id":  1383
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/1385?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Lesser Healing Potion",
+                                               "id":  1385
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/1816?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Lesser Mana Potion",
+                                               "id":  1816
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/1817?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Potion of Curing",
+                                               "id":  1817
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/1930?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Healing Potion",
+                                               "id":  1930
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/1931?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Lesser Invisibility Potion",
+                                               "id":  1931
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/1935?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Mana Potion",
+                                               "id":  1935
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/2907?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Discolored Healing Potion",
+                                               "id":  2907
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/2909?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Lesser Stoneshield Potion",
+                                               "id":  2909
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/4004?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Free Action Potion",
+                                               "id":  4004
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/4006?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Great Rage Potion",
+                                               "id":  4006
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/4007?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Rage Potion",
+                                               "id":  4007
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/4177?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Greater Healing Potion",
+                                               "id":  4177
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/4209?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Fire Protection Potion",
+                                               "id":  4209
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/4210?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Frost Protection Potion",
+                                               "id":  4210
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/4211?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Holy Protection Potion",
+                                               "id":  4211
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/4212?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Nature Protection Potion",
+                                               "id":  4212
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/4213?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Shadow Protection Potion",
+                                               "id":  4213
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/4395?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Swim Speed Potion",
+                                               "id":  4395
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/6000?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Greater Mana Potion",
+                                               "id":  6000
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/6001?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Restorative Potion",
+                                               "id":  6001
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/6005?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Superior Healing Potion",
+                                               "id":  6005
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/6006?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Wildvine Potion",
+                                               "id":  6006
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/6010?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Invisibility Potion",
+                                               "id":  6010
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/8596?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Dreamless Sleep Potion",
+                                               "id":  8596
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/9937?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Mighty Rage Potion",
+                                               "id":  9937
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/9938?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Superior Mana Potion",
+                                               "id":  9938
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/9941?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Major Healing Potion",
+                                               "id":  9941
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/9951?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Greater Stoneshield Potion",
+                                               "id":  9951
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/9953?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Purification Potion",
+                                               "id":  9953
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/9955?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Greater Fire Protection Potion",
+                                               "id":  9955
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/9956?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Greater Frost Protection Potion",
+                                               "id":  9956
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/9957?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Greater Nature Protection Potion",
+                                               "id":  9957
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/9958?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Greater Arcane Protection Potion",
+                                               "id":  9958
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/9959?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Greater Shadow Protection Potion",
+                                               "id":  9959
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/9960?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Greater Holy Protection Potion",
+                                               "id":  9960
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/9961?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Major Mana Potion",
+                                               "id":  9961
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/9977?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Potion of Petrification",
+                                               "id":  9977
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/11316?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Limited Invulnerability Potion",
+                                               "id":  11316
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/12299?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Major Rejuvenation Potion",
+                                               "id":  12299
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/12893?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Greater Dreamless Sleep Potion",
+                                               "id":  12893
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/12894?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Living Action Potion",
+                                               "id":  12894
+                                           }
+                                       ]
+                       },
+                       {
+                           "name":  "Elixirs",
+                           "recipes":  [
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/1378?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Elixir of Lion\u0027s Strength",
+                                               "id":  1378
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/1382?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Elixir of Minor Fortitude",
+                                               "id":  1382
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/1814?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Elixir of Wisdom",
+                                               "id":  1814
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/1819?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Strong Troll\u0027s Blood Elixir",
+                                               "id":  1819
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/1820?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Elixir of Defense",
+                                               "id":  1820
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/1821?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Elixir of Lesser Agility",
+                                               "id":  1821
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/1822?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Elixir of Ogre\u0027s Strength",
+                                               "id":  1822
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/1832?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Weak Troll\u0027s Blood Elixir",
+                                               "id":  1832
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/1833?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Elixir of Minor Agility",
+                                               "id":  1833
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/1933?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Elixir of Fortitude",
+                                               "id":  1933
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/1934?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Major Troll\u0027s Blood Elixir",
+                                               "id":  1934
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/1936?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Elixir of Detect Lesser Invisibility",
+                                               "id":  1936
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/4176?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Elixir of Water Breathing",
+                                               "id":  4176
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/4178?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Elixir of Minor Defense",
+                                               "id":  4178
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/4396?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Elixir of Firepower",
+                                               "id":  4396
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/4570?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Elixir of Giant Growth",
+                                               "id":  4570
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/5997?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Elixir of Agility",
+                                               "id":  5997
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/5998?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Elixir of Greater Defense",
+                                               "id":  5998
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/6008?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Elixir of Detect Undead",
+                                               "id":  6008
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/6009?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Arcane Elixir",
+                                               "id":  6009
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/6011?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Elixir of Greater Intellect",
+                                               "id":  6011
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/6012?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Gift of Arthas",
+                                               "id":  6012
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/6013?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Elixir of Greater Agility",
+                                               "id":  6013
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/6014?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Elixir of Dream Vision",
+                                               "id":  6014
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/6015?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Elixir of Giants",
+                                               "id":  6015
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/6017?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Elixir of Shadow Power",
+                                               "id":  6017
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/6018?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Elixir of Demonslaying",
+                                               "id":  6018
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/6019?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Elixir of Detect Demon",
+                                               "id":  6019
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/6848?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Catseye Elixir",
+                                               "id":  6848
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/9939?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Elixir of Superior Defense",
+                                               "id":  9939
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/9940?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Elixir of the Sages",
+                                               "id":  9940
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/9942?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Elixir of Brute Force",
+                                               "id":  9942
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/9952?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Elixir of the Mongoose",
+                                               "id":  9952
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/9954?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Greater Arcane Elixir",
+                                               "id":  9954
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/12137?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Elixir of Frost Power",
+                                               "id":  12137
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/12322?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Elixir of Greater Water Breathing",
+                                               "id":  12322
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/12892?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Mageblood Elixir",
+                                               "id":  12892
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/12895?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Mighty Troll\u0027s Blood Elixir",
+                                               "id":  12895
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/13417?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Elixir of Greater Firepower",
+                                               "id":  13417
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/20870?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Elixir of Minor Accuracy",
+                                               "id":  20870
+                                           }
+                                       ]
+                       },
+                       {
+                           "name":  "Oils",
+                           "recipes":  [
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/1932?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Shadow Oil",
+                                               "id":  1932
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/1937?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Frost Oil",
+                                               "id":  1937
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/4393?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Blackmouth Oil",
+                                               "id":  4393
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/4394?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Fire Oil",
+                                               "id":  4394
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/5999?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Oil of Immolation",
+                                               "id":  5999
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/9936?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Stonescale Oil",
+                                               "id":  9936
+                                           }
+                                       ]
+                       },
+                       {
+                           "name":  "Materials",
+                           "recipes":  [
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/6004?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Goblin Rocket Fuel",
+                                               "id":  6004
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/6016?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Ghost Dye",
+                                               "id":  6016
+                                           }
+                                       ]
+                       },
+                       {
+                           "name":  "Trinkets",
+                           "recipes":  [
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/6007?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Philosopher\u0027s Stone",
+                                               "id":  6007
+                                           }
+                                       ]
+                       },
+                       {
+                           "name":  "Transmutation",
+                           "recipes":  [
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/6020?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Transmute: Iron to Gold",
+                                               "id":  6020
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/6021?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Transmute: Mithril to Truesilver",
+                                               "id":  6021
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/9840?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Transmute: Arcanite",
+                                               "id":  9840
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/9943?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Transmute: Air to Fire",
+                                               "id":  9943
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/9944?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Transmute: Earth to Water",
+                                               "id":  9944
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/9945?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Transmute: Earth to Life",
+                                               "id":  9945
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/9946?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Transmute: Fire to Earth",
+                                               "id":  9946
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/9947?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Transmute: Undeath to Water",
+                                               "id":  9947
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/9948?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Transmute: Water to Air",
+                                               "id":  9948
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/9949?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Transmute: Water to Undeath",
+                                               "id":  9949
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/9950?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Transmute: Life to Earth",
+                                               "id":  9950
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/13146?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Transmute: Elemental Fire",
+                                               "id":  13146
+                                           }
+                                       ]
+                       },
+                       {
+                           "name":  "Flasks",
+                           "recipes":  [
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/9978?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Flask of the Titans",
+                                               "id":  9978
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/9979?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Flask of Distilled Wisdom",
+                                               "id":  9979
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/9980?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Flask of Supreme Power",
+                                               "id":  9980
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/27367?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Alchemist\u0027s Flask",
+                                               "id":  27367
+                                           }
+                                       ]
+                       },
+                       {
+                           "name":  "Special",
+                           "recipes":  [
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/12876?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Gurubashi Mojo Madness",
+                                               "id":  12876
+                                           }
+                                       ]
+                       },
+                       {
+                           "name":  "Anti-Venoms",
+                           "recipes":  [
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/39671?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Anti-Venom",
+                                               "id":  39671
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/39672?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Strong Anti-Venom",
+                                               "id":  39672
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/39673?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Powerful Anti-Venom",
+                                               "id":  39673
+                                           }
+                                       ]
+                       },
+                       {
+                           "name":  "House Decor",
+                           "recipes":  [
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/56118?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Stoppered Black Potion",
+                                               "id":  56118
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/56269?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Apothecary\u0027s Worktable",
+                                               "id":  56269
+                                           }
+                                       ]
+                       },
+                       {
+                           "name":  "Housing Dye Pigment",
+                           "recipes":  [
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/56837?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Teal Dye Pigment",
+                                               "id":  56837
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/56838?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Brown Dye Pigment",
+                                               "id":  56838
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/56839?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Purple Dye Pigment",
+                                               "id":  56839
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/56840?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "White Dye Pigment",
+                                               "id":  56840
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/56841?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Yellow Dye Pigment",
+                                               "id":  56841
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/56842?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Red Dye Pigment",
+                                               "id":  56842
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/56843?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Blue Dye Pigment",
+                                               "id":  56843
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/56844?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Black Dye Pigment",
+                                               "id":  56844
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/56845?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Orange Dye Pigment",
+                                               "id":  56845
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/56846?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Green Dye Pigment",
+                                               "id":  56846
+                                           }
+                                       ]
+                       }
+                   ]
+}

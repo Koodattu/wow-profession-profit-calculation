@@ -1,0 +1,439 @@
+﻿{
+    "_links":  {
+                   "self":  {
+                                "href":  "https://eu.api.blizzard.com/data/wow/profession/171/skill-tier/2871?namespace=static-12.0.1_65617-eu"
+                            }
+               },
+    "id":  2871,
+    "name":  "Khaz Algar Alchemy",
+    "minimum_skill_level":  1,
+    "maximum_skill_level":  100,
+    "categories":  [
+                       {
+                           "name":  "Alchemy Essentials",
+                           "recipes":  [
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49270?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Wild Experimentation",
+                                               "id":  49270
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49374?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Thaumaturgy",
+                                               "id":  49374
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49375?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Meticulous Experimentation",
+                                               "id":  49375
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49700?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Formulated Courage",
+                                               "id":  49700
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/51331?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Recraft Equipment",
+                                               "id":  51331
+                                           }
+                                       ]
+                       },
+                       {
+                           "name":  "Alchemist Stones",
+                           "recipes":  [
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49271?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Algari Alchemist Stone",
+                                               "id":  49271
+                                           }
+                                       ]
+                       },
+                       {
+                           "name":  "Reagents",
+                           "recipes":  [
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49272?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Neutralize Concoctions",
+                                               "id":  49272
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49677?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Harmonious Horticulture",
+                                               "id":  49677
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/51362?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Bubbling Mycobloom Culture",
+                                               "id":  51362
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/51363?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Petal Powder",
+                                               "id":  51363
+                                           }
+                                       ]
+                       },
+                       {
+                           "name":  "Basic Concoctions",
+                           "recipes":  [
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49615?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Algari Healing Potion",
+                                               "id":  49615
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49617?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Algari Mana Potion",
+                                               "id":  49617
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49618?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Cavedweller\u0027s Delight",
+                                               "id":  49618
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49619?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Slumbering Soul Serum",
+                                               "id":  49619
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/53137?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Invigorating Healing Potion",
+                                               "id":  53137
+                                           }
+                                       ]
+                       },
+                       {
+                           "name":  "Potions",
+                           "recipes":  [
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49620?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Draught of Silent Footfalls",
+                                               "id":  49620
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49621?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Draught of Shocking Revelations",
+                                               "id":  49621
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49622?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Grotesque Vial",
+                                               "id":  49622
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49623?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Potion of Unwavering Focus",
+                                               "id":  49623
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49624?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Frontline Potion",
+                                               "id":  49624
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49625?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Tempered Potion",
+                                               "id":  49625
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49626?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Potion of the Reborn Cheetah",
+                                               "id":  49626
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/54269?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Umbral Essentia",
+                                               "id":  54269
+                                           }
+                                       ]
+                       },
+                       {
+                           "name":  "Flasks",
+                           "recipes":  [
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49627?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Flask of Tempered Aggression",
+                                               "id":  49627
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49628?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Flask of Tempered Swiftness",
+                                               "id":  49628
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49629?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Flask of Tempered Versatility",
+                                               "id":  49629
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49630?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Flask of Tempered Mastery",
+                                               "id":  49630
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49631?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Flask of Alchemical Chaos",
+                                               "id":  49631
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49637?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Flask of Saving Graces",
+                                               "id":  49637
+                                           }
+                                       ]
+                       },
+                       {
+                           "name":  "Vicious Flasks",
+                           "recipes":  [
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49633?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Vicious Flask of Classical Spirits",
+                                               "id":  49633
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49634?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Vicious Flask of Honor",
+                                               "id":  49634
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49636?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Vicious Flask of the Wrecking Ball",
+                                               "id":  49636
+                                           }
+                                       ]
+                       },
+                       {
+                           "name":  "Phials",
+                           "recipes":  [
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49639?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Phial of Concentrated Ingenuity",
+                                               "id":  49639
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49640?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Phial of Truesight",
+                                               "id":  49640
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49641?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Phial of Enhanced Ambidexterity",
+                                               "id":  49641
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49642?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Phial of Bountiful Seasons",
+                                               "id":  49642
+                                           }
+                                       ]
+                       },
+                       {
+                           "name":  "Transmutations",
+                           "recipes":  [
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49643?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Mercurial Blessings",
+                                               "id":  49643
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49644?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Mercurial Storms",
+                                               "id":  49644
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49645?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Volatile Weaving",
+                                               "id":  49645
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49646?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Volatile Stone",
+                                               "id":  49646
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49647?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Ominous Call",
+                                               "id":  49647
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49648?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Ominous Gloom",
+                                               "id":  49648
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49649?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Gleaming Glory",
+                                               "id":  49649
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/51124?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Mercurial Herbs",
+                                               "id":  51124
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/51125?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Ominous Herbs",
+                                               "id":  51125
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/51126?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Mercurial Coalescence",
+                                               "id":  51126
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/51127?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Ominous Coalescence",
+                                               "id":  51127
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/51128?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Volatile Coalescence",
+                                               "id":  51128
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/51131?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Gleaming Chaos",
+                                               "id":  51131
+                                           }
+                                       ]
+                       },
+                       {
+                           "name":  "Cauldrons",
+                           "recipes":  [
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49698?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Algari Flask Cauldron",
+                                               "id":  49698
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/49699?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Algari Potion Cauldron",
+                                               "id":  49699
+                                           }
+                                       ]
+                       },
+                       {
+                           "name":  "House Decor",
+                           "recipes":  [
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/55797?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Boulder Springs Hot Tub",
+                                               "id":  55797
+                                           },
+                                           {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/recipe/56144?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Nerubian Alchemist\u0027s Retort",
+                                               "id":  56144
+                                           }
+                                       ]
+                       }
+                   ]
+}

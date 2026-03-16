@@ -1,0 +1,95 @@
+﻿{
+    "_links":  {
+                   "self":  {
+                                "href":  "https://eu.api.blizzard.com/data/wow/item/236951?namespace=static-12.0.1_65617-eu"
+                            }
+               },
+    "id":  236951,
+    "name":  "Mote of Wild Magic",
+    "quality":  {
+                    "type":  "RARE",
+                    "name":  "Rare"
+                },
+    "level":  80,
+    "required_level":  1,
+    "media":  {
+                  "key":  {
+                              "href":  "https://eu.api.blizzard.com/data/wow/media/item/236951?namespace=static-12.0.1_65617-eu"
+                          },
+                  "id":  236951
+              },
+    "item_class":  {
+                       "key":  {
+                                   "href":  "https://eu.api.blizzard.com/data/wow/item-class/7?namespace=static-12.0.1_65617-eu"
+                               },
+                       "name":  "Tradeskill",
+                       "id":  7
+                   },
+    "item_subclass":  {
+                          "key":  {
+                                      "href":  "https://eu.api.blizzard.com/data/wow/item-class/7/item-subclass/11?namespace=static-12.0.1_65617-eu"
+                                  },
+                          "name":  "Other",
+                          "id":  11
+                      },
+    "inventory_type":  {
+                           "type":  "NON_EQUIP",
+                           "name":  "Non-equippable"
+                       },
+    "purchase_price":  10000,
+    "sell_price":  2000,
+    "max_count":  0,
+    "is_equippable":  false,
+    "is_stackable":  true,
+    "description":  "Wild magic given a solid form. Can be bought and sold on the Auction House.",
+    "preview_item":  {
+                         "item":  {
+                                      "key":  {
+                                                  "href":  "https://eu.api.blizzard.com/data/wow/item/236951?namespace=static-12.0.1_65617-eu"
+                                              },
+                                      "id":  236951
+                                  },
+                         "quality":  {
+                                         "type":  "RARE",
+                                         "name":  "Rare"
+                                     },
+                         "name":  "Mote of Wild Magic",
+                         "media":  {
+                                       "key":  {
+                                                   "href":  "https://eu.api.blizzard.com/data/wow/media/item/236951?namespace=static-12.0.1_65617-eu"
+                                               },
+                                       "id":  236951
+                                   },
+                         "item_class":  {
+                                            "key":  {
+                                                        "href":  "https://eu.api.blizzard.com/data/wow/item-class/7?namespace=static-12.0.1_65617-eu"
+                                                    },
+                                            "name":  "Tradeskill",
+                                            "id":  7
+                                        },
+                         "item_subclass":  {
+                                               "key":  {
+                                                           "href":  "https://eu.api.blizzard.com/data/wow/item-class/7/item-subclass/11?namespace=static-12.0.1_65617-eu"
+                                                       },
+                                               "name":  "Other",
+                                               "id":  11
+                                           },
+                         "inventory_type":  {
+                                                "type":  "NON_EQUIP",
+                                                "name":  "Non-equippable"
+                                            },
+                         "sell_price":  {
+                                            "value":  2000,
+                                            "display_strings":  {
+                                                                    "header":  "Sell Price:",
+                                                                    "gold":  "0",
+                                                                    "silver":  "20",
+                                                                    "copper":  "0"
+                                                                }
+                                        },
+                         "description":  "Wild magic given a solid form. Can be bought and sold on the Auction House.",
+                         "is_subclass_hidden":  true,
+                         "crafting_reagent":  "Crafting Reagent"
+                     },
+    "purchase_quantity":  1
+}

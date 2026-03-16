@@ -1,0 +1,60 @@
+﻿{
+    "_links":  {
+                   "self":  {
+                                "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/396?namespace=static-12.0.1_65617-eu"
+                            }
+               },
+    "id":  396,
+    "description":  "Artisan\u0027s Authenticity",
+    "compatible_categories":  [
+                                  {
+                                      "key":  {
+                                                  "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/category/826?namespace=static-12.0.1_65617-eu"
+                                              },
+                                      "name":  "Apprentice\u0027s Scribbles",
+                                      "id":  826
+                                  },
+                                  {
+                                      "key":  {
+                                                  "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/category/827?namespace=static-12.0.1_65617-eu"
+                                              },
+                                      "name":  "Global Finishing Reagent 02",
+                                      "id":  827
+                                  },
+                                  {
+                                      "key":  {
+                                                  "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/category/828?namespace=static-12.0.1_65617-eu"
+                                              },
+                                      "name":  "Global Finishing Reagent 03",
+                                      "id":  828
+                                  },
+                                  {
+                                      "key":  {
+                                                  "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/category/829?namespace=static-12.0.1_65617-eu"
+                                              },
+                                      "name":  "Artisan\u0027s Consortium Gold Star",
+                                      "id":  829
+                                  },
+                                  {
+                                      "key":  {
+                                                  "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/category/833?namespace=static-12.0.1_65617-eu"
+                                              },
+                                      "name":  "Multicraft Matrix",
+                                      "id":  833
+                                  },
+                                  {
+                                      "key":  {
+                                                  "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/category/835?namespace=static-12.0.1_65617-eu"
+                                              },
+                                      "name":  "Resourceful Rebar",
+                                      "id":  835
+                                  },
+                                  {
+                                      "key":  {
+                                                  "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/category/838?namespace=static-12.0.1_65617-eu"
+                                              },
+                                      "name":  "Ingenuious Identity",
+                                      "id":  838
+                                  }
+                              ]
+}

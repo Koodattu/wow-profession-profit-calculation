@@ -1,0 +1,69 @@
+﻿{
+    "_links":  {
+                   "self":  {
+                                "href":  "https://eu.api.blizzard.com/data/wow/recipe/52682?namespace=static-12.0.1_65617-eu"
+                            }
+               },
+    "id":  52682,
+    "name":  "Composite Flora",
+    "media":  {
+                  "key":  {
+                              "href":  "https://eu.api.blizzard.com/data/wow/media/recipe/52682?namespace=static-12.0.1_65617-eu"
+                          },
+                  "id":  52682
+              },
+    "reagents":  [
+                     {
+                         "reagent":  {
+                                         "key":  {
+                                                     "href":  "https://eu.api.blizzard.com/data/wow/item/236951?namespace=static-12.0.1_65617-eu"
+                                                 },
+                                         "name":  "Mote of Wild Magic",
+                                         "id":  236951
+                                     },
+                         "quantity":  4
+                     },
+                     {
+                         "reagent":  {
+                                         "key":  {
+                                                     "href":  "https://eu.api.blizzard.com/data/wow/item/236950?namespace=static-12.0.1_65617-eu"
+                                                 },
+                                         "name":  "Mote of Primal Energy",
+                                         "id":  236950
+                                     },
+                         "quantity":  4
+                     }
+                 ],
+    "modified_crafting_slots":  [
+                                    {
+                                        "slot_type":  {
+                                                          "key":  {
+                                                                      "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/432?namespace=static-12.0.1_65617-eu"
+                                                                  },
+                                                          "name":  "Peacebloom",
+                                                          "id":  432
+                                                      },
+                                        "display_order":  0
+                                    },
+                                    {
+                                        "slot_type":  {
+                                                          "key":  {
+                                                                      "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/433?namespace=static-12.0.1_65617-eu"
+                                                                  },
+                                                          "name":  "Argentleaf",
+                                                          "id":  433
+                                                      },
+                                        "display_order":  1
+                                    },
+                                    {
+                                        "slot_type":  {
+                                                          "key":  {
+                                                                      "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/396?namespace=static-12.0.1_65617-eu"
+                                                                  },
+                                                          "name":  "Artisan\u0027s Authenticity",
+                                                          "id":  396
+                                                      },
+                                        "display_order":  2
+                                    }
+                                ]
+}

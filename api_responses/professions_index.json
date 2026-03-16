@@ -1,0 +1,184 @@
+{
+    "_links":  {
+                   "self":  {
+                                "href":  "https://eu.api.blizzard.com/data/wow/profession/?namespace=static-12.0.1_65617-eu"
+                            }
+               },
+    "professions":  [
+                        {
+                            "key":  {
+                                        "href":  "https://eu.api.blizzard.com/data/wow/profession/202?namespace=static-12.0.1_65617-eu"
+                                    },
+                            "name":  "Engineering",
+                            "id":  202
+                        },
+                        {
+                            "key":  {
+                                        "href":  "https://eu.api.blizzard.com/data/wow/profession/393?namespace=static-12.0.1_65617-eu"
+                                    },
+                            "name":  "Skinning",
+                            "id":  393
+                        },
+                        {
+                            "key":  {
+                                        "href":  "https://eu.api.blizzard.com/data/wow/profession/164?namespace=static-12.0.1_65617-eu"
+                                    },
+                            "name":  "Blacksmithing",
+                            "id":  164
+                        },
+                        {
+                            "key":  {
+                                        "href":  "https://eu.api.blizzard.com/data/wow/profession/333?namespace=static-12.0.1_65617-eu"
+                                    },
+                            "name":  "Enchanting",
+                            "id":  333
+                        },
+                        {
+                            "key":  {
+                                        "href":  "https://eu.api.blizzard.com/data/wow/profession/182?namespace=static-12.0.1_65617-eu"
+                                    },
+                            "name":  "Herbalism",
+                            "id":  182
+                        },
+                        {
+                            "key":  {
+                                        "href":  "https://eu.api.blizzard.com/data/wow/profession/794?namespace=static-12.0.1_65617-eu"
+                                    },
+                            "name":  "Archaeology",
+                            "id":  794
+                        },
+                        {
+                            "key":  {
+                                        "href":  "https://eu.api.blizzard.com/data/wow/profession/186?namespace=static-12.0.1_65617-eu"
+                                    },
+                            "name":  "Mining",
+                            "id":  186
+                        },
+                        {
+                            "key":  {
+                                        "href":  "https://eu.api.blizzard.com/data/wow/profession/197?namespace=static-12.0.1_65617-eu"
+                                    },
+                            "name":  "Tailoring",
+                            "id":  197
+                        },
+                        {
+                            "key":  {
+                                        "href":  "https://eu.api.blizzard.com/data/wow/profession/773?namespace=static-12.0.1_65617-eu"
+                                    },
+                            "name":  "Inscription",
+                            "id":  773
+                        },
+                        {
+                            "key":  {
+                                        "href":  "https://eu.api.blizzard.com/data/wow/profession/185?namespace=static-12.0.1_65617-eu"
+                                    },
+                            "name":  "Cooking",
+                            "id":  185
+                        },
+                        {
+                            "key":  {
+                                        "href":  "https://eu.api.blizzard.com/data/wow/profession/356?namespace=static-12.0.1_65617-eu"
+                                    },
+                            "name":  "Fishing",
+                            "id":  356
+                        },
+                        {
+                            "key":  {
+                                        "href":  "https://eu.api.blizzard.com/data/wow/profession/165?namespace=static-12.0.1_65617-eu"
+                                    },
+                            "name":  "Leatherworking",
+                            "id":  165
+                        },
+                        {
+                            "key":  {
+                                        "href":  "https://eu.api.blizzard.com/data/wow/profession/171?namespace=static-12.0.1_65617-eu"
+                                    },
+                            "name":  "Alchemy",
+                            "id":  171
+                        },
+                        {
+                            "key":  {
+                                        "href":  "https://eu.api.blizzard.com/data/wow/profession/755?namespace=static-12.0.1_65617-eu"
+                                    },
+                            "name":  "Jewelcrafting",
+                            "id":  755
+                        },
+                        {
+                            "key":  {
+                                        "href":  "https://eu.api.blizzard.com/data/wow/profession/2777?namespace=static-12.0.1_65617-eu"
+                                    },
+                            "name":  "Soul Cyphering",
+                            "id":  2777
+                        },
+                        {
+                            "key":  {
+                                        "href":  "https://eu.api.blizzard.com/data/wow/profession/2787?namespace=static-12.0.1_65617-eu"
+                                    },
+                            "name":  "Abominable Stitching",
+                            "id":  2787
+                        },
+                        {
+                            "key":  {
+                                        "href":  "https://eu.api.blizzard.com/data/wow/profession/2791?namespace=static-12.0.1_65617-eu"
+                                    },
+                            "name":  "Ascension Crafting",
+                            "id":  2791
+                        },
+                        {
+                            "key":  {
+                                        "href":  "https://eu.api.blizzard.com/data/wow/profession/2819?namespace=static-12.0.1_65617-eu"
+                                    },
+                            "name":  "Protoform Synthesis",
+                            "id":  2819
+                        },
+                        {
+                            "key":  {
+                                        "href":  "https://eu.api.blizzard.com/data/wow/profession/2821?namespace=static-12.0.1_65617-eu"
+                                    },
+                            "name":  "Arcana Manipulation",
+                            "id":  2821
+                        },
+                        {
+                            "key":  {
+                                        "href":  "https://eu.api.blizzard.com/data/wow/profession/2886?namespace=static-12.0.1_65617-eu"
+                                    },
+                            "name":  "Supply Shipments",
+                            "id":  2886
+                        },
+                        {
+                            "key":  {
+                                        "href":  "https://eu.api.blizzard.com/data/wow/profession/2870?namespace=static-12.0.1_65617-eu"
+                                    },
+                            "name":  "Shipment Prototype",
+                            "id":  2870
+                        },
+                        {
+                            "key":  {
+                                        "href":  "https://eu.api.blizzard.com/data/wow/profession/2950?namespace=static-12.0.1_65617-eu"
+                                    },
+                            "name":  "Alchemy Research",
+                            "id":  2950
+                        },
+                        {
+                            "key":  {
+                                        "href":  "https://eu.api.blizzard.com/data/wow/profession/2984?namespace=static-12.0.1_65617-eu"
+                                    },
+                            "name":  "Dye Crafting",
+                            "id":  2984
+                        },
+                        {
+                            "key":  {
+                                        "href":  "https://eu.api.blizzard.com/data/wow/profession/2811?namespace=static-12.0.1_65617-eu"
+                                    },
+                            "name":  "Stygia Crafting",
+                            "id":  2811
+                        },
+                        {
+                            "key":  {
+                                        "href":  "https://eu.api.blizzard.com/data/wow/profession/2847?namespace=static-12.0.1_65617-eu"
+                                    },
+                            "name":  "Tuskarr Fishing Gear",
+                            "id":  2847
+                        }
+                    ]
+}

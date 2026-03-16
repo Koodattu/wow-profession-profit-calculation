@@ -1,0 +1,71 @@
+﻿{
+    "_links":  {
+                   "self":  {
+                                "href":  "https://eu.api.blizzard.com/data/wow/connected-realm/1080?namespace=dynamic-eu"
+                            }
+               },
+    "id":  1080,
+    "has_queue":  false,
+    "status":  {
+                   "type":  "UP",
+                   "name":  "Up"
+               },
+    "population":  {
+                       "type":  "LOW",
+                       "name":  "Low"
+                   },
+    "realms":  [
+                   {
+                       "id":  1080,
+                       "region":  {
+                                      "key":  {
+                                                  "href":  "https://eu.api.blizzard.com/data/wow/region/3?namespace=dynamic-eu"
+                                              },
+                                      "name":  "Europe",
+                                      "id":  3
+                                  },
+                       "connected_realm":  {
+                                               "href":  "https://eu.api.blizzard.com/data/wow/connected-realm/1080?namespace=dynamic-eu"
+                                           },
+                       "name":  "Khadgar",
+                       "category":  "English",
+                       "locale":  "enGB",
+                       "timezone":  "Europe/Paris",
+                       "type":  {
+                                    "type":  "NORMAL",
+                                    "name":  "Normal"
+                                },
+                       "is_tournament":  false,
+                       "slug":  "khadgar"
+                   },
+                   {
+                       "id":  504,
+                       "region":  {
+                                      "key":  {
+                                                  "href":  "https://eu.api.blizzard.com/data/wow/region/3?namespace=dynamic-eu"
+                                              },
+                                      "name":  "Europe",
+                                      "id":  3
+                                  },
+                       "connected_realm":  {
+                                               "href":  "https://eu.api.blizzard.com/data/wow/connected-realm/1080?namespace=dynamic-eu"
+                                           },
+                       "name":  "Bloodhoof",
+                       "category":  "English",
+                       "locale":  "enGB",
+                       "timezone":  "Europe/Paris",
+                       "type":  {
+                                    "type":  "NORMAL",
+                                    "name":  "Normal"
+                                },
+                       "is_tournament":  false,
+                       "slug":  "bloodhoof"
+                   }
+               ],
+    "mythic_leaderboards":  {
+                                "href":  "https://eu.api.blizzard.com/data/wow/connected-realm/1080/mythic-leaderboard/?namespace=dynamic-eu"
+                            },
+    "auctions":  {
+                     "href":  "https://eu.api.blizzard.com/data/wow/connected-realm/1080/auctions?namespace=dynamic-eu"
+                 }
+}

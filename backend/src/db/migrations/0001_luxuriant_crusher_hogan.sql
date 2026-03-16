@@ -1,0 +1,1 @@
+ALTER TABLE "recipes" ALTER COLUMN "output_item_id" DROP NOT NULL;

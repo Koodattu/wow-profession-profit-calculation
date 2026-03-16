@@ -1,0 +1,57 @@
+﻿{
+    "_links":  {
+                   "self":  {
+                                "href":  "https://eu.api.blizzard.com/data/wow/recipe/49615?namespace=static-12.0.1_65617-eu"
+                            }
+               },
+    "id":  49615,
+    "name":  "Algari Healing Potion",
+    "media":  {
+                  "key":  {
+                              "href":  "https://eu.api.blizzard.com/data/wow/media/recipe/49615?namespace=static-12.0.1_65617-eu"
+                          },
+                  "id":  49615
+              },
+    "modified_crafting_slots":  [
+                                    {
+                                        "slot_type":  {
+                                                          "key":  {
+                                                                      "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/267?namespace=static-12.0.1_65617-eu"
+                                                                  },
+                                                          "name":  "Gilded Vial",
+                                                          "id":  267
+                                                      },
+                                        "display_order":  0
+                                    },
+                                    {
+                                        "slot_type":  {
+                                                          "key":  {
+                                                                      "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/257?namespace=static-12.0.1_65617-eu"
+                                                                  },
+                                                          "name":  "Mycobloom",
+                                                          "id":  257
+                                                      },
+                                        "display_order":  1
+                                    },
+                                    {
+                                        "slot_type":  {
+                                                          "key":  {
+                                                                      "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/362?namespace=static-12.0.1_65617-eu"
+                                                                  },
+                                                          "name":  "Mysterious Concoction",
+                                                          "id":  362
+                                                      },
+                                        "display_order":  2
+                                    },
+                                    {
+                                        "slot_type":  {
+                                                          "key":  {
+                                                                      "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/354?namespace=static-12.0.1_65617-eu"
+                                                                  },
+                                                          "name":  "Artisan\u0027s Authenticity",
+                                                          "id":  354
+                                                      },
+                                        "display_order":  3
+                                    }
+                                ]
+}

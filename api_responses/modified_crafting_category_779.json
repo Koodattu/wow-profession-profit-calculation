@@ -1,0 +1,9 @@
+﻿{
+    "_links":  {
+                   "self":  {
+                                "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/category/779?namespace=static-12.0.1_65617-eu"
+                            }
+               },
+    "id":  779,
+    "name":  "Sunglass Vial"
+}

@@ -1,0 +1,13 @@
+﻿{
+    "_links":  {
+                   "self":  {
+                                "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/?namespace=static-12.0.1_65617-eu"
+                            }
+               },
+    "categories":  {
+                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/category/?namespace=static-12.0.1_65617-eu"
+                   },
+    "slot_types":  {
+                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/?namespace=static-12.0.1_65617-eu"
+                   }
+}

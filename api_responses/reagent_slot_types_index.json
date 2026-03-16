@@ -1,0 +1,2705 @@
+﻿{
+    "_links":  {
+                   "self":  {
+                                "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/?namespace=static-12.0.1_65617-eu"
+                            }
+               },
+    "slot_types":  [
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/16?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Modify Item Level - Major",
+                           "id":  16
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/17?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Specify a Secondary Stat",
+                           "id":  17
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/31?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "id":  31
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/92?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Lesser Illustrious Insight",
+                           "id":  92
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/91?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Alchemical Catalyst",
+                           "id":  91
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/94?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Alchemical Catalyst",
+                           "id":  94
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/125?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Customize Secondary Stats",
+                           "id":  125
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/124?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Quenching Fluid",
+                           "id":  124
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/98?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Hochenblume (DNT)",
+                           "id":  98
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/47?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "id":  47
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/48?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "id":  48
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/49?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "id":  49
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/50?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "id":  50
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/67?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Specify a Secondary Stat",
+                           "id":  67
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/99?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Writhebark (DNT)",
+                           "id":  99
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/46?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Modify Item Level - Minor",
+                           "id":  46
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/72?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Specify a Secondary Stat",
+                           "id":  72
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/75?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Specify a Secondary Stat",
+                           "id":  75
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/79?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Add Progenitor Enhancement",
+                           "id":  79
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/100?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Saxifrage (DNT)",
+                           "id":  100
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/101?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Bubble Poppy (DNT)",
+                           "id":  101
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/102?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Primal Convergent (DNT)",
+                           "id":  102
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/103?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Omnium Draconis (DNT)",
+                           "id":  103
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/181?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Embroidery Thread",
+                           "id":  181
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/123?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Add Embellishment",
+                           "id":  123
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/143?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Shimmering Clasp (DNT)",
+                           "id":  143
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/81?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Draconium Ore (DNT)",
+                           "id":  81
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/83?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Frostfire Alloy (DNT)",
+                           "id":  83
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/84?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Obsidian Seared Alloy (DNT)",
+                           "id":  84
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/85?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Infurious Alloy (DNT)",
+                           "id":  85
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/90?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Test finishing reagent Slot (DNT)",
+                           "id":  90
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/112?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Add Embellishment",
+                           "id":  112
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/146?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Resilient Leather (DNT)",
+                           "id":  146
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/114?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Serevite Ore (DNT)",
+                           "id":  114
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/147?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Adamant Scales (DNT)",
+                           "id":  147
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/148?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Dense Hide (DNT)",
+                           "id":  148
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/149?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Lustrous Scaled Hide (DNT)",
+                           "id":  149
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/150?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Stonecrust Hide (DNT)",
+                           "id":  150
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/151?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Mireslush Hide (DNT)",
+                           "id":  151
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/153?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Infurious Hide (DNT)",
+                           "id":  153
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/155?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Earthshine Scales (DNT)",
+                           "id":  155
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/156?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Frostbite Scales (DNT)",
+                           "id":  156
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/157?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Infurious Scales (DNT)",
+                           "id":  157
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/126?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Infuse with Power",
+                           "id":  126
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/192?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Finishing Touches",
+                           "id":  192
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/193?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Secret Ingredient",
+                           "id":  193
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/226?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Add Embellishment",
+                           "id":  226
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/227?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Customize Secondary Stats",
+                           "id":  227
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/230?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Spare Parts",
+                           "id":  230
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/105?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Elemental Potion of Power (DNT)",
+                           "id":  105
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/231?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Customize Gathering Stat",
+                           "id":  231
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/232?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Customize Crafting Stat",
+                           "id":  232
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/82?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Primal Molten Alloy (DNT)",
+                           "id":  82
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/195?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Shock-Spring Coil (DNT)",
+                           "id":  195
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/128?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Queen\u0027s Ruby (DNT)",
+                           "id":  128
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/129?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Mystic Sapphire (DNT)",
+                           "id":  129
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/130?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Vibrant Emerald (DNT)",
+                           "id":  130
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/131?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Sundered Onyx (DNT)",
+                           "id":  131
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/132?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Eternity Amber (DNT)",
+                           "id":  132
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/133?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Alexstraszite (DNT)",
+                           "id":  133
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/134?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Malygite (DNT)",
+                           "id":  134
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/135?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Ysemerald (DNT)",
+                           "id":  135
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/136?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Neltharite (DNT)",
+                           "id":  136
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/137?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Nozdorite (DNT)",
+                           "id":  137
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/138?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Illimited Diamond (DNT)",
+                           "id":  138
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/140?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Frameless Lens (DNT)",
+                           "id":  140
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/196?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Everburning Blasting Powder (DNT)",
+                           "id":  196
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/142?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Glossy Stone (DNT)",
+                           "id":  142
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/145?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Projection Prism (DNT)",
+                           "id":  145
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/169?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Vibrant Spellthread (DNT)",
+                           "id":  169
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/170?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Frozen Spellthread (DNT)",
+                           "id":  170
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/171?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Temporal Spellthread (DNT)",
+                           "id":  171
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/172?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Wildercloth Bolt (DNT)",
+                           "id":  172
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/173?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Azureweave Bolt (DNT)",
+                           "id":  173
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/174?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Chronocloth Bolt (DNT)",
+                           "id":  174
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/175?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Vibrant Wildercloth Bolt (DNT)",
+                           "id":  175
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/176?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Infurious Wildercloth Bolt (DNT)",
+                           "id":  176
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/177?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Spool of Wilderthread (DNT)",
+                           "id":  177
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/178?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Add Embellishment",
+                           "id":  178
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/179?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Add Embellishment",
+                           "id":  179
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/180?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Add Embellishment",
+                           "id":  180
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/184?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Chain Oil",
+                           "id":  184
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/185?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Curing Agent",
+                           "id":  185
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/189?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Empower with Training Matrix",
+                           "id":  189
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/197?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Greased-Up Gears (DNT)",
+                           "id":  197
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/199?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Reinforced Machine Chassis (DNT)",
+                           "id":  199
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/200?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Assorted Safety Fuses (DNT)",
+                           "id":  200
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/203?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Refreshing Healing Potion (DNT)",
+                           "id":  203
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/204?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Aerated Mana Potion (DNT)",
+                           "id":  204
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/205?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Potion of Gusts (DNT)",
+                           "id":  205
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/222?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Customize Crafting Stat",
+                           "id":  222
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/86?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Just optional reagents w/o quality variation",
+                           "id":  86
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/88?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Optional reagents with and without quality variation",
+                           "id":  88
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/89?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Test finishing reagent (DNT)",
+                           "id":  89
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/106?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Phial of Tepid Versatility (DNT)",
+                           "id":  106
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/107?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Phial of Elemental Chaos (DNT)",
+                           "id":  107
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/108?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Potion of Frozen Focus (DNT)",
+                           "id":  108
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/110?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Increase Rank",
+                           "id":  110
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/111?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Infuse with Power",
+                           "id":  111
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/182?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Polishing Cloth",
+                           "id":  182
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/186?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Fiery Spirit (DNT)",
+                           "id":  186
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/233?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Add Embellishment",
+                           "id":  233
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/190?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "id":  190
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/202?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Darkmoon Sigil",
+                           "id":  202
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/207?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Draconium Gun Shoes (DNT)",
+                           "id":  207
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/208?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Gravitational Displacer (DNT)",
+                           "id":  208
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/209?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Blazing Ink (DNT)",
+                           "id":  209
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/210?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Cosmic Ink (DNT)",
+                           "id":  210
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/211?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Flourishing Ink (DNT)",
+                           "id":  211
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/212?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Burnished Ink (DNT)",
+                           "id":  212
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/213?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Serene Ink (DNT)",
+                           "id":  213
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/104?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Draconic Vial (DNT)",
+                           "id":  104
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/158?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Silken Gemdust (DNT)",
+                           "id":  158
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/116?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Empower with Training Matrix",
+                           "id":  116
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/159?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Elemental Harmony (DNT)",
+                           "id":  159
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/183?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Add Embellishment",
+                           "id":  183
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/214?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Serene Pigment (DNT)",
+                           "id":  214
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/215?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Flourishing Pigment (DNT)",
+                           "id":  215
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/216?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Blazing Pigment (DNT)",
+                           "id":  216
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/217?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Shimmering Pigment (DNT)",
+                           "id":  217
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/218?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Chilled Rune (DNT)",
+                           "id":  218
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/219?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Runed Writhebark (DNT)",
+                           "id":  219
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/220?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Potion of the Hushed Zephyr (DNT)",
+                           "id":  220
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/221?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Blotting Sand",
+                           "id":  221
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/223?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Safety Components",
+                           "id":  223
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/224?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Amplify Secondary Stat",
+                           "id":  224
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/225?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Amplify Secondary Stat",
+                           "id":  225
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/93?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Illustrious Insight",
+                           "id":  93
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/234?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Polishing Cloth",
+                           "id":  234
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/235?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Lesser Illustrious Insight",
+                           "id":  235
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/194?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Handful of Serevite Bolts (DNT)",
+                           "id":  194
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/198?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Arclight Capacitor (DNT)",
+                           "id":  198
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/201?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Primal Deconstruction Charge (DNT)",
+                           "id":  201
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/206?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Creature Combustion Canister (DNT)",
+                           "id":  206
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/236?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Steelforged Essence",
+                           "id":  236
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/237?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Truesteel Essence",
+                           "id":  237
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/238?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Linkgrease Locksprocket",
+                           "id":  238
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/239?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "True Iron Trigger",
+                           "id":  239
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/240?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Burnished Essence",
+                           "id":  240
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/241?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Hexweave Essence",
+                           "id":  241
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/242?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Weapon Crystal",
+                           "id":  242
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/248?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Shadowed Alloy (DNT)",
+                           "id":  248
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/451?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Midnight Mastery Flask",
+                           "id":  451
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/385?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Bright Linen",
+                           "id":  385
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/452?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Midnight Versatility Flask",
+                           "id":  452
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/453?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Arcanoweave",
+                           "id":  453
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/454?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Arcanoweave Bolt",
+                           "id":  454
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/455?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Bright Linen Bolt",
+                           "id":  455
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/457?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Sunfire Silk",
+                           "id":  457
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/322?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Luredrop Pigment",
+                           "id":  322
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/323?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Apricate Ink",
+                           "id":  323
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/327?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Spool of Duskthread",
+                           "id":  327
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/329?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Spool of Weaverthread",
+                           "id":  329
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/331?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Dawncloth Bolt",
+                           "id":  331
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/332?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Weavercloth Bolt",
+                           "id":  332
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/340?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Add Embellishment",
+                           "id":  340
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/341?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Add Embellishment",
+                           "id":  341
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/346?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Artisan\u0027s Authenticity",
+                           "id":  346
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/349?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Algari Healing Potion",
+                           "id":  349
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/350?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Cavedweller\u0027s Delight",
+                           "id":  350
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/354?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Artisan\u0027s Authenticity",
+                           "id":  354
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/357?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Exquisite Weavercloth Bolt",
+                           "id":  357
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/378?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Enchants and Equipment",
+                           "id":  378
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/247?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Spark",
+                           "id":  247
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/313?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Core Alloy",
+                           "id":  313
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/314?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Charged Alloy",
+                           "id":  314
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/315?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Sanctified Alloy",
+                           "id":  315
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/316?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Ironclaw Alloy",
+                           "id":  316
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/317?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Forge Accessories",
+                           "id":  317
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/318?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Secret Ingredient",
+                           "id":  318
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/319?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Codified Greenwood",
+                           "id":  319
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/320?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Boundless Cipher",
+                           "id":  320
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/321?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Sable Ink",
+                           "id":  321
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/324?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Apricate Pigment",
+                           "id":  324
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/328?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Spool of Dawnthread",
+                           "id":  328
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/330?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Duskcloth Bolt",
+                           "id":  330
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/333?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Embroidery Thread",
+                           "id":  333
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/334?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Add Embellishment",
+                           "id":  334
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/347?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Spare Parts",
+                           "id":  347
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/348?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Potion of the Reborn Cheetah",
+                           "id":  348
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/351?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Tempered Potion",
+                           "id":  351
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/352?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Customize Crafting Stat",
+                           "id":  352
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/353?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Customize Gathering Stat",
+                           "id":  353
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/358?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Crafted Reagents",
+                           "id":  358
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/252?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Socket",
+                           "id":  252
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/284?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Infuse with Power",
+                           "id":  284
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/363?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Socket",
+                           "id":  363
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/286?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Leather Armor",
+                           "id":  286
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/287?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Mail Armor",
+                           "id":  287
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/364?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Socket",
+                           "id":  364
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/374?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Radiant Reagents",
+                           "id":  374
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/375?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Embroidery Thread",
+                           "id":  375
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/376?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Spare Parts",
+                           "id":  376
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/377?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Embroidery Thread",
+                           "id":  377
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/379?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Consumables and Reagents",
+                           "id":  379
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/397?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Song Gear",
+                           "id":  397
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/398?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Soul Sprocket",
+                           "id":  398
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/399?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Aetherlume",
+                           "id":  399
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/400?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Lumiflux",
+                           "id":  400
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/401?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Spark",
+                           "id":  401
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/402?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Dawn Crystal",
+                           "id":  402
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/403?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Radiant Shard",
+                           "id":  403
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/404?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Eversinging Dust",
+                           "id":  404
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/405?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Sunglass Vial",
+                           "id":  405
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/406?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Amani Lapis",
+                           "id":  406
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/407?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Flawless Amani Lapis",
+                           "id":  407
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/408?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Harandar Peridot",
+                           "id":  408
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/409?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Sanguine Garnet",
+                           "id":  409
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/410?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Tenebrous Amethyst",
+                           "id":  410
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/411?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Flawless Harandar Peridot",
+                           "id":  411
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/412?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Flawless Sanguine Garnet",
+                           "id":  412
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/413?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Flawless Tenebrous Amethyst",
+                           "id":  413
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/414?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Glimmering Gemdust",
+                           "id":  414
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/415?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Crystalline Glass",
+                           "id":  415
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/416?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Sin\u0027dorei Lens",
+                           "id":  416
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/417?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Duskshrouded Stone",
+                           "id":  417
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/418?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Kaleidoscopic Prism",
+                           "id":  418
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/429?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Eversong Diamond",
+                           "id":  429
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/459?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Amplify Secondary Stat",
+                           "id":  459
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/460?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Optional Reagent",
+                           "id":  460
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/255?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Competitor\u0027s Heraldry",
+                           "id":  255
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/256?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Spark",
+                           "id":  256
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/268?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Harmonious Horticulture",
+                           "id":  268
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/269?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Stormcharged Leather",
+                           "id":  269
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/367?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Radiant Reagents",
+                           "id":  367
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/282?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Amplify Secondary Stat",
+                           "id":  282
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/283?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Customize Secondary Stats",
+                           "id":  283
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/290?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Masterful Cypher",
+                           "id":  290
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/291?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Versatile Cypher",
+                           "id":  291
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/368?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Empower",
+                           "id":  368
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/372?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Radiant Reagents",
+                           "id":  372
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/386?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Refulgent Copper Ingot",
+                           "id":  386
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/427?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Socket",
+                           "id":  427
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/428?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Socket",
+                           "id":  428
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/73?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Specify a Secondary Stat",
+                           "id":  73
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/74?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Specify a Secondary Stat",
+                           "id":  74
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/77?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Modify Item Level - Minor",
+                           "id":  77
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/78?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Increase Rank",
+                           "id":  78
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/87?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Just optional reagents with quality variation",
+                           "id":  87
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/117?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Khaz\u0027gorite Ore (DNT)",
+                           "id":  117
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/280?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Gemdust \u0026 Polishing Cloth",
+                           "id":  280
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/355?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Orbinid Pigment",
+                           "id":  355
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/356?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Blossom Pigment",
+                           "id":  356
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/369?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Forge Accessories",
+                           "id":  369
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/370?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Embroidery Thread",
+                           "id":  370
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/371?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Drafting Supplies",
+                           "id":  371
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/380?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Socket",
+                           "id":  380
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/381?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Socket",
+                           "id":  381
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/264?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Ironclaw Ore",
+                           "id":  264
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/267?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Gilded Vial",
+                           "id":  267
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/270?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Gloom Chitin",
+                           "id":  270
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/271?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Thunderous Hide",
+                           "id":  271
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/272?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Sunless Carapace",
+                           "id":  272
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/275?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Crushed Gemstones",
+                           "id":  275
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/288?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Deadly Cypher",
+                           "id":  288
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/289?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Quick Cypher",
+                           "id":  289
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/304?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Handful of Bismuth Bolts",
+                           "id":  304
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/306?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Gyrating Gear",
+                           "id":  306
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/307?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Safety Switch",
+                           "id":  307
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/309?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Entropy Enhancer",
+                           "id":  309
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/311?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Select Safety Component",
+                           "id":  311
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/249?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Blotting Sand",
+                           "id":  249
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/250?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Wildercloth Bandage (DNT)",
+                           "id":  250
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/253?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Potion of Withering Vitality (DNT)",
+                           "id":  253
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/293?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Carapace-Backed Hide",
+                           "id":  293
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/294?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Crystalfused Hide",
+                           "id":  294
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/295?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Writhing Hide",
+                           "id":  295
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/296?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Sporecoated Hide",
+                           "id":  296
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/297?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Leyfused Hide",
+                           "id":  297
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/298?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Deepfury Hide",
+                           "id":  298
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/299?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Storm-Touched Weapon Wrap",
+                           "id":  299
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/300?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Chitin Armor Banding",
+                           "id":  300
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/301?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Storm Dust",
+                           "id":  301
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/302?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Gleaming Shard",
+                           "id":  302
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/303?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Refulgent Crystal",
+                           "id":  303
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/342?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Empower",
+                           "id":  342
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/344?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Customize Gathering Stat",
+                           "id":  344
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/345?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Customize Crafting Stat",
+                           "id":  345
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/359?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Drafting Supplies",
+                           "id":  359
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/251?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Socket",
+                           "id":  251
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/257?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Mycobloom",
+                           "id":  257
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/258?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Luredrop",
+                           "id":  258
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/259?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Orbinid",
+                           "id":  259
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/260?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Blessing Blossom",
+                           "id":  260
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/261?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Arathor\u0027s Spear",
+                           "id":  261
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/262?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Bismuth",
+                           "id":  262
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/263?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Aqirite",
+                           "id":  263
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/312?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Add Embellishment",
+                           "id":  312
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/382?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Forge Accessories",
+                           "id":  382
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/281?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Add Embellishment",
+                           "id":  281
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/305?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Whimsical Wiring",
+                           "id":  305
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/308?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Chaos Circuit",
+                           "id":  308
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/362?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Mysterious Concoction",
+                           "id":  362
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/383?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Black Blood Residue",
+                           "id":  383
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/384?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Augment Beyond",
+                           "id":  384
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/419?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Void-Tempered Hide",
+                           "id":  419
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/420?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Void-Tempered Plating",
+                           "id":  420
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/421?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Void-Tempered Leather",
+                           "id":  421
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/422?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Void-Tempered Scales",
+                           "id":  422
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/423?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Scalewoven Hide",
+                           "id":  423
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/424?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Infused Scalewoven Hide",
+                           "id":  424
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/425?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Silvermoon Weapon Wrap",
+                           "id":  425
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/426?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Sin\u0027dorei Armor Banding",
+                           "id":  426
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/430?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Azeroot",
+                           "id":  430
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/431?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Sanguithorn",
+                           "id":  431
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/432?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Peacebloom",
+                           "id":  432
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/433?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Argentleaf",
+                           "id":  433
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/434?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Mana Lily",
+                           "id":  434
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/435?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Refulgent Copper Ore",
+                           "id":  435
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/436?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Umbral Tin Ore",
+                           "id":  436
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/437?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Brilliant Silver Ore",
+                           "id":  437
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/438?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Draught of Rampant Abandon",
+                           "id":  438
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/439?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Enlightenment Tonic",
+                           "id":  439
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/440?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Light\u0027s Potential",
+                           "id":  440
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/441?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Light\u0027s Preservation",
+                           "id":  441
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/442?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Midnight Healing Potion",
+                           "id":  442
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/443?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Midnight Mana Potion",
+                           "id":  443
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/444?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Potion of Devoured Dreams",
+                           "id":  444
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/445?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Potion of Recklessness",
+                           "id":  445
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/446?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Potion of Zealotry",
+                           "id":  446
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/447?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Refreshing Serum",
+                           "id":  447
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/448?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Void-Shrouded Tincture",
+                           "id":  448
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/243?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Customize Secondary Stat",
+                           "id":  243
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/244?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Grant PvP Item Level",
+                           "id":  244
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/245?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Grant PvP Item Level",
+                           "id":  245
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/246?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Grant PvP Item Level",
+                           "id":  246
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/276?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Engraved Gemcutter",
+                           "id":  276
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/277?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Decorative Lens",
+                           "id":  277
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/278?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Marbled Stone",
+                           "id":  278
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/279?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Inverted Prism",
+                           "id":  279
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/360?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Radiant Reagents",
+                           "id":  360
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/365?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Customize Secondary Stats",
+                           "id":  365
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/366?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Infuse with Power",
+                           "id":  366
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/387?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Artisan\u0027s Authenticity",
+                           "id":  387
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/388?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Artisan\u0027s Authenticity",
+                           "id":  388
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/389?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Add Embellishment",
+                           "id":  389
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/390?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Add Embellishment",
+                           "id":  390
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/391?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Add Embellishment",
+                           "id":  391
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/392?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Infuse with Power",
+                           "id":  392
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/393?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Customize Secondary Stats",
+                           "id":  393
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/394?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Customize Gathering Stat",
+                           "id":  394
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/395?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Customize Crafting Stat",
+                           "id":  395
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/396?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Artisan\u0027s Authenticity",
+                           "id":  396
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/449?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Midnight Critical Flask",
+                           "id":  449
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/450?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Midnight Haste Flask",
+                           "id":  450
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/468?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Smuggler\u0027s Enchanted Edge",
+                           "id":  468
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/477?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Oil of Beledar\u0027s Grace",
+                           "id":  477
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/478?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Duskweave",
+                           "id":  478
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/481?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Slumbering Soul Serum",
+                           "id":  481
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/489?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "White Dye Herbs",
+                           "id":  489
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/490?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Black Dye Herbs",
+                           "id":  490
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/491?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Brown Dye Herbs",
+                           "id":  491
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/462?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Codified Azeroot",
+                           "id":  462
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/463?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Munsell Ink",
+                           "id":  463
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/464?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Sienna Ink",
+                           "id":  464
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/465?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Soul Cipher",
+                           "id":  465
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/469?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Empower",
+                           "id":  469
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/470?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Empower",
+                           "id":  470
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/471?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Competitor\u0027s Heraldry",
+                           "id":  471
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/456?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Imbued Bright Linen Bolt",
+                           "id":  456
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/458?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Sunfire Silk Bolt",
+                           "id":  458
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/472?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Powder Pigment",
+                           "id":  472
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/473?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Sanguithorn Pigment",
+                           "id":  473
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/474?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Argentleaf Pigment",
+                           "id":  474
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/475?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Mana Lily Pigment",
+                           "id":  475
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/476?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Wondrous Synergist",
+                           "id":  476
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/479?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Weavercloth",
+                           "id":  479
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/480?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Secret Ingredient",
+                           "id":  480
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/482?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Red Dye Herbs",
+                           "id":  482
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/483?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Orange Dye Herbs",
+                           "id":  483
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/484?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Yellow Dye Herbs",
+                           "id":  484
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/485?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Green Dye Herbs",
+                           "id":  485
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/486?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Blue Dye Herbs",
+                           "id":  486
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/487?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Teal Dye Herbs",
+                           "id":  487
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/488?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Purple Dye Herbs",
+                           "id":  488
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/461?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Alchemy Combined Reagent",
+                           "id":  461
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/466?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Gloaming Alloy",
+                           "id":  466
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/467?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Sterling Alloy",
+                           "id":  467
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/499?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Add Embellishment",
+                           "id":  499
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/500?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Spark",
+                           "id":  500
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/496?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Artisan\u0027s Authenticity",
+                           "id":  496
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/497?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Artisan\u0027s Authenticity",
+                           "id":  497
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/498?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Artisan\u0027s Authenticity",
+                           "id":  498
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/501?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Add Embellishment",
+                           "id":  501
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/495?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Artisan\u0027s Authenticity",
+                           "id":  495
+                       },
+                       {
+                           "key":  {
+                                       "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/502?namespace=static-12.0.1_65617-eu"
+                                   },
+                           "name":  "Add Embellishment",
+                           "id":  502
+                       }
+                   ]
+}

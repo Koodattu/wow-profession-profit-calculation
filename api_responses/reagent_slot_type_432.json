@@ -1,0 +1,18 @@
+﻿{
+    "_links":  {
+                   "self":  {
+                                "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/432?namespace=static-12.0.1_65617-eu"
+                            }
+               },
+    "id":  432,
+    "description":  "Peacebloom",
+    "compatible_categories":  [
+                                  {
+                                      "key":  {
+                                                  "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/category/741?namespace=static-12.0.1_65617-eu"
+                                              },
+                                      "name":  "Peacebloom",
+                                      "id":  741
+                                  }
+                              ]
+}

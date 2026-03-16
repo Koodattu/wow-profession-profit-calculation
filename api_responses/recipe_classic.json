@@ -1,0 +1,57 @@
+﻿{
+    "_links":  {
+                   "self":  {
+                                "href":  "https://eu.api.blizzard.com/data/wow/recipe/1377?namespace=static-12.0.1_65617-eu"
+                            }
+               },
+    "id":  1377,
+    "name":  "Minor Healing Potion",
+    "media":  {
+                  "key":  {
+                              "href":  "https://eu.api.blizzard.com/data/wow/media/recipe/1377?namespace=static-12.0.1_65617-eu"
+                          },
+                  "id":  1377
+              },
+    "crafted_item":  {
+                         "key":  {
+                                     "href":  "https://eu.api.blizzard.com/data/wow/item/118?namespace=static-12.0.1_65617-eu"
+                                 },
+                         "name":  "Minor Healing Potion",
+                         "id":  118
+                     },
+    "reagents":  [
+                     {
+                         "reagent":  {
+                                         "key":  {
+                                                     "href":  "https://eu.api.blizzard.com/data/wow/item/2447?namespace=static-12.0.1_65617-eu"
+                                                 },
+                                         "name":  "Peacebloom",
+                                         "id":  2447
+                                     },
+                         "quantity":  1
+                     },
+                     {
+                         "reagent":  {
+                                         "key":  {
+                                                     "href":  "https://eu.api.blizzard.com/data/wow/item/765?namespace=static-12.0.1_65617-eu"
+                                                 },
+                                         "name":  "Silverleaf",
+                                         "id":  765
+                                     },
+                         "quantity":  1
+                     },
+                     {
+                         "reagent":  {
+                                         "key":  {
+                                                     "href":  "https://eu.api.blizzard.com/data/wow/item/3371?namespace=static-12.0.1_65617-eu"
+                                                 },
+                                         "name":  "Crystal Vial",
+                                         "id":  3371
+                                     },
+                         "quantity":  1
+                     }
+                 ],
+    "crafted_quantity":  {
+                             "value":  1.0
+                         }
+}

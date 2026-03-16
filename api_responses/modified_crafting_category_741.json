@@ -1,0 +1,9 @@
+﻿{
+    "_links":  {
+                   "self":  {
+                                "href":  "https://eu.api.blizzard.com/data/wow/modified-crafting/category/741?namespace=static-12.0.1_65617-eu"
+                            }
+               },
+    "id":  741,
+    "name":  "Peacebloom"
+}
