@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, useSyncExternalStore, useTransition } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, useTransition } from "react";
 import { fetchItemPrices, formatPrice, type Item, type PricePoint } from "@/lib/api";
 import { getSelectedConnectedRealmId, subscribeToConnectedRealm } from "@/lib/realm-state";
 
@@ -13,7 +13,8 @@ export default function ItemDetailClient({ item }: Props) {
   const connectedRealmId = useSyncExternalStore(subscribeToConnectedRealm, getSelectedConnectedRealmId, () => null);
   const [prices, setPrices] = useState<PricePoint[]>([]);
   const [initialLoad, setInitialLoad] = useState(true);
-  const [isPending, startTransition] = useTransition();
+  const hasLoadedDataRef = useRef(false);
+  const [, startTransition] = useTransition();
 
   const usesRealmByDefault = item.isCraftedOutput && !item.isReagent;
 
@@ -25,9 +26,12 @@ export default function ItemDetailClient({ item }: Props) {
     startTransition(async () => {
       try {
         const nextPrices = await fetchItemPrices(item.id, "eu", "24h", usesRealmByDefault ? { type: "realm", connectedRealmId: connectedRealmId ?? undefined } : { type: "auto" });
-        if (!cancelled) setPrices(nextPrices);
+        if (!cancelled) {
+          setPrices(nextPrices);
+          hasLoadedDataRef.current = true;
+        }
       } catch {
-        if (!cancelled) setPrices([]);
+        if (!cancelled && !hasLoadedDataRef.current) setPrices([]);
       } finally {
         if (!cancelled) setInitialLoad(false);
       }
@@ -60,8 +64,11 @@ export default function ItemDetailClient({ item }: Props) {
       </div>
 
       <div className="border border-border rounded-lg bg-card p-4 mb-6">
-        <h2 className="text-sm text-muted mb-3">Current Price (EU)</h2>
-        {initialLoad || isPending ? (
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-sm text-muted">Current Price (EU)</h2>
+          <span className="text-sm text-muted" />
+        </div>
+        {initialLoad ? (
           <p className="text-muted">Loading price data...</p>
         ) : latestPrice ? (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">

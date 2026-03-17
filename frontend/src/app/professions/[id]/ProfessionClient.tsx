@@ -20,7 +20,7 @@ export default function ProfessionClient({ profession }: Props) {
   const connectedRealmId = useSyncExternalStore(subscribeToConnectedRealm, getSelectedConnectedRealmId, () => null);
   const [recipeCosts, setRecipeCosts] = useState<ProfessionRecipeCost[]>([]);
   const [initialLoad, setInitialLoad] = useState(true);
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   const tierStats = getTierStats(profession.name, tier);
   const hasTier = tier !== "none";
@@ -35,7 +35,6 @@ export default function ProfessionClient({ profession }: Props) {
         const nextRecipeCosts = await fetchProfessionCostsForRealm(profession.id, "eu", connectedRealmId);
         if (!cancelled) setRecipeCosts(nextRecipeCosts);
       } catch {
-        if (!cancelled) setRecipeCosts([]);
       } finally {
         if (!cancelled) setInitialLoad(false);
       }
@@ -85,7 +84,7 @@ export default function ProfessionClient({ profession }: Props) {
         </div>
       </div>
 
-      {(initialLoad || isPending) && <p className="text-sm text-muted mb-4">Loading recipe prices...</p>}
+      <div className="h-5 mb-4 text-sm text-muted">{initialLoad ? "Loading recipe prices..." : null}</div>
 
       {sortedCategories.map(([categoryId, recipes]) => {
         const category = categoryId ? categoryMap.get(categoryId) : null;

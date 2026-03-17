@@ -183,8 +183,8 @@ export function fetchProfessionCostsForRealm(id: number, region = "eu", connecte
   return apiFetch(`/api/crafting/professions/${id}${qs({ region, connectedRealmId: connectedRealmId?.toString() })}`);
 }
 
-export function fetchRecipeCost(id: number, region = "eu"): Promise<RecipeProfitResult> {
-  return apiFetch(`/api/crafting/recipes/${id}${qs({ region })}`);
+export function fetchRecipeCost(id: number, region = "eu", connectedRealmId?: number): Promise<RecipeProfitResult> {
+  return apiFetch(`/api/crafting/recipes/${id}${qs({ region, connectedRealmId: connectedRealmId?.toString() })}`);
 }
 
 export function fetchItem(id: number): Promise<Item> {

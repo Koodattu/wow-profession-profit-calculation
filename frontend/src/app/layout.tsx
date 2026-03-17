@@ -29,8 +29,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans`}>
-        <div className="flex min-h-screen">
-          <nav className="w-56 shrink-0 border-r border-border bg-card p-4 flex flex-col gap-1">
+        <div className="flex h-screen overflow-hidden">
+          <nav className="w-56 shrink-0 border-r border-border bg-card p-4 flex flex-col gap-1 h-screen overflow-y-auto">
             <Link href="/" className="text-lg font-bold text-accent mb-4 block">
               WoW Tools
             </Link>
@@ -41,7 +41,7 @@ export default function RootLayout({
             <NavLink href="/flipping">Flipping</NavLink>
             <NavSettings />
           </nav>
-          <main className="flex-1 p-6 overflow-auto">{children}</main>
+          <main className="flex-1 p-6 overflow-y-auto">{children}</main>
         </div>
         <WowheadTooltips />
       </body>
