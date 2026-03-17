@@ -5,6 +5,7 @@ import { formatPrice, type RecipeProfitResult, type RankScenario } from "@/lib/a
 import WowheadLink from "@/app/WowheadLink";
 import { getTierStats, TOOL_TIERS, TOOL_TIER_LABELS, type ToolTier } from "@/lib/tool-tiers";
 import { calculateAdjustedProfit, type AdjustedProfit } from "@/lib/profit-calc";
+import { getItemQualityClass } from "@/lib/item-quality";
 
 interface Props {
   recipe: RecipeProfitResult;
@@ -74,7 +75,7 @@ function ScenarioCard({ scenario, tierResults }: { scenario: RankScenario; tierR
             {scenario.cost.reagents.map((r) => (
               <tr key={r.slotIndex} className="border-b border-border/30">
                 <td className="py-1">
-                  <WowheadLink href={`/items/${r.itemId}`} type="item" id={r.itemId} className="text-accent hover:underline">
+                  <WowheadLink href={`/items/${r.itemId}`} type="item" id={r.itemId} className={`${getItemQualityClass(r.itemQuality)} hover:underline`}>
                     {r.itemName}
                   </WowheadLink>
                 </td>
@@ -102,7 +103,12 @@ function ScenarioCard({ scenario, tierResults }: { scenario: RankScenario; tierR
         <div className="flex justify-between text-sm">
           <span>
             {scenario.outputItemName ? (
-              <WowheadLink href={`/items/${scenario.outputItemId}`} type="item" id={scenario.outputItemId!} className="text-accent hover:underline">
+              <WowheadLink
+                href={`/items/${scenario.outputItemId}`}
+                type="item"
+                id={scenario.outputItemId!}
+                className={`${getItemQualityClass(scenario.outputItemQuality)} hover:underline`}
+              >
                 {scenario.outputItemName}
               </WowheadLink>
             ) : (

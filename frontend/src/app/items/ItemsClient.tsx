@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useTransition } from "react";
 import WowheadLink from "@/app/WowheadLink";
 import { fetchItems, formatPrice, type ItemWithPrice, type ItemListResponse } from "@/lib/api";
+import { getItemQualityClass } from "@/lib/item-quality";
 
 const TYPE_FILTERS = ["all", "reagent", "crafted"] as const;
 type TypeFilter = (typeof TYPE_FILTERS)[number];
@@ -172,7 +173,7 @@ function ItemRow({ item }: { item: ItemWithPrice }) {
   return (
     <tr className="border-b border-border/50 hover:bg-card-hover transition-colors">
       <td className="py-2 pr-4">
-        <WowheadLink href={`/items/${item.id}`} type="item" id={item.id} className="text-accent hover:underline">
+        <WowheadLink href={`/items/${item.id}`} type="item" id={item.id} className={`${getItemQualityClass(item.qualityRank)} hover:underline`}>
           {item.name || <span className="text-muted italic">Unknown item #{item.id}</span>}
         </WowheadLink>
       </td>

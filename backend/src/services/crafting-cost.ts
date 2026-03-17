@@ -14,6 +14,7 @@ interface ReagentCost {
   slotIndex: number;
   itemId: number;
   itemName: string;
+  itemQuality: number | null;
   quantity: number;
   unitPrice: number;
   totalPrice: number;
@@ -30,6 +31,7 @@ interface RankScenario {
   cost: RecipeCostResult;
   outputItemId: number | null;
   outputItemName: string | null;
+  outputItemQuality: number | null;
   outputQuantity: number;
   outputUnitPrice: number | null;
   outputTotalPrice: number | null;
@@ -241,8 +243,8 @@ export async function computeRecipeCost(recipeId: number, regionId: string, reag
   const prices = await getLatestPrices(regionId, itemIds);
 
   // Look up item names
-  const itemRows = itemIds.length > 0 ? await db.select({ id: items.id, name: items.name }).from(items).where(inArray(items.id, itemIds)) : [];
-  const itemNameMap = new Map(itemRows.map((r) => [r.id, r.name]));
+  const itemRows = itemIds.length > 0 ? await db.select({ id: items.id, name: items.name, qualityRank: items.qualityRank }).from(items).where(inArray(items.id, itemIds)) : [];
+  const itemMetaMap = new Map(itemRows.map((r) => [r.id, { name: r.name, qualityRank: r.qualityRank }]));
 
   // Build reagent cost breakdown
   let totalCost = 0;
@@ -259,7 +261,8 @@ export async function computeRecipeCost(recipeId: number, regionId: string, reag
     reagents.push({
       slotIndex: sel.slotIndex,
       itemId: sel.itemId,
-      itemName: itemNameMap.get(sel.itemId) ?? `Item #${sel.itemId}`,
+      itemName: itemMetaMap.get(sel.itemId)?.name ?? `Item #${sel.itemId}`,
+      itemQuality: itemMetaMap.get(sel.itemId)?.qualityRank ?? null,
       quantity: sel.quantity,
       unitPrice,
       totalPrice: slotTotal,
@@ -313,8 +316,9 @@ export async function computeRecipeProfit(recipeId: number, regionId: string): P
   const outputPrices = await getLatestPrices(regionId, outputItemIds);
 
   // Look up output item names
-  const outputItemRows = outputItemIds.length > 0 ? await db.select({ id: items.id, name: items.name }).from(items).where(inArray(items.id, outputItemIds)) : [];
-  const outputNameMap = new Map(outputItemRows.map((r) => [r.id, r.name]));
+  const outputItemRows =
+    outputItemIds.length > 0 ? await db.select({ id: items.id, name: items.name, qualityRank: items.qualityRank }).from(items).where(inArray(items.id, outputItemIds)) : [];
+  const outputMetaMap = new Map(outputItemRows.map((r) => [r.id, { name: r.name, qualityRank: r.qualityRank }]));
 
   // Build scenarios
   function buildScenario(rank: 1 | 2, cost: RecipeCostResult, outputItemId: number | null): RankScenario {
@@ -327,7 +331,8 @@ export async function computeRecipeProfit(recipeId: number, regionId: string): P
       reagentRank: rank,
       cost,
       outputItemId,
-      outputItemName: outputItemId ? (outputNameMap.get(outputItemId) ?? null) : null,
+      outputItemName: outputItemId ? (outputMetaMap.get(outputItemId)?.name ?? null) : null,
+      outputItemQuality: outputItemId ? (outputMetaMap.get(outputItemId)?.qualityRank ?? null) : null,
       outputQuantity,
       outputUnitPrice,
       outputTotalPrice,
@@ -441,8 +446,9 @@ export async function computeProfessionRecipeCosts(professionId: number, regionI
   // ── Look up all item names ────────────────────────────────────────
 
   const allItemIdArray = [...allItemIds];
-  const itemRows = allItemIdArray.length > 0 ? await db.select({ id: items.id, name: items.name }).from(items).where(inArray(items.id, allItemIdArray)) : [];
-  const itemNameMap = new Map(itemRows.map((r) => [r.id, r.name]));
+  const itemRows =
+    allItemIdArray.length > 0 ? await db.select({ id: items.id, name: items.name, qualityRank: items.qualityRank }).from(items).where(inArray(items.id, allItemIdArray)) : [];
+  const itemMetaMap = new Map(itemRows.map((r) => [r.id, { name: r.name, qualityRank: r.qualityRank }]));
 
   // ── Compute per-recipe ────────────────────────────────────────────
 
@@ -474,7 +480,8 @@ export async function computeProfessionRecipeCosts(professionId: number, regionI
       reagents.push({
         slotIndex: slot.slotIndex,
         itemId: chosenOption.itemId,
-        itemName: itemNameMap.get(chosenOption.itemId) ?? `Item #${chosenOption.itemId}`,
+        itemName: itemMetaMap.get(chosenOption.itemId)?.name ?? `Item #${chosenOption.itemId}`,
+        itemQuality: itemMetaMap.get(chosenOption.itemId)?.qualityRank ?? null,
         quantity: slot.quantity,
         unitPrice,
         totalPrice: slotTotal,
@@ -523,7 +530,8 @@ export async function computeProfessionRecipeCosts(professionId: number, regionI
         reagentRank: rank,
         cost,
         outputItemId,
-        outputItemName: outputItemId ? (itemNameMap.get(outputItemId) ?? null) : null,
+        outputItemName: outputItemId ? (itemMetaMap.get(outputItemId)?.name ?? null) : null,
+        outputItemQuality: outputItemId ? (itemMetaMap.get(outputItemId)?.qualityRank ?? null) : null,
         outputQuantity,
         outputUnitPrice,
         outputTotalPrice,

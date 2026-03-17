@@ -24,6 +24,7 @@ export interface ReagentCost {
   slotIndex: number;
   itemId: number;
   itemName: string;
+  itemQuality: number | null;
   quantity: number;
   unitPrice: number;
   totalPrice: number;
@@ -40,6 +41,7 @@ export interface RankScenario {
   cost: RecipeCostResult;
   outputItemId: number | null;
   outputItemName: string | null;
+  outputItemQuality: number | null;
   outputQuantity: number;
   outputUnitPrice: number | null;
   outputTotalPrice: number | null;
