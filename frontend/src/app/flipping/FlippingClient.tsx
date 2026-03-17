@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useTransition } from "react";
 import WowheadLink from "@/app/WowheadLink";
-import { fetchFlippingOpportunities, formatPrice, type FlippingOpportunity } from "@/lib/api";
+import { fetchFlippingCategories, fetchFlippingOpportunities, formatPrice, type FlippingCategory, type FlippingOpportunity } from "@/lib/api";
 import { getItemQualityClass } from "@/lib/item-quality";
 
 const LIMIT_OPTIONS = [25, 50, 100] as const;
@@ -10,9 +10,28 @@ const LIMIT_OPTIONS = [25, 50, 100] as const;
 export default function FlippingClient() {
   const [minSpreadGold, setMinSpreadGold] = useState(0);
   const [limit, setLimit] = useState<number>(25);
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [categories, setCategories] = useState<FlippingCategory[]>([]);
   const [data, setData] = useState<FlippingOpportunity[]>([]);
   const [isPending, startTransition] = useTransition();
   const [initialLoad, setInitialLoad] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const result = await fetchFlippingCategories("eu");
+        if (!cancelled) setCategories(result);
+      } catch {
+        if (!cancelled) setCategories([]);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -35,6 +54,19 @@ export default function FlippingClient() {
   }, [minSpreadGold, limit]);
 
   const loading = initialLoad || isPending;
+  const categoryOptions = [
+    "all",
+    ...Array.from(
+      new Set((categories.length > 0 ? categories.map((category) => category.categoryName ?? "__none__") : data.map((item) => item.categoryName ?? "__none__")) as string[]),
+    ),
+  ];
+  const filteredAndSorted = data
+    .filter((opp) => {
+      if (categoryFilter === "all") return true;
+      if (categoryFilter === "__none__") return !opp.categoryName;
+      return opp.categoryName === categoryFilter;
+    })
+    .sort((a, b) => b.spread - a.spread);
 
   return (
     <div>
@@ -77,12 +109,30 @@ export default function FlippingClient() {
             ))}
           </select>
         </div>
+
+        <div className="flex items-center gap-2">
+          <label htmlFor="category" className="text-sm text-muted whitespace-nowrap">
+            Category
+          </label>
+          <select
+            id="category"
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className="px-3 py-2 rounded-md bg-card border border-border text-foreground focus:outline-none focus:border-accent"
+          >
+            {categoryOptions.map((category) => (
+              <option key={category} value={category}>
+                {category === "all" ? "All categories" : category === "__none__" ? "No category" : category}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {/* Table */}
       {loading ? (
         <p className="text-muted py-8 text-center">Loading…</p>
-      ) : data.length === 0 ? (
+      ) : filteredAndSorted.length === 0 ? (
         <p className="text-muted py-8 text-center">No flipping opportunities found</p>
       ) : (
         <div className="overflow-x-auto">
@@ -90,6 +140,7 @@ export default function FlippingClient() {
             <thead>
               <tr className="border-b border-border text-left text-muted">
                 <th className="py-2 pr-4 font-medium">Item</th>
+                <th className="py-2 pr-4 font-medium">Category</th>
                 <th className="py-2 pr-4 font-medium">Rank</th>
                 <th className="py-2 pr-4 font-medium text-right">Region Avg</th>
                 <th className="py-2 pr-4 font-medium">Cheapest Realm</th>
@@ -100,7 +151,7 @@ export default function FlippingClient() {
               </tr>
             </thead>
             <tbody>
-              {data.map((opp) => (
+              {filteredAndSorted.map((opp) => (
                 <FlipRow key={`${opp.itemId}-${opp.qualityRank ?? 0}`} opp={opp} />
               ))}
             </tbody>
@@ -119,6 +170,7 @@ function FlipRow({ opp }: { opp: FlippingOpportunity }) {
           {opp.itemName}
         </WowheadLink>
       </td>
+      <td className="py-2 pr-4 text-muted">{opp.categoryName ?? "No category"}</td>
       <td className="py-2 pr-4 text-muted">{opp.qualityRank ? `R${opp.qualityRank}` : "—"}</td>
       <td className="py-2 pr-4 text-right">{formatPrice(opp.regionAvgPrice)}</td>
       <td className="py-2 pr-4">

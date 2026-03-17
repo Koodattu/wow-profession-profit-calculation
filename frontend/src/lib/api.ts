@@ -97,6 +97,8 @@ export interface ItemWithPrice {
   isCraftedOutput: boolean;
   priceSource: "commodity" | "realm" | null;
   latestPrice: { minPrice: number; avgPrice: number; medianPrice: number } | null;
+  regionLatestPrice: { minPrice: number; avgPrice: number; medianPrice: number } | null;
+  realmLatestPrice: { minPrice: number; avgPrice: number; medianPrice: number } | null;
 }
 
 export interface ItemListResponse {
@@ -121,12 +123,20 @@ export interface FlippingOpportunity {
   itemName: string;
   itemQuality: number | null;
   qualityRank: number | null;
+  categoryId: number | null;
+  categoryName: string | null;
+  professionName: string | null;
   regionAvgPrice: number;
   cheapestRealm: { realmId: number; realmName: string; minBuyout: number };
   mostExpensiveRealm: { realmId: number; realmName: string; minBuyout: number };
   spread: number;
   spreadPercent: number;
   realmCount: number;
+}
+
+export interface FlippingCategory {
+  categoryId: number | null;
+  categoryName: string | null;
 }
 
 export interface RealmPrice {
@@ -202,8 +212,17 @@ export function fetchItemPrices(id: number, region = "eu", range = "24h", option
   );
 }
 
-export function fetchItems(params: { region?: string; type?: string; search?: string; page?: number; limit?: number } = {}): Promise<ItemListResponse> {
-  return apiFetch(`/api/items${qs({ region: params.region, type: params.type, search: params.search, page: params.page?.toString(), limit: params.limit?.toString() })}`);
+export function fetchItems(params: { region?: string; type?: string; search?: string; page?: number; limit?: number; connectedRealmId?: number } = {}): Promise<ItemListResponse> {
+  return apiFetch(
+    `/api/items${qs({
+      region: params.region,
+      type: params.type,
+      search: params.search,
+      page: params.page?.toString(),
+      limit: params.limit?.toString(),
+      connectedRealmId: params.connectedRealmId?.toString(),
+    })}`,
+  );
 }
 
 export function fetchSearch(q: string, region = "eu"): Promise<SearchResult> {
@@ -212,6 +231,10 @@ export function fetchSearch(q: string, region = "eu"): Promise<SearchResult> {
 
 export function fetchFlippingOpportunities(region = "eu", minSpread?: number, limit?: number): Promise<FlippingOpportunity[]> {
   return apiFetch(`/api/flipping/opportunities${qs({ region, minSpread: minSpread?.toString(), limit: limit?.toString() })}`);
+}
+
+export function fetchFlippingCategories(region = "eu"): Promise<FlippingCategory[]> {
+  return apiFetch(`/api/flipping/categories${qs({ region })}`);
 }
 
 export function fetchItemRealmPrices(itemId: number, region = "eu", range = "24h"): Promise<RealmPrice[]> {

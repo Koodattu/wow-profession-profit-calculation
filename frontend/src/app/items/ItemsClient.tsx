@@ -1,23 +1,26 @@
 "use client";
 
-import { useState, useEffect, useRef, useTransition } from "react";
+import { useState, useEffect, useRef, useTransition, useSyncExternalStore, useCallback } from "react";
 import WowheadLink from "@/app/WowheadLink";
 import { fetchItems, formatPrice, type ItemWithPrice, type ItemListResponse } from "@/lib/api";
 import { getItemQualityClass } from "@/lib/item-quality";
+import { getSelectedConnectedRealmId, subscribeToConnectedRealm } from "@/lib/realm-state";
 
-const TYPE_FILTERS = ["all", "reagent", "crafted"] as const;
+const TYPE_FILTERS = ["all", "commodity", "gear"] as const;
 type TypeFilter = (typeof TYPE_FILTERS)[number];
 
 const TYPE_LABELS: Record<TypeFilter, string> = {
   all: "All",
-  reagent: "Reagents",
-  crafted: "Crafted",
+  commodity: "Commodities",
+  gear: "Gear",
 };
 
 const PAGE_SIZE_OPTIONS = [50, 100, 250, 500, 1000] as const;
 const DEFAULT_PAGE_SIZE = 1000;
 
 export default function ItemsClient() {
+  const getRealmSnapshot = useCallback(() => getSelectedConnectedRealmId(), []);
+  const connectedRealmId = useSyncExternalStore(subscribeToConnectedRealm, getRealmSnapshot, () => null);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
@@ -52,6 +55,7 @@ export default function ItemsClient() {
           search: debouncedSearch || undefined,
           page,
           limit: pageSize,
+          connectedRealmId: connectedRealmId ?? undefined,
         });
         if (!cancelled) setData(result);
       } catch {
@@ -64,7 +68,7 @@ export default function ItemsClient() {
     return () => {
       cancelled = true;
     };
-  }, [debouncedSearch, typeFilter, page, pageSize]);
+  }, [connectedRealmId, debouncedSearch, typeFilter, page, pageSize]);
 
   const loading = initialLoad || isPending;
 
@@ -128,6 +132,8 @@ export default function ItemsClient() {
                   <th className="py-2 pr-4 font-medium">Rank</th>
                   <th className="py-2 pr-4 font-medium">Type</th>
                   <th className="py-2 pr-4 font-medium">Source</th>
+                  <th className="py-2 pr-4 font-medium text-right">Realm Avg</th>
+                  <th className="py-2 pr-4 font-medium text-right">Region Avg</th>
                   <th className="py-2 pr-4 font-medium text-right">Min</th>
                   <th className="py-2 pr-4 font-medium text-right">Avg</th>
                   <th className="py-2 pr-4 font-medium text-right">Median</th>
@@ -187,9 +193,11 @@ function ItemRow({ item }: { item: ItemWithPrice }) {
       </td>
       <td className="py-2 pr-4">
         {item.priceSource === "commodity" && <span className="text-xs px-1.5 py-0.5 rounded bg-green-500/15 text-green-400">Commodity</span>}
-        {item.priceSource === "realm" && <span className="text-xs px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-400">Realm Avg</span>}
+        {item.priceSource === "realm" && <span className="text-xs px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-400">Realm</span>}
         {!item.priceSource && <span className="text-muted">—</span>}
       </td>
+      <td className="py-2 pr-4 text-right">{item.realmLatestPrice ? formatPrice(item.realmLatestPrice.avgPrice) : "—"}</td>
+      <td className="py-2 pr-4 text-right">{item.regionLatestPrice ? formatPrice(item.regionLatestPrice.avgPrice) : "—"}</td>
       <td className="py-2 pr-4 text-right">{item.latestPrice ? formatPrice(item.latestPrice.minPrice) : "—"}</td>
       <td className="py-2 pr-4 text-right">{item.latestPrice ? formatPrice(item.latestPrice.avgPrice) : "—"}</td>
       <td className="py-2 pr-4 text-right">{item.latestPrice ? formatPrice(item.latestPrice.medianPrice) : "—"}</td>

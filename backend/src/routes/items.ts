@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { eq, and, gte, desc, sql, ilike } from "drizzle-orm";
 import { db } from "../db";
 import { items, commoditySnapshots, realmSnapshots, commodityDaily, realmDaily, realms, connectedRealms } from "../db/schema";
-import { getLatestCommodityPrices, getLatestRealmPrices, type PriceData } from "../services/crafting-cost";
+import { getLatestCommodityPrices, getLatestRealmPrices, getLatestRealmPricesForConnectedRealm, type PriceData } from "../services/crafting-cost";
 
 const itemRoutes = new Hono();
 
@@ -12,6 +12,11 @@ itemRoutes.get("/", async (c) => {
   const region = c.req.query("region") || "eu";
   const type = c.req.query("type") || "all";
   const search = c.req.query("search") || "";
+  const connectedRealmIdQuery = c.req.query("connectedRealmId");
+  const connectedRealmId = connectedRealmIdQuery ? Number(connectedRealmIdQuery) : undefined;
+  if (connectedRealmIdQuery && !Number.isFinite(connectedRealmId)) {
+    return c.json({ error: "Invalid connected realm ID" }, 400);
+  }
   const page = Math.max(1, Number(c.req.query("page")) || 1);
   const limit = Math.min(2000, Math.max(1, Number(c.req.query("limit")) || 50));
   const offset = (page - 1) * limit;
@@ -21,6 +26,21 @@ itemRoutes.get("/", async (c) => {
     const conditions = [];
     if (type === "reagent") conditions.push(eq(items.isReagent, true));
     else if (type === "crafted") conditions.push(eq(items.isCraftedOutput, true));
+    else if (type === "commodity") {
+      conditions.push(sql`exists (
+        select 1
+        from commodity_snapshots cs
+        where cs.item_id = ${items.id}
+          and cs.region_id = ${region}
+      )`);
+    } else if (type === "gear") {
+      conditions.push(sql`not exists (
+        select 1
+        from commodity_snapshots cs
+        where cs.item_id = ${items.id}
+          and cs.region_id = ${region}
+      )`);
+    }
     if (search) {
       const safeSearch = search.replace(/[%_\\]/g, "\\$&");
       conditions.push(ilike(items.name, `%${safeSearch}%`));
@@ -43,12 +63,18 @@ itemRoutes.get("/", async (c) => {
     const commodityPrices = await getLatestCommodityPrices(region, itemIds);
 
     const needRealmPriceIds = itemIds.filter((id) => !commodityPrices.has(id));
-    const realmPrices = needRealmPriceIds.length > 0 ? await getLatestRealmPrices(region, needRealmPriceIds) : new Map<number, PriceData>();
+    const regionRealmPrices = needRealmPriceIds.length > 0 ? await getLatestRealmPrices(region, needRealmPriceIds) : new Map<number, PriceData>();
+    const selectedRealmPrices =
+      connectedRealmId !== undefined && needRealmPriceIds.length > 0
+        ? await getLatestRealmPricesForConnectedRealm(region, needRealmPriceIds, connectedRealmId)
+        : new Map<number, PriceData>();
 
     // Build response with price source info
     const enrichedItems = itemRows.map((item) => {
       const comPrice = commodityPrices.get(item.id);
-      const rlmPrice = realmPrices.get(item.id);
+      const regionRealmPrice = regionRealmPrices.get(item.id);
+      const selectedRealmPrice = selectedRealmPrices.get(item.id);
+      const effectiveRealmPrice = selectedRealmPrice ?? regionRealmPrice;
 
       return {
         id: item.id,
@@ -57,8 +83,10 @@ itemRoutes.get("/", async (c) => {
         qualityRank: item.qualityRank,
         isReagent: item.isReagent,
         isCraftedOutput: item.isCraftedOutput,
-        priceSource: comPrice ? ("commodity" as const) : rlmPrice ? ("realm" as const) : null,
-        latestPrice: comPrice ?? rlmPrice ?? null,
+        priceSource: comPrice ? ("commodity" as const) : effectiveRealmPrice ? ("realm" as const) : null,
+        latestPrice: comPrice ?? effectiveRealmPrice ?? null,
+        regionLatestPrice: comPrice ?? regionRealmPrice ?? null,
+        realmLatestPrice: selectedRealmPrice ?? null,
       };
     });
 

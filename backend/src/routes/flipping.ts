@@ -4,6 +4,36 @@ import { db } from "../db";
 
 const flippingRoutes = new Hono();
 
+// ─── GET /categories — All flipping categories for dropdown ─────────
+
+flippingRoutes.get("/categories", async (c) => {
+  const region = c.req.query("region") || "eu";
+
+  try {
+    const rows = await db.execute(sql`
+      SELECT DISTINCT
+        r.category_id,
+        rc.name AS category_name
+      FROM recipes r
+      JOIN items i ON i.id = r.output_item_id
+      LEFT JOIN recipe_categories rc ON rc.id = r.category_id
+      WHERE i.is_crafted_output = true
+      ORDER BY (r.category_id IS NULL) ASC, rc.name ASC
+    `);
+
+    const categories = Array.from(rows as Iterable<Record<string, unknown>>).map((row) => ({
+      categoryId: row.category_id ? Number(row.category_id) : null,
+      categoryName: (row.category_name as string | null) ?? null,
+    }));
+
+    console.log(`[Flipping] Found ${categories.length} categories for region ${region}`);
+    return c.json(categories);
+  } catch (err) {
+    console.error("[Flipping] Error fetching categories:", err);
+    return c.json({ error: "Failed to fetch flipping categories" }, 500);
+  }
+});
+
 // ─── GET /opportunities — Flipping opportunities across realms ──────
 
 flippingRoutes.get("/opportunities", async (c) => {
@@ -56,6 +86,9 @@ flippingRoutes.get("/opportunities", async (c) => {
         i.name AS item_name,
         i.item_quality,
         i.quality_rank,
+        cat.category_id,
+        cat.category_name,
+        cat.profession_name,
         ia.region_avg_price,
         c.connected_realm_id AS cheapest_realm_id,
         (SELECT r.name FROM realms r
@@ -72,6 +105,18 @@ flippingRoutes.get("/opportunities", async (c) => {
         ia.realm_count
       FROM item_agg ia
       JOIN items i ON i.id = ia.item_id
+      LEFT JOIN LATERAL (
+        SELECT
+          rc.id AS category_id,
+          rc.name AS category_name,
+          p.name AS profession_name
+        FROM recipes r
+        LEFT JOIN recipe_categories rc ON rc.id = r.category_id
+        LEFT JOIN professions p ON p.id = r.profession_id
+        WHERE r.output_item_id = ia.item_id
+        ORDER BY (r.category_id IS NULL) ASC, rc.name ASC, r.id ASC
+        LIMIT 1
+      ) cat ON true
       JOIN cheapest c ON c.item_id = ia.item_id
       JOIN expensive e ON e.item_id = ia.item_id
       WHERE i.is_crafted_output = true
@@ -84,6 +129,9 @@ flippingRoutes.get("/opportunities", async (c) => {
       itemName: row.item_name as string,
       itemQuality: row.item_quality ? Number(row.item_quality) : null,
       qualityRank: row.quality_rank ? Number(row.quality_rank) : null,
+      categoryId: row.category_id ? Number(row.category_id) : null,
+      categoryName: (row.category_name as string | null) ?? null,
+      professionName: (row.profession_name as string | null) ?? null,
       regionAvgPrice: Number(row.region_avg_price),
       cheapestRealm: {
         realmId: Number(row.cheapest_realm_id),
