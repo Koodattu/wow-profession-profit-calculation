@@ -69,7 +69,11 @@ professionRoutes.get("/recipes/:recipeId", async (c) => {
     if (!recipe) return c.json({ error: "Recipe not found" }, 404);
 
     // Output item
-    const [outputItem] = await db.select().from(items).where(eq(items.id, recipe.outputItemId)).limit(1);
+    let outputItem: typeof items.$inferSelect | null = null;
+    if (recipe.outputItemId != null) {
+      const [item] = await db.select().from(items).where(eq(items.id, recipe.outputItemId)).limit(1);
+      outputItem = item ?? null;
+    }
 
     // Output qualities
     const outputQualities = await db.select().from(recipeOutputQualities).where(eq(recipeOutputQualities.recipeId, recipeId));
@@ -97,7 +101,7 @@ professionRoutes.get("/recipes/:recipeId", async (c) => {
 
     return c.json({
       ...recipe,
-      outputItem: outputItem ?? null,
+      outputItem,
       outputQualities,
       reagentSlots: slotsWithOptions,
       salvageTargets,

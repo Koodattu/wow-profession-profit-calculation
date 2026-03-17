@@ -70,7 +70,7 @@ export default function ProfessionClient({ profession, recipeCosts }: Props) {
         const category = categoryId ? categoryMap.get(categoryId) : null;
         return (
           <section key={categoryId ?? "uncategorized"} className="mb-8">
-            <h2 className="text-lg font-semibold mb-3 text-muted">{category?.name ?? "Other"}</h2>
+            <h2 className="text-lg font-semibold text-muted">{category?.name ?? "Other"}</h2>
             <div className="overflow-x-auto">
               <RecipeTable recipes={recipes} professionName={profession.name} tier={tier} />
             </div>
@@ -85,9 +85,18 @@ function RecipeTable({ recipes, professionName, tier }: { recipes: ProfessionRec
   const hasTier = tier !== "none";
   const tierStats = getTierStats(professionName, tier);
   const scenarioColSpan = hasTier ? 4 : 3;
+  const metricColumnCount = hasTier ? 12 : 9;
+  const recipeColumnWidth = "22%";
+  const metricColumnWidth = `${(100 - 22) / metricColumnCount}%`;
 
   return (
-    <table className="w-full text-sm border-collapse">
+    <table className="w-full text-sm border-collapse table-fixed">
+      <colgroup>
+        <col style={{ width: recipeColumnWidth }} />
+        {Array.from({ length: metricColumnCount }).map((_, index) => (
+          <col key={index} style={{ width: metricColumnWidth }} />
+        ))}
+      </colgroup>
       <thead>
         <tr className="border-b border-border text-left text-muted">
           <th rowSpan={2} className="py-2 pr-4 font-medium align-bottom">

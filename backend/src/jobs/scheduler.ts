@@ -1,11 +1,45 @@
 import cron from "node-cron";
 import { db } from "../db";
-import { professions, commoditySnapshots } from "../db/schema";
-import { sql } from "drizzle-orm";
+import { professions, commoditySnapshots, realmSnapshots } from "../db/schema";
+import { count, desc, eq } from "drizzle-orm";
 import { ACTIVE_REGIONS } from "../config/regions";
 import { syncCommodities, syncAllRealmAuctions } from "../services/auction-sync";
 import { syncConnectedRealms } from "../services/realm-sync";
 import { importGameData } from "../services/game-data-import";
+
+const PRICE_SYNC_MIN_INTERVAL_MS = 60 * 60 * 1000;
+
+function toTimestampMs(value: Date | string | null | undefined): number | null {
+  if (!value) return null;
+  if (value instanceof Date) return value.getTime();
+  const parsed = Date.parse(value);
+  return Number.isNaN(parsed) ? null : parsed;
+}
+
+async function shouldRunPriceSync(regionId: string): Promise<boolean> {
+  const [latestCommodity] = await db
+    .select({ snapshotTime: commoditySnapshots.snapshotTime })
+    .from(commoditySnapshots)
+    .where(eq(commoditySnapshots.regionId, regionId))
+    .orderBy(desc(commoditySnapshots.snapshotTime))
+    .limit(1);
+
+  const [latestRealm] = await db
+    .select({ snapshotTime: realmSnapshots.snapshotTime })
+    .from(realmSnapshots)
+    .where(eq(realmSnapshots.regionId, regionId))
+    .orderBy(desc(realmSnapshots.snapshotTime))
+    .limit(1);
+
+  const latestTimestamp = Math.max(toTimestampMs(latestCommodity?.snapshotTime) ?? 0, toTimestampMs(latestRealm?.snapshotTime) ?? 0);
+
+  if (latestTimestamp === 0) {
+    return true;
+  }
+
+  const elapsedMs = Date.now() - latestTimestamp;
+  return elapsedMs >= PRICE_SYNC_MIN_INTERVAL_MS;
+}
 
 export function startScheduler(): void {
   // Hourly auction sync — every hour at minute 5
@@ -13,6 +47,12 @@ export function startScheduler(): void {
     console.log(`[Scheduler] Hourly auction sync started at ${new Date().toISOString()}`);
     for (const regionId of ACTIVE_REGIONS) {
       try {
+        const shouldSync = await shouldRunPriceSync(regionId);
+        if (!shouldSync) {
+          console.log(`[Scheduler] Hourly auction sync skipped for ${regionId} (latest price data is under 1 hour old)`);
+          continue;
+        }
+
         await syncCommodities(regionId);
         await syncAllRealmAuctions(regionId);
       } catch (err) {
@@ -62,9 +102,10 @@ export async function runInitialSync(): Promise<void> {
   }
 
   // Game data present — check if price data is also present
-  const [{ count }] = await db.select({ count: sql<number>`count(*)::int` }).from(commoditySnapshots);
+  const [priceCountRow] = await db.select({ count: count() }).from(commoditySnapshots);
+  const snapshotCount = priceCountRow?.count ?? 0;
 
-  if (count === 0) {
+  if (snapshotCount === 0) {
     console.log("[Scheduler] Game data present but no price data — syncing auction data...");
     try {
       for (const regionId of ACTIVE_REGIONS) {
