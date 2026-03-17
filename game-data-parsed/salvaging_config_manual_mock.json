@@ -1,0 +1,68 @@
+[
+  {
+    "recipeId": 123456,
+    "recipeName": "Example Salvage Recipe Alpha",
+    "useSalvageInputs": true,
+    "inputQuantity": 5,
+    "inputOptions": [
+      {
+        "itemId": 210001,
+        "itemName": "Example Input Cloth",
+        "itemQuality": 2,
+        "qualityRank": 2,
+        "notes": "Example input option for manual configuration testing.",
+        "outputs": [
+          {
+            "itemId": 220001,
+            "quantity": 1.25,
+            "itemName": "Example Output Shard",
+            "itemQuality": 2,
+            "qualityRank": 2,
+            "notes": "Example expected average output."
+          },
+          {
+            "itemId": 220002,
+            "quantity": 0.4,
+            "itemName": "Example Output Dust",
+            "itemQuality": 1,
+            "qualityRank": 1,
+            "notes": "Example expected average output from salvage."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "recipeId": 123457,
+    "recipeName": "Example Salvage Recipe Beta",
+    "useSalvageInputs": true,
+    "inputQuantity": 3,
+    "inputOptions": [
+      {
+        "itemId": 210101,
+        "itemName": "Example Input Ore",
+        "itemQuality": null,
+        "qualityRank": null,
+        "notes": "Example unranked input option for manual structure.",
+        "outputs": [
+          {
+            "itemId": 220101,
+            "quantity": 0.85,
+            "itemName": "Example Output Fragment",
+            "itemQuality": null,
+            "qualityRank": null,
+            "notes": "Example expected average output."
+          },
+          {
+            "itemId": 220102,
+            "quantity": 0.15,
+            "itemName": "Example Rare Byproduct",
+            "itemQuality": 3,
+            "qualityRank": 3,
+            "notes": "Example expected average output for rare result."
+          }
+        ]
+      }
+    ]
+  }
+]

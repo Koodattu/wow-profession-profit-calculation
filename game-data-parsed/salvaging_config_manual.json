@@ -7,330 +7,576 @@
     "inputOptions": [
       {
         "itemId": 243574,
+        "itemName": "Song Gear",
+        "itemQuality": 2,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 243575,
+        "itemName": "Song Gear",
+        "itemQuality": 2,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 243576,
+        "itemName": "Soul Sprocket",
+        "itemQuality": 3,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 243577,
+        "itemName": "Soul Sprocket",
+        "itemQuality": 3,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 245764,
+        "itemName": "Codified Azeroot",
+        "itemQuality": 3,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 245765,
+        "itemName": "Codified Azeroot",
+        "itemQuality": 3,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 245766,
+        "itemName": "Soul Cipher",
+        "itemQuality": 3,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 245767,
+        "itemName": "Soul Cipher",
+        "itemQuality": 3,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 245781,
+        "itemName": "Thalassian Missive of the Aurora",
+        "itemQuality": 2,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 245782,
+        "itemName": "Thalassian Missive of the Aurora",
+        "itemQuality": 2,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 245783,
+        "itemName": "Thalassian Missive of the Feverflare",
+        "itemQuality": 2,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 245784,
+        "itemName": "Thalassian Missive of the Feverflare",
+        "itemQuality": 2,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 245785,
+        "itemName": "Thalassian Missive of the Fireflash",
+        "itemQuality": 2,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 245786,
+        "itemName": "Thalassian Missive of the Fireflash",
+        "itemQuality": 2,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 245787,
+        "itemName": "Thalassian Missive of the Harmonious",
+        "itemQuality": 2,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 245788,
+        "itemName": "Thalassian Missive of the Harmonious",
+        "itemQuality": 2,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 245789,
+        "itemName": "Thalassian Missive of the Peerless",
+        "itemQuality": 2,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 245790,
+        "itemName": "Thalassian Missive of the Peerless",
+        "itemQuality": 2,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 245791,
+        "itemName": "Thalassian Missive of the Quickblade",
+        "itemQuality": 2,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 245792,
+        "itemName": "Thalassian Missive of the Quickblade",
+        "itemQuality": 2,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 245801,
+        "itemName": "Munsell Ink",
+        "itemQuality": 3,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 245802,
+        "itemName": "Munsell Ink",
+        "itemQuality": 3,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 245803,
+        "itemName": "Argentleaf Pigment",
+        "itemQuality": 2,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 245804,
+        "itemName": "Argentleaf Pigment",
+        "itemQuality": 2,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 245805,
+        "itemName": "Sienna Ink",
+        "itemQuality": 3,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 245806,
+        "itemName": "Sienna Ink",
+        "itemQuality": 3,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 245807,
+        "itemName": "Powder Pigment",
+        "itemQuality": 1,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 245808,
+        "itemName": "Powder Pigment",
+        "itemQuality": 1,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 245814,
+        "itemName": "Thalassian Missive of Ingenuity",
+        "itemQuality": 2,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 245815,
+        "itemName": "Thalassian Missive of Ingenuity",
+        "itemQuality": 2,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 245816,
+        "itemName": "Thalassian Missive of Resourcefulness",
+        "itemQuality": 2,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 245817,
+        "itemName": "Thalassian Missive of Resourcefulness",
+        "itemQuality": 2,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 245818,
+        "itemName": "Thalassian Missive of Multicraft",
+        "itemQuality": 2,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 245819,
+        "itemName": "Thalassian Missive of Multicraft",
+        "itemQuality": 2,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 245820,
+        "itemName": "Thalassian Missive of Crafting Speed",
+        "itemQuality": 2,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 245821,
+        "itemName": "Thalassian Missive of Crafting Speed",
+        "itemQuality": 2,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 245822,
+        "itemName": "Thalassian Missive of Finesse",
+        "itemQuality": 2,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 245823,
+        "itemName": "Thalassian Missive of Finesse",
+        "itemQuality": 2,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 245824,
+        "itemName": "Thalassian Missive of Perception",
+        "itemQuality": 2,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 245825,
+        "itemName": "Thalassian Missive of Perception",
+        "itemQuality": 2,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 245826,
+        "itemName": "Thalassian Missive of Deftness",
+        "itemQuality": 2,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 245827,
+        "itemName": "Thalassian Missive of Deftness",
+        "itemQuality": 2,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 245871,
+        "itemName": "Darkmoon Sigil: Blood",
+        "itemQuality": 3,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 245872,
+        "itemName": "Darkmoon Sigil: Blood",
+        "itemQuality": 3,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 245873,
+        "itemName": "Darkmoon Sigil: Void",
+        "itemQuality": 3,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 245874,
+        "itemName": "Darkmoon Sigil: Void",
+        "itemQuality": 3,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 245875,
+        "itemName": "Darkmoon Sigil: Hunt",
+        "itemQuality": 3,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 245876,
+        "itemName": "Darkmoon Sigil: Hunt",
+        "itemQuality": 3,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 245877,
+        "itemName": "Darkmoon Sigil: Rot",
+        "itemQuality": 3,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 245878,
+        "itemName": "Darkmoon Sigil: Rot",
+        "itemQuality": 3,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 238197,
+        "itemName": "Refulgent Copper Ingot",
+        "itemQuality": 2,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 238198,
+        "itemName": "Refulgent Copper Ingot",
+        "itemQuality": 2,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 238202,
+        "itemName": "Gloaming Alloy",
+        "itemQuality": 2,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 238203,
+        "itemName": "Gloaming Alloy",
+        "itemQuality": 2,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 238204,
+        "itemName": "Sterling Alloy",
+        "itemQuality": 2,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 238205,
+        "itemName": "Sterling Alloy",
+        "itemQuality": 2,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 239198,
+        "itemName": "Arcanoweave Bolt",
+        "itemQuality": 4,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 239200,
+        "itemName": "Arcanoweave Bolt",
+        "itemQuality": 4,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 239201,
+        "itemName": "Sunfire Silk Bolt",
+        "itemQuality": 4,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 239202,
+        "itemName": "Sunfire Silk Bolt",
+        "itemQuality": 4,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 239700,
+        "itemName": "Bright Linen Bolt",
+        "itemQuality": 2,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 239701,
+        "itemName": "Bright Linen Bolt",
+        "itemQuality": 2,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 239702,
+        "itemName": "Imbued Bright Linen Bolt",
+        "itemQuality": 3,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 239703,
+        "itemName": "Imbued Bright Linen Bolt",
+        "itemQuality": 3,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 240164,
+        "itemName": "Sunfire Silk Lining",
+        "itemQuality": 3,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 240165,
+        "itemName": "Sunfire Silk Lining",
+        "itemQuality": 3,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 240166,
+        "itemName": "Arcanoweave Lining",
+        "itemQuality": 3,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 240167,
+        "itemName": "Arcanoweave Lining",
+        "itemQuality": 3,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 244603,
+        "itemName": "Blessed Pango Charm",
+        "itemQuality": 3,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 244604,
+        "itemName": "Blessed Pango Charm",
+        "itemQuality": 3,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 244607,
+        "itemName": "Primal Spore Binding",
+        "itemQuality": 3,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 244608,
+        "itemName": "Primal Spore Binding",
+        "itemQuality": 3,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 244631,
+        "itemName": "Scalewoven Hide",
+        "itemQuality": null,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 244632,
+        "itemName": "Scalewoven Hide",
+        "itemQuality": null,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 244633,
+        "itemName": "Infused Scalewoven Hide",
+        "itemQuality": null,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 244634,
+        "itemName": "Infused Scalewoven Hide",
+        "itemQuality": null,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 244635,
+        "itemName": "Sin'dorei Armor Banding",
+        "itemQuality": 2,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 244636,
+        "itemName": "Sin'dorei Armor Banding",
+        "itemQuality": 2,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 244637,
+        "itemName": "Silvermoon Weapon Wrap",
+        "itemQuality": 2,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 244638,
+        "itemName": "Silvermoon Weapon Wrap",
+        "itemQuality": 2,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 244674,
+        "itemName": "Devouring Banding",
+        "itemQuality": 3,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 244675,
+        "itemName": "Devouring Banding",
+        "itemQuality": 3,
+        "qualityRank": 2,
         "outputs": []
       }
     ]
@@ -343,98 +589,170 @@
     "inputOptions": [
       {
         "itemId": 245830,
+        "itemName": "Ace of Hunt",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245831,
+        "itemName": "Two of Hunt",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245832,
+        "itemName": "Three of Hunt",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245833,
+        "itemName": "Four of Hunt",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245834,
+        "itemName": "Five of Hunt",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245835,
+        "itemName": "Six of Hunt",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245836,
+        "itemName": "Seven of Hunt",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245837,
+        "itemName": "Eight of Hunt",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245847,
+        "itemName": "Ace of Rot",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245848,
+        "itemName": "Two of Rot",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245849,
+        "itemName": "Three of Rot",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245850,
+        "itemName": "Four of Rot",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245851,
+        "itemName": "Five of Rot",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245852,
+        "itemName": "Six of Rot",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245853,
+        "itemName": "Seven of Rot",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245854,
+        "itemName": "Eight of Rot",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245856,
+        "itemName": "Ace of Blood",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245857,
+        "itemName": "Two of Blood",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245858,
+        "itemName": "Three of Blood",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245859,
+        "itemName": "Four of Blood",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245860,
+        "itemName": "Five of Blood",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245861,
+        "itemName": "Six of Blood",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245862,
+        "itemName": "Seven of Blood",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245863,
+        "itemName": "Eight of Blood",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       }
     ]
@@ -447,14 +765,23 @@
     "inputOptions": [
       {
         "itemId": 251923,
+        "itemName": "Thalassian Essence of the Faire",
+        "itemQuality": 2,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245806,
+        "itemName": "Sienna Ink",
+        "itemQuality": 3,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 245802,
+        "itemName": "Munsell Ink",
+        "itemQuality": 3,
+        "qualityRank": 2,
         "outputs": []
       }
     ]
@@ -467,98 +794,170 @@
     "inputOptions": [
       {
         "itemId": 245830,
+        "itemName": "Ace of Hunt",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245831,
+        "itemName": "Two of Hunt",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245832,
+        "itemName": "Three of Hunt",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245833,
+        "itemName": "Four of Hunt",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245834,
+        "itemName": "Five of Hunt",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245835,
+        "itemName": "Six of Hunt",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245836,
+        "itemName": "Seven of Hunt",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245837,
+        "itemName": "Eight of Hunt",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245838,
+        "itemName": "Ace of Void",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245839,
+        "itemName": "Two of Void",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245840,
+        "itemName": "Three of Void",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245841,
+        "itemName": "Four of Void",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245842,
+        "itemName": "Five of Void",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245843,
+        "itemName": "Six of Void",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245844,
+        "itemName": "Seven of Void",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245845,
+        "itemName": "Eight of Void",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245856,
+        "itemName": "Ace of Blood",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245857,
+        "itemName": "Two of Blood",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245858,
+        "itemName": "Three of Blood",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245859,
+        "itemName": "Four of Blood",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245860,
+        "itemName": "Five of Blood",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245861,
+        "itemName": "Six of Blood",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245862,
+        "itemName": "Seven of Blood",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245863,
+        "itemName": "Eight of Blood",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       }
     ]
@@ -571,14 +970,23 @@
     "inputOptions": [
       {
         "itemId": 251923,
+        "itemName": "Thalassian Essence of the Faire",
+        "itemQuality": 2,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245806,
+        "itemName": "Sienna Ink",
+        "itemQuality": 3,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 245802,
+        "itemName": "Munsell Ink",
+        "itemQuality": 3,
+        "qualityRank": 2,
         "outputs": []
       }
     ]
@@ -591,98 +999,170 @@
     "inputOptions": [
       {
         "itemId": 245838,
+        "itemName": "Ace of Void",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245839,
+        "itemName": "Two of Void",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245840,
+        "itemName": "Three of Void",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245841,
+        "itemName": "Four of Void",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245842,
+        "itemName": "Five of Void",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245843,
+        "itemName": "Six of Void",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245844,
+        "itemName": "Seven of Void",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245845,
+        "itemName": "Eight of Void",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245847,
+        "itemName": "Ace of Rot",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245848,
+        "itemName": "Two of Rot",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245849,
+        "itemName": "Three of Rot",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245850,
+        "itemName": "Four of Rot",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245851,
+        "itemName": "Five of Rot",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245852,
+        "itemName": "Six of Rot",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245853,
+        "itemName": "Seven of Rot",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245854,
+        "itemName": "Eight of Rot",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245856,
+        "itemName": "Ace of Blood",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245857,
+        "itemName": "Two of Blood",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245858,
+        "itemName": "Three of Blood",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245859,
+        "itemName": "Four of Blood",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245860,
+        "itemName": "Five of Blood",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245861,
+        "itemName": "Six of Blood",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245862,
+        "itemName": "Seven of Blood",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245863,
+        "itemName": "Eight of Blood",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       }
     ]
@@ -695,14 +1175,23 @@
     "inputOptions": [
       {
         "itemId": 251923,
+        "itemName": "Thalassian Essence of the Faire",
+        "itemQuality": 2,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245806,
+        "itemName": "Sienna Ink",
+        "itemQuality": 3,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 245802,
+        "itemName": "Munsell Ink",
+        "itemQuality": 3,
+        "qualityRank": 2,
         "outputs": []
       }
     ]
@@ -715,98 +1204,170 @@
     "inputOptions": [
       {
         "itemId": 245830,
+        "itemName": "Ace of Hunt",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245831,
+        "itemName": "Two of Hunt",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245832,
+        "itemName": "Three of Hunt",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245833,
+        "itemName": "Four of Hunt",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245834,
+        "itemName": "Five of Hunt",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245835,
+        "itemName": "Six of Hunt",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245836,
+        "itemName": "Seven of Hunt",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245837,
+        "itemName": "Eight of Hunt",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245838,
+        "itemName": "Ace of Void",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245839,
+        "itemName": "Two of Void",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245840,
+        "itemName": "Three of Void",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245841,
+        "itemName": "Four of Void",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245842,
+        "itemName": "Five of Void",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245843,
+        "itemName": "Six of Void",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245844,
+        "itemName": "Seven of Void",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245845,
+        "itemName": "Eight of Void",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245847,
+        "itemName": "Ace of Rot",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245848,
+        "itemName": "Two of Rot",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245849,
+        "itemName": "Three of Rot",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245850,
+        "itemName": "Four of Rot",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245851,
+        "itemName": "Five of Rot",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245852,
+        "itemName": "Six of Rot",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245853,
+        "itemName": "Seven of Rot",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245854,
+        "itemName": "Eight of Rot",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       }
     ]
@@ -819,14 +1380,23 @@
     "inputOptions": [
       {
         "itemId": 251923,
+        "itemName": "Thalassian Essence of the Faire",
+        "itemQuality": 2,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 245806,
+        "itemName": "Sienna Ink",
+        "itemQuality": 3,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 245802,
+        "itemName": "Munsell Ink",
+        "itemQuality": 3,
+        "qualityRank": 2,
         "outputs": []
       }
     ]
@@ -839,30 +1409,51 @@
     "inputOptions": [
       {
         "itemId": 237359,
+        "itemName": "Refulgent Copper Ore",
+        "itemQuality": 1,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 237361,
+        "itemName": "Refulgent Copper Ore",
+        "itemQuality": 1,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 237362,
+        "itemName": "Umbral Tin Ore",
+        "itemQuality": 2,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 237363,
+        "itemName": "Umbral Tin Ore",
+        "itemQuality": 2,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 237364,
+        "itemName": "Brilliant Silver Ore",
+        "itemQuality": 2,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 237365,
+        "itemName": "Brilliant Silver Ore",
+        "itemQuality": 2,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 237366,
+        "itemName": "Dazzling Thorium",
+        "itemQuality": 3,
+        "qualityRank": null,
         "outputs": []
       }
     ]
@@ -875,74 +1466,128 @@
     "inputOptions": [
       {
         "itemId": 242612,
+        "itemName": "Flawless Amani Lapis",
+        "itemQuality": 3,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 242727,
+        "itemName": "Flawless Amani Lapis",
+        "itemQuality": null,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 242554,
+        "itemName": "Amani Lapis",
+        "itemQuality": 2,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 242722,
+        "itemName": "Amani Lapis",
+        "itemQuality": 2,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 242608,
+        "itemName": "Eversong Diamond",
+        "itemQuality": null,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 242712,
+        "itemName": "Eversong Diamond",
+        "itemQuality": null,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 242610,
+        "itemName": "Flawless Harandar Peridot",
+        "itemQuality": null,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 242726,
+        "itemName": "Flawless Harandar Peridot",
+        "itemQuality": null,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 242607,
+        "itemName": "Harandar Peridot",
+        "itemQuality": 2,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 242720,
+        "itemName": "Harandar Peridot",
+        "itemQuality": null,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 242611,
+        "itemName": "Flawless Tenebrous Amethyst",
+        "itemQuality": 3,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 242725,
+        "itemName": "Flawless Tenebrous Amethyst",
+        "itemQuality": 3,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 242606,
+        "itemName": "Tenebrous Amethyst",
+        "itemQuality": null,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 242721,
+        "itemName": "Tenebrous Amethyst",
+        "itemQuality": null,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 242613,
+        "itemName": "Flawless Sanguine Garnet",
+        "itemQuality": 3,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 242724,
+        "itemName": "Flawless Sanguine Garnet",
+        "itemQuality": null,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 242553,
+        "itemName": "Sanguine Garnet",
+        "itemQuality": 2,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 242723,
+        "itemName": "Sanguine Garnet",
+        "itemQuality": null,
+        "qualityRank": 2,
         "outputs": []
       }
     ]
@@ -955,106 +1600,184 @@
     "inputOptions": [
       {
         "itemId": 241289,
+        "itemName": "Potion of Recklessness",
+        "itemQuality": 1,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 241292,
+        "itemName": "Draught of Rampant Abandon",
+        "itemQuality": 1,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 241293,
+        "itemName": "Draught of Rampant Abandon",
+        "itemQuality": 1,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 241288,
+        "itemName": "Potion of Recklessness",
+        "itemQuality": 1,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 241294,
+        "itemName": "Potion of Devoured Dreams",
+        "itemQuality": 1,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 241295,
+        "itemName": "Potion of Devoured Dreams",
+        "itemQuality": 1,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 241298,
+        "itemName": "Amani Extract",
+        "itemQuality": 1,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 241299,
+        "itemName": "Amani Extract",
+        "itemQuality": 1,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 241302,
+        "itemName": "Void-Shrouded Tincture",
+        "itemQuality": 1,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 241303,
+        "itemName": "Void-Shrouded Tincture",
+        "itemQuality": 1,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 241338,
+        "itemName": "Enlightenment Tonic",
+        "itemQuality": 1,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 241339,
+        "itemName": "Enlightenment Tonic",
+        "itemQuality": 1,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 241296,
+        "itemName": "Potion of Zealotry",
+        "itemQuality": 1,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 241297,
+        "itemName": "Potion of Zealotry",
+        "itemQuality": 1,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 241300,
+        "itemName": "Lightfused Mana Potion",
+        "itemQuality": 1,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 241301,
+        "itemName": "Lightfused Mana Potion",
+        "itemQuality": 1,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 241304,
+        "itemName": "Silvermoon Health Potion",
+        "itemQuality": 1,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 241305,
+        "itemName": "Silvermoon Health Potion",
+        "itemQuality": 1,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 241306,
+        "itemName": "Refreshing Serum",
+        "itemQuality": 1,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 241307,
+        "itemName": "Refreshing Serum",
+        "itemQuality": 1,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 241308,
+        "itemName": "Light's Potential",
+        "itemQuality": 1,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 241309,
+        "itemName": "Light's Potential",
+        "itemQuality": 1,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 241286,
+        "itemName": "Light's Preservation",
+        "itemQuality": 1,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 241287,
+        "itemName": "Light's Preservation",
+        "itemQuality": 1,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 268954,
+        "itemName": "Entropic Extract",
+        "itemQuality": 1,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 268955,
+        "itemName": "Entropic Extract",
+        "itemQuality": 1,
+        "qualityRank": 2,
         "outputs": []
       }
     ]
@@ -1067,38 +1790,65 @@
     "inputOptions": [
       {
         "itemId": 241327,
+        "itemName": "Flask of the Shattered Sun",
+        "itemQuality": 1,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 241320,
+        "itemName": "Flask of Thalassian Resistance",
+        "itemQuality": 1,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 241321,
+        "itemName": "Flask of Thalassian Resistance",
+        "itemQuality": 1,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 241322,
+        "itemName": "Flask of the Magisters",
+        "itemQuality": 1,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 241323,
+        "itemName": "Flask of the Magisters",
+        "itemQuality": 1,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 241324,
+        "itemName": "Flask of the Blood Knights",
+        "itemQuality": 1,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 241325,
+        "itemName": "Flask of the Blood Knights",
+        "itemQuality": 1,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 241326,
+        "itemName": "Flask of the Shattered Sun",
+        "itemQuality": 1,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 241334,
+        "itemName": "Vicious Thalassian Flask of Honor",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       }
     ]
@@ -1111,18 +1861,30 @@
     "inputOptions": [
       {
         "itemId": 236951,
+        "itemName": "Mote of Wild Magic",
+        "itemQuality": 3,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 236949,
+        "itemName": "Mote of Light",
+        "itemQuality": 3,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 236950,
+        "itemName": "Mote of Primal Energy",
+        "itemQuality": 3,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 236952,
+        "itemName": "Mote of Pure Void",
+        "itemQuality": 3,
+        "qualityRank": null,
         "outputs": []
       }
     ]
@@ -1135,82 +1897,142 @@
     "inputOptions": [
       {
         "itemId": 238365,
+        "itemName": "Sin'dorei Swarmer",
+        "itemQuality": 1,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 238366,
+        "itemName": "Lynxfish",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 238367,
+        "itemName": "Root Crab",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 238368,
+        "itemName": "Twisted Tetra",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 238369,
+        "itemName": "Bloomtail Minnow",
+        "itemQuality": 2,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 238370,
+        "itemName": "",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 238371,
+        "itemName": "Arcane Wyrmfish",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 238372,
+        "itemName": "Restored Songfish",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 238373,
+        "itemName": "Ominous Octopus",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 238374,
+        "itemName": "Tender Lumifin",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 238376,
+        "itemName": "",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 238377,
+        "itemName": "Blood Hunter",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 238378,
+        "itemName": "Shimmersiren",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 238379,
+        "itemName": "Warping Wise",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 238380,
+        "itemName": "Null Voidfish",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 238381,
+        "itemName": "",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 238382,
+        "itemName": "",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 238383,
+        "itemName": "Eversong Trout",
+        "itemQuality": 3,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 238384,
+        "itemName": "Sunwell Fish",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       },
       {
         "itemId": 238375,
+        "itemName": "Fungalskin Pike",
+        "itemQuality": null,
+        "qualityRank": null,
         "outputs": []
       }
     ]
@@ -1223,34 +2045,58 @@
     "inputOptions": [
       {
         "itemId": 236761,
+        "itemName": "Tranquility Bloom",
+        "itemQuality": 1,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 236767,
+        "itemName": "Tranquility Bloom",
+        "itemQuality": 1,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 236770,
+        "itemName": "Sanguithorn",
+        "itemQuality": 2,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 236771,
+        "itemName": "Sanguithorn",
+        "itemQuality": 2,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 236776,
+        "itemName": "Argentleaf",
+        "itemQuality": 2,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 236777,
+        "itemName": "Argentleaf",
+        "itemQuality": 2,
+        "qualityRank": 2,
         "outputs": []
       },
       {
         "itemId": 236778,
+        "itemName": "Mana Lily",
+        "itemQuality": 2,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 236779,
+        "itemName": "Mana Lily",
+        "itemQuality": 2,
+        "qualityRank": 2,
         "outputs": []
       }
     ]
@@ -1263,10 +2109,16 @@
     "inputOptions": [
       {
         "itemId": 243602,
+        "itemName": "Radiant Shard",
+        "itemQuality": 3,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 243603,
+        "itemName": "Radiant Shard",
+        "itemQuality": 3,
+        "qualityRank": 2,
         "outputs": []
       }
     ]
@@ -1279,10 +2131,16 @@
     "inputOptions": [
       {
         "itemId": 243605,
+        "itemName": "Dawn Crystal",
+        "itemQuality": null,
+        "qualityRank": 1,
         "outputs": []
       },
       {
         "itemId": 243606,
+        "itemName": "Dawn Crystal",
+        "itemQuality": null,
+        "qualityRank": 2,
         "outputs": []
       }
     ]
