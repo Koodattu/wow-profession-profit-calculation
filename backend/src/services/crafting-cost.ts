@@ -1,6 +1,7 @@
 import { eq, and, desc, inArray, sql, gte } from "drizzle-orm";
 import { db } from "../db";
-import { professions, recipes, recipeOutputQualities, recipeReagentSlots, recipeReagentSlotOptions, commoditySnapshots, realmSnapshots, items } from "../db/schema";
+import { professions, recipes, recipeOutputQualities, recipeReagentSlots, recipeReagentSlotOptions, recipeSalvageTargets, commoditySnapshots, realmSnapshots, items } from "../db/schema";
+import { getSalvagingRecipeConfigMap } from "./salvaging-config";
 
 // ─── Types ───────────────────────────────────────────────────────────
 
@@ -37,6 +38,9 @@ interface RankScenario {
   outputUnitPrice: number | null;
   outputTotalPrice: number | null;
   profit: number | null;
+  isSalvage?: boolean;
+  scenarioLabel?: string;
+  inputItemId?: number;
 }
 
 interface RecipeProfitResult {
@@ -304,6 +308,61 @@ export async function computeRecipeCost(recipeId: number, regionId: string, reag
   return { reagents, totalCost, hasPriceData };
 }
 
+interface SalvageInputOption {
+  itemId: number;
+  itemName: string;
+  itemQuality: number | null;
+  quantity: number;
+  unitPrice: number | null;
+  totalPrice: number;
+  hasPriceData: boolean;
+}
+
+async function computeSalvageInputOptions(
+  recipeId: number,
+  regionId: string,
+  inputQuantity: number,
+  connectedRealmId?: number,
+): Promise<SalvageInputOption[]> {
+  const salvageRows = await db
+    .select({ itemId: recipeSalvageTargets.itemId })
+    .from(recipeSalvageTargets)
+    .where(eq(recipeSalvageTargets.recipeId, recipeId));
+
+  const itemIds = [...new Set(salvageRows.map((row) => row.itemId))];
+  if (itemIds.length === 0) return [];
+
+  const [prices, itemRows] = await Promise.all([
+    getLatestPrices(regionId, itemIds, connectedRealmId),
+    db.select({ id: items.id, name: items.name, itemQuality: items.itemQuality }).from(items).where(inArray(items.id, itemIds)),
+  ]);
+
+  const itemMetaMap = new Map(itemRows.map((row) => [row.id, row]));
+
+  const options = itemIds.map((itemId) => {
+    const price = prices.get(itemId);
+    const unitPrice = price?.minPrice ?? null;
+    const totalPrice = unitPrice !== null ? unitPrice * inputQuantity : 0;
+
+    return {
+      itemId,
+      itemName: itemMetaMap.get(itemId)?.name ?? `Item #${itemId}`,
+      itemQuality: itemMetaMap.get(itemId)?.itemQuality ?? null,
+      quantity: inputQuantity,
+      unitPrice,
+      totalPrice,
+      hasPriceData: unitPrice !== null,
+    };
+  });
+
+  options.sort((a, b) => {
+    if (a.hasPriceData !== b.hasPriceData) return a.hasPriceData ? -1 : 1;
+    return a.totalPrice - b.totalPrice;
+  });
+
+  return options;
+}
+
 // ─── Compute Recipe Profit ──────────────────────────────────────────
 
 export async function computeRecipeProfit(recipeId: number, regionId: string, connectedRealmId?: number): Promise<RecipeProfitResult> {
@@ -315,8 +374,18 @@ export async function computeRecipeProfit(recipeId: number, regionId: string, co
   const [profession] = await db.select({ name: professions.name }).from(professions).where(eq(professions.id, recipe.professionId));
   const professionName = profession?.name ?? "Unknown";
 
+  const [reagentSlots, salvageTargets, salvagingConfigMap] = await Promise.all([
+    db.select({ id: recipeReagentSlots.id }).from(recipeReagentSlots).where(eq(recipeReagentSlots.recipeId, recipeId)),
+    db.select({ itemId: recipeSalvageTargets.itemId }).from(recipeSalvageTargets).where(eq(recipeSalvageTargets.recipeId, recipeId)),
+    getSalvagingRecipeConfigMap(),
+  ]);
+
+  const salvageConfig = salvagingConfigMap.get(recipeId);
+  const hasSalvageTargets = salvageTargets.length > 0;
+  const isSalvageMode = hasSalvageTargets && (reagentSlots.length === 0 || salvageConfig?.useSalvageInputs === true);
+
   // Compute cost for both ranks
-  const [costRank1, costRank2] = await Promise.all([computeRecipeCost(recipeId, regionId, 1), computeRecipeCost(recipeId, regionId, 2)]);
+  const [costRank1, costRank2] = isSalvageMode ? [null, null] : await Promise.all([computeRecipeCost(recipeId, regionId, 1), computeRecipeCost(recipeId, regionId, 2)]);
 
   // Determine output items for each rank
   const outputQuantity = recipe.outputQuantityMin;
@@ -359,6 +428,63 @@ export async function computeRecipeProfit(recipeId: number, regionId: string, co
       : [];
   const outputMetaMap = new Map(outputItemRows.map((row) => [row.id, row]));
 
+  if (isSalvageMode) {
+    const inputQuantity = salvageConfig?.inputQuantity ?? (recipe.name === "Recycling" ? 5 : 1);
+    const salvageInputOptions = await computeSalvageInputOptions(recipeId, regionId, inputQuantity, connectedRealmId);
+    const outputItemId = outputRank1ItemId;
+    const outputMeta = outputItemId ? outputMetaMap.get(outputItemId) : null;
+    const useSelectedRealmPrice = Boolean(connectedRealmId !== undefined && outputMeta && outputMeta.isCraftedOutput && !outputMeta.isReagent && outputPricesSelectedRealm);
+    const sourceMap = useSelectedRealmPrice ? outputPricesSelectedRealm! : outputPricesDefault;
+    const outputPrice = outputItemId ? sourceMap.get(outputItemId) : null;
+    const outputUnitPrice = outputPrice?.minPrice ?? null;
+    const outputTotalPrice = outputUnitPrice !== null ? outputUnitPrice * outputQuantity : null;
+
+    const scenarios: RankScenario[] = salvageInputOptions.map((inputOption) => {
+      const reagentRow: ReagentCost = {
+        slotIndex: 1,
+        itemId: inputOption.itemId,
+        itemName: inputOption.itemName,
+        itemQuality: inputOption.itemQuality,
+        quantity: inputOption.quantity,
+        unitPrice: inputOption.unitPrice ?? 0,
+        totalPrice: inputOption.totalPrice,
+      };
+
+      const cost: RecipeCostResult = {
+        reagents: [reagentRow],
+        totalCost: reagentRow.totalPrice,
+        hasPriceData: inputOption.hasPriceData,
+      };
+
+      return {
+        reagentRank: 1,
+        outputRank: 1,
+        cost,
+        outputItemId,
+        outputItemName: outputMeta?.name ?? null,
+        outputItemQuality: outputMeta?.itemQuality ?? null,
+        outputQuantity,
+        outputUnitPrice,
+        outputTotalPrice,
+        profit: outputTotalPrice !== null ? outputTotalPrice - cost.totalCost : null,
+        isSalvage: true,
+        scenarioLabel: `${inputOption.itemName} ×${inputQuantity}`,
+        inputItemId: inputOption.itemId,
+      };
+    });
+
+    return {
+      recipeId,
+      recipeName: recipe.name,
+      qualityTierType: recipe.qualityTierType,
+      affectedByMulticraft: recipe.affectedByMulticraft,
+      affectedByResourcefulness: recipe.affectedByResourcefulness,
+      professionId: recipe.professionId,
+      professionName,
+      scenarios,
+    };
+  }
+
   // Build scenarios
   function buildScenario(rank: 1 | 2, outputRank: 1 | 2, cost: RecipeCostResult, outputItemId: number | null): RankScenario {
     const outputMeta = outputItemId ? outputMetaMap.get(outputItemId) : null;
@@ -391,7 +517,11 @@ export async function computeRecipeProfit(recipeId: number, regionId: string, co
     affectedByResourcefulness: recipe.affectedByResourcefulness,
     professionId: recipe.professionId,
     professionName,
-    scenarios: [buildScenario(1, 1, costRank1, outputRank1ItemId), buildScenario(2, 2, costRank2, outputRank2ItemId)],
+    scenarios: [
+      buildScenario(1, 1, costRank1!, outputRank1ItemId),
+      buildScenario(2, 2, costRank2!, outputRank2ItemId),
+      buildScenario(1, 2, costRank1!, outputRank2ItemId),
+    ],
   };
 }
 
@@ -448,6 +578,8 @@ export async function computeProfessionRecipeCosts(professionId: number, regionI
   // ── Batch-load all output qualities ───────────────────────────────
 
   const allOutputQualities = await db.select().from(recipeOutputQualities).where(inArray(recipeOutputQualities.recipeId, recipeIds));
+  const allSalvageTargets = await db.select().from(recipeSalvageTargets).where(inArray(recipeSalvageTargets.recipeId, recipeIds));
+  const salvagingConfigMap = await getSalvagingRecipeConfigMap();
 
   const outputQualitiesByRecipe = new Map<number, typeof allOutputQualities>();
   for (const oq of allOutputQualities) {
@@ -459,12 +591,32 @@ export async function computeProfessionRecipeCosts(professionId: number, regionI
     arr.push(oq);
   }
 
+  const salvageTargetsByRecipe = new Map<number, typeof allSalvageTargets>();
+  for (const target of allSalvageTargets) {
+    let arr = salvageTargetsByRecipe.get(target.recipeId);
+    if (!arr) {
+      arr = [];
+      salvageTargetsByRecipe.set(target.recipeId, arr);
+    }
+    arr.push(target);
+  }
+
   // ── Determine all item IDs we need prices for ─────────────────────
 
   const allItemIds = new Set<number>();
 
   // Collect reagent item IDs for both ranks
   for (const recipe of profRecipes) {
+    const salvageTargets = salvageTargetsByRecipe.get(recipe.id) ?? [];
+    const salvageConfig = salvagingConfigMap.get(recipe.id);
+    const shouldUseSalvageInputs = salvageTargets.length > 0 && ((slotsByRecipe.get(recipe.id) ?? []).length === 0 || salvageConfig?.useSalvageInputs === true);
+
+    if (shouldUseSalvageInputs) {
+      for (const target of salvageTargets) {
+        allItemIds.add(target.itemId);
+      }
+    }
+
     const slots = slotsByRecipe.get(recipe.id) ?? [];
     for (const slot of slots) {
       if (slot.reagentType === 3 && !slot.required) continue;
@@ -561,8 +713,54 @@ export async function computeProfessionRecipeCosts(professionId: number, regionI
   const results: ProfessionRecipeCost[] = [];
 
   for (const recipe of profRecipes) {
-    const costRank1 = computeCostFromData(recipe.id, 1);
-    const costRank2 = computeCostFromData(recipe.id, 2);
+    const salvageTargets = salvageTargetsByRecipe.get(recipe.id) ?? [];
+    const salvageConfig = salvagingConfigMap.get(recipe.id);
+    const shouldUseSalvageInputs = salvageTargets.length > 0 && ((slotsByRecipe.get(recipe.id) ?? []).length === 0 || salvageConfig?.useSalvageInputs === true);
+
+    let costRank1 = computeCostFromData(recipe.id, 1);
+    let costRank2 = computeCostFromData(recipe.id, 2);
+
+    if (shouldUseSalvageInputs) {
+      const inputQuantity = salvageConfig?.inputQuantity ?? (recipe.name === "Recycling" ? 5 : 1);
+      const cheapestInput = salvageTargets
+        .map((target) => {
+          const price = prices.get(target.itemId);
+          const unitPrice = price?.minPrice ?? 0;
+          return {
+            itemId: target.itemId,
+            itemName: itemMetaMap.get(target.itemId)?.name ?? `Item #${target.itemId}`,
+            itemQuality: itemMetaMap.get(target.itemId)?.itemQuality ?? null,
+            unitPrice,
+            totalPrice: unitPrice * inputQuantity,
+            hasPriceData: Boolean(price),
+          };
+        })
+        .sort((a, b) => {
+          if (a.hasPriceData !== b.hasPriceData) return a.hasPriceData ? -1 : 1;
+          return a.totalPrice - b.totalPrice;
+        })[0];
+
+      if (cheapestInput) {
+        const salvageCost: RecipeCostResult = {
+          reagents: [
+            {
+              slotIndex: 1,
+              itemId: cheapestInput.itemId,
+              itemName: cheapestInput.itemName,
+              itemQuality: cheapestInput.itemQuality,
+              quantity: inputQuantity,
+              unitPrice: cheapestInput.unitPrice,
+              totalPrice: cheapestInput.totalPrice,
+            },
+          ],
+          totalCost: cheapestInput.totalPrice,
+          hasPriceData: cheapestInput.hasPriceData,
+        };
+
+        costRank1 = salvageCost;
+        costRank2 = salvageCost;
+      }
+    }
 
     const outputQuantity = recipe.outputQuantityMin;
 

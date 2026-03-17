@@ -16,7 +16,7 @@ export default function RecipeClient({ recipe }: Props) {
   const activeTiers = TOOL_TIERS.filter((t) => t !== "none");
 
   return (
-    <div className="max-w-5xl">
+    <div>
       <div className="mb-6">
         <Link href="/" className="text-sm text-muted hover:text-accent transition-colors">
           &larr; Back
@@ -37,7 +37,7 @@ export default function RecipeClient({ recipe }: Props) {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {recipe.scenarios.map((scenario) => {
           const tierResults: { tier: ToolTier; adj: AdjustedProfit }[] = [];
           for (const tier of activeTiers) {
@@ -53,7 +53,7 @@ export default function RecipeClient({ recipe }: Props) {
             if (adj) tierResults.push({ tier, adj });
           }
 
-          return <ScenarioCard key={scenario.reagentRank} scenario={scenario} tierResults={tierResults} />;
+          return <ScenarioCard key={`${scenario.reagentRank}-${scenario.outputRank}-${scenario.inputItemId ?? "none"}`} scenario={scenario} tierResults={tierResults} />;
         })}
       </div>
     </div>
@@ -62,10 +62,11 @@ export default function RecipeClient({ recipe }: Props) {
 
 function ScenarioCard({ scenario, tierResults }: { scenario: RankScenario; tierResults: { tier: ToolTier; adj: AdjustedProfit }[] }) {
   const profitColor = scenario.profit !== null ? (scenario.profit >= 0 ? "text-positive" : "text-negative") : "text-muted";
+  const title = scenario.scenarioLabel ?? (scenario.reagentRank === 1 && scenario.outputRank === 2 ? "Conc R1→R2" : `Rank ${scenario.reagentRank} Reagents`);
 
   return (
     <div className="border border-border rounded-lg bg-card p-4">
-      <h2 className="font-semibold mb-4">Rank {scenario.reagentRank} Reagents</h2>
+      <h2 className="font-semibold mb-4">{title}</h2>
 
       {/* Reagent breakdown */}
       <div className="mb-4">

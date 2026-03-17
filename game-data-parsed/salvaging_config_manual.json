@@ -1,0 +1,1290 @@
+[
+  {
+    "recipeId": 1229930,
+    "recipeName": "Recycling",
+    "useSalvageInputs": true,
+    "inputQuantity": 5,
+    "inputOptions": [
+      {
+        "itemId": 243574,
+        "outputs": []
+      },
+      {
+        "itemId": 243575,
+        "outputs": []
+      },
+      {
+        "itemId": 243576,
+        "outputs": []
+      },
+      {
+        "itemId": 243577,
+        "outputs": []
+      },
+      {
+        "itemId": 245764,
+        "outputs": []
+      },
+      {
+        "itemId": 245765,
+        "outputs": []
+      },
+      {
+        "itemId": 245766,
+        "outputs": []
+      },
+      {
+        "itemId": 245767,
+        "outputs": []
+      },
+      {
+        "itemId": 245781,
+        "outputs": []
+      },
+      {
+        "itemId": 245782,
+        "outputs": []
+      },
+      {
+        "itemId": 245783,
+        "outputs": []
+      },
+      {
+        "itemId": 245784,
+        "outputs": []
+      },
+      {
+        "itemId": 245785,
+        "outputs": []
+      },
+      {
+        "itemId": 245786,
+        "outputs": []
+      },
+      {
+        "itemId": 245787,
+        "outputs": []
+      },
+      {
+        "itemId": 245788,
+        "outputs": []
+      },
+      {
+        "itemId": 245789,
+        "outputs": []
+      },
+      {
+        "itemId": 245790,
+        "outputs": []
+      },
+      {
+        "itemId": 245791,
+        "outputs": []
+      },
+      {
+        "itemId": 245792,
+        "outputs": []
+      },
+      {
+        "itemId": 245801,
+        "outputs": []
+      },
+      {
+        "itemId": 245802,
+        "outputs": []
+      },
+      {
+        "itemId": 245803,
+        "outputs": []
+      },
+      {
+        "itemId": 245804,
+        "outputs": []
+      },
+      {
+        "itemId": 245805,
+        "outputs": []
+      },
+      {
+        "itemId": 245806,
+        "outputs": []
+      },
+      {
+        "itemId": 245807,
+        "outputs": []
+      },
+      {
+        "itemId": 245808,
+        "outputs": []
+      },
+      {
+        "itemId": 245814,
+        "outputs": []
+      },
+      {
+        "itemId": 245815,
+        "outputs": []
+      },
+      {
+        "itemId": 245816,
+        "outputs": []
+      },
+      {
+        "itemId": 245817,
+        "outputs": []
+      },
+      {
+        "itemId": 245818,
+        "outputs": []
+      },
+      {
+        "itemId": 245819,
+        "outputs": []
+      },
+      {
+        "itemId": 245820,
+        "outputs": []
+      },
+      {
+        "itemId": 245821,
+        "outputs": []
+      },
+      {
+        "itemId": 245822,
+        "outputs": []
+      },
+      {
+        "itemId": 245823,
+        "outputs": []
+      },
+      {
+        "itemId": 245824,
+        "outputs": []
+      },
+      {
+        "itemId": 245825,
+        "outputs": []
+      },
+      {
+        "itemId": 245826,
+        "outputs": []
+      },
+      {
+        "itemId": 245827,
+        "outputs": []
+      },
+      {
+        "itemId": 245871,
+        "outputs": []
+      },
+      {
+        "itemId": 245872,
+        "outputs": []
+      },
+      {
+        "itemId": 245873,
+        "outputs": []
+      },
+      {
+        "itemId": 245874,
+        "outputs": []
+      },
+      {
+        "itemId": 245875,
+        "outputs": []
+      },
+      {
+        "itemId": 245876,
+        "outputs": []
+      },
+      {
+        "itemId": 245877,
+        "outputs": []
+      },
+      {
+        "itemId": 245878,
+        "outputs": []
+      },
+      {
+        "itemId": 238197,
+        "outputs": []
+      },
+      {
+        "itemId": 238198,
+        "outputs": []
+      },
+      {
+        "itemId": 238202,
+        "outputs": []
+      },
+      {
+        "itemId": 238203,
+        "outputs": []
+      },
+      {
+        "itemId": 238204,
+        "outputs": []
+      },
+      {
+        "itemId": 238205,
+        "outputs": []
+      },
+      {
+        "itemId": 239198,
+        "outputs": []
+      },
+      {
+        "itemId": 239200,
+        "outputs": []
+      },
+      {
+        "itemId": 239201,
+        "outputs": []
+      },
+      {
+        "itemId": 239202,
+        "outputs": []
+      },
+      {
+        "itemId": 239700,
+        "outputs": []
+      },
+      {
+        "itemId": 239701,
+        "outputs": []
+      },
+      {
+        "itemId": 239702,
+        "outputs": []
+      },
+      {
+        "itemId": 239703,
+        "outputs": []
+      },
+      {
+        "itemId": 240164,
+        "outputs": []
+      },
+      {
+        "itemId": 240165,
+        "outputs": []
+      },
+      {
+        "itemId": 240166,
+        "outputs": []
+      },
+      {
+        "itemId": 240167,
+        "outputs": []
+      },
+      {
+        "itemId": 244603,
+        "outputs": []
+      },
+      {
+        "itemId": 244604,
+        "outputs": []
+      },
+      {
+        "itemId": 244607,
+        "outputs": []
+      },
+      {
+        "itemId": 244608,
+        "outputs": []
+      },
+      {
+        "itemId": 244631,
+        "outputs": []
+      },
+      {
+        "itemId": 244632,
+        "outputs": []
+      },
+      {
+        "itemId": 244633,
+        "outputs": []
+      },
+      {
+        "itemId": 244634,
+        "outputs": []
+      },
+      {
+        "itemId": 244635,
+        "outputs": []
+      },
+      {
+        "itemId": 244636,
+        "outputs": []
+      },
+      {
+        "itemId": 244637,
+        "outputs": []
+      },
+      {
+        "itemId": 244638,
+        "outputs": []
+      },
+      {
+        "itemId": 244674,
+        "outputs": []
+      },
+      {
+        "itemId": 244675,
+        "outputs": []
+      }
+    ]
+  },
+  {
+    "recipeId": 1230078,
+    "recipeName": "Transcribe: Void",
+    "useSalvageInputs": false,
+    "inputQuantity": 1,
+    "inputOptions": [
+      {
+        "itemId": 245830,
+        "outputs": []
+      },
+      {
+        "itemId": 245831,
+        "outputs": []
+      },
+      {
+        "itemId": 245832,
+        "outputs": []
+      },
+      {
+        "itemId": 245833,
+        "outputs": []
+      },
+      {
+        "itemId": 245834,
+        "outputs": []
+      },
+      {
+        "itemId": 245835,
+        "outputs": []
+      },
+      {
+        "itemId": 245836,
+        "outputs": []
+      },
+      {
+        "itemId": 245837,
+        "outputs": []
+      },
+      {
+        "itemId": 245847,
+        "outputs": []
+      },
+      {
+        "itemId": 245848,
+        "outputs": []
+      },
+      {
+        "itemId": 245849,
+        "outputs": []
+      },
+      {
+        "itemId": 245850,
+        "outputs": []
+      },
+      {
+        "itemId": 245851,
+        "outputs": []
+      },
+      {
+        "itemId": 245852,
+        "outputs": []
+      },
+      {
+        "itemId": 245853,
+        "outputs": []
+      },
+      {
+        "itemId": 245854,
+        "outputs": []
+      },
+      {
+        "itemId": 245856,
+        "outputs": []
+      },
+      {
+        "itemId": 245857,
+        "outputs": []
+      },
+      {
+        "itemId": 245858,
+        "outputs": []
+      },
+      {
+        "itemId": 245859,
+        "outputs": []
+      },
+      {
+        "itemId": 245860,
+        "outputs": []
+      },
+      {
+        "itemId": 245861,
+        "outputs": []
+      },
+      {
+        "itemId": 245862,
+        "outputs": []
+      },
+      {
+        "itemId": 245863,
+        "outputs": []
+      }
+    ]
+  },
+  {
+    "recipeId": 1230079,
+    "recipeName": "Inscribe: Void",
+    "useSalvageInputs": true,
+    "inputQuantity": 1,
+    "inputOptions": [
+      {
+        "itemId": 251923,
+        "outputs": []
+      },
+      {
+        "itemId": 245806,
+        "outputs": []
+      },
+      {
+        "itemId": 245802,
+        "outputs": []
+      }
+    ]
+  },
+  {
+    "recipeId": 1230080,
+    "recipeName": "Transcribe: Rot",
+    "useSalvageInputs": false,
+    "inputQuantity": 1,
+    "inputOptions": [
+      {
+        "itemId": 245830,
+        "outputs": []
+      },
+      {
+        "itemId": 245831,
+        "outputs": []
+      },
+      {
+        "itemId": 245832,
+        "outputs": []
+      },
+      {
+        "itemId": 245833,
+        "outputs": []
+      },
+      {
+        "itemId": 245834,
+        "outputs": []
+      },
+      {
+        "itemId": 245835,
+        "outputs": []
+      },
+      {
+        "itemId": 245836,
+        "outputs": []
+      },
+      {
+        "itemId": 245837,
+        "outputs": []
+      },
+      {
+        "itemId": 245838,
+        "outputs": []
+      },
+      {
+        "itemId": 245839,
+        "outputs": []
+      },
+      {
+        "itemId": 245840,
+        "outputs": []
+      },
+      {
+        "itemId": 245841,
+        "outputs": []
+      },
+      {
+        "itemId": 245842,
+        "outputs": []
+      },
+      {
+        "itemId": 245843,
+        "outputs": []
+      },
+      {
+        "itemId": 245844,
+        "outputs": []
+      },
+      {
+        "itemId": 245845,
+        "outputs": []
+      },
+      {
+        "itemId": 245856,
+        "outputs": []
+      },
+      {
+        "itemId": 245857,
+        "outputs": []
+      },
+      {
+        "itemId": 245858,
+        "outputs": []
+      },
+      {
+        "itemId": 245859,
+        "outputs": []
+      },
+      {
+        "itemId": 245860,
+        "outputs": []
+      },
+      {
+        "itemId": 245861,
+        "outputs": []
+      },
+      {
+        "itemId": 245862,
+        "outputs": []
+      },
+      {
+        "itemId": 245863,
+        "outputs": []
+      }
+    ]
+  },
+  {
+    "recipeId": 1230081,
+    "recipeName": "Inscribe: Rot",
+    "useSalvageInputs": true,
+    "inputQuantity": 1,
+    "inputOptions": [
+      {
+        "itemId": 251923,
+        "outputs": []
+      },
+      {
+        "itemId": 245806,
+        "outputs": []
+      },
+      {
+        "itemId": 245802,
+        "outputs": []
+      }
+    ]
+  },
+  {
+    "recipeId": 1230082,
+    "recipeName": "Transcribe: Hunt",
+    "useSalvageInputs": false,
+    "inputQuantity": 1,
+    "inputOptions": [
+      {
+        "itemId": 245838,
+        "outputs": []
+      },
+      {
+        "itemId": 245839,
+        "outputs": []
+      },
+      {
+        "itemId": 245840,
+        "outputs": []
+      },
+      {
+        "itemId": 245841,
+        "outputs": []
+      },
+      {
+        "itemId": 245842,
+        "outputs": []
+      },
+      {
+        "itemId": 245843,
+        "outputs": []
+      },
+      {
+        "itemId": 245844,
+        "outputs": []
+      },
+      {
+        "itemId": 245845,
+        "outputs": []
+      },
+      {
+        "itemId": 245847,
+        "outputs": []
+      },
+      {
+        "itemId": 245848,
+        "outputs": []
+      },
+      {
+        "itemId": 245849,
+        "outputs": []
+      },
+      {
+        "itemId": 245850,
+        "outputs": []
+      },
+      {
+        "itemId": 245851,
+        "outputs": []
+      },
+      {
+        "itemId": 245852,
+        "outputs": []
+      },
+      {
+        "itemId": 245853,
+        "outputs": []
+      },
+      {
+        "itemId": 245854,
+        "outputs": []
+      },
+      {
+        "itemId": 245856,
+        "outputs": []
+      },
+      {
+        "itemId": 245857,
+        "outputs": []
+      },
+      {
+        "itemId": 245858,
+        "outputs": []
+      },
+      {
+        "itemId": 245859,
+        "outputs": []
+      },
+      {
+        "itemId": 245860,
+        "outputs": []
+      },
+      {
+        "itemId": 245861,
+        "outputs": []
+      },
+      {
+        "itemId": 245862,
+        "outputs": []
+      },
+      {
+        "itemId": 245863,
+        "outputs": []
+      }
+    ]
+  },
+  {
+    "recipeId": 1230083,
+    "recipeName": "Inscribe: Hunt",
+    "useSalvageInputs": true,
+    "inputQuantity": 1,
+    "inputOptions": [
+      {
+        "itemId": 251923,
+        "outputs": []
+      },
+      {
+        "itemId": 245806,
+        "outputs": []
+      },
+      {
+        "itemId": 245802,
+        "outputs": []
+      }
+    ]
+  },
+  {
+    "recipeId": 1230084,
+    "recipeName": "Transcribe: Blood",
+    "useSalvageInputs": false,
+    "inputQuantity": 1,
+    "inputOptions": [
+      {
+        "itemId": 245830,
+        "outputs": []
+      },
+      {
+        "itemId": 245831,
+        "outputs": []
+      },
+      {
+        "itemId": 245832,
+        "outputs": []
+      },
+      {
+        "itemId": 245833,
+        "outputs": []
+      },
+      {
+        "itemId": 245834,
+        "outputs": []
+      },
+      {
+        "itemId": 245835,
+        "outputs": []
+      },
+      {
+        "itemId": 245836,
+        "outputs": []
+      },
+      {
+        "itemId": 245837,
+        "outputs": []
+      },
+      {
+        "itemId": 245838,
+        "outputs": []
+      },
+      {
+        "itemId": 245839,
+        "outputs": []
+      },
+      {
+        "itemId": 245840,
+        "outputs": []
+      },
+      {
+        "itemId": 245841,
+        "outputs": []
+      },
+      {
+        "itemId": 245842,
+        "outputs": []
+      },
+      {
+        "itemId": 245843,
+        "outputs": []
+      },
+      {
+        "itemId": 245844,
+        "outputs": []
+      },
+      {
+        "itemId": 245845,
+        "outputs": []
+      },
+      {
+        "itemId": 245847,
+        "outputs": []
+      },
+      {
+        "itemId": 245848,
+        "outputs": []
+      },
+      {
+        "itemId": 245849,
+        "outputs": []
+      },
+      {
+        "itemId": 245850,
+        "outputs": []
+      },
+      {
+        "itemId": 245851,
+        "outputs": []
+      },
+      {
+        "itemId": 245852,
+        "outputs": []
+      },
+      {
+        "itemId": 245853,
+        "outputs": []
+      },
+      {
+        "itemId": 245854,
+        "outputs": []
+      }
+    ]
+  },
+  {
+    "recipeId": 1230085,
+    "recipeName": "Inscribe: Blood",
+    "useSalvageInputs": true,
+    "inputQuantity": 1,
+    "inputOptions": [
+      {
+        "itemId": 251923,
+        "outputs": []
+      },
+      {
+        "itemId": 245806,
+        "outputs": []
+      },
+      {
+        "itemId": 245802,
+        "outputs": []
+      }
+    ]
+  },
+  {
+    "recipeId": 1231127,
+    "recipeName": "Midnight Prospecting",
+    "useSalvageInputs": true,
+    "inputQuantity": 1,
+    "inputOptions": [
+      {
+        "itemId": 237359,
+        "outputs": []
+      },
+      {
+        "itemId": 237361,
+        "outputs": []
+      },
+      {
+        "itemId": 237362,
+        "outputs": []
+      },
+      {
+        "itemId": 237363,
+        "outputs": []
+      },
+      {
+        "itemId": 237364,
+        "outputs": []
+      },
+      {
+        "itemId": 237365,
+        "outputs": []
+      },
+      {
+        "itemId": 237366,
+        "outputs": []
+      }
+    ]
+  },
+  {
+    "recipeId": 1231132,
+    "recipeName": "Midnight Crushing",
+    "useSalvageInputs": false,
+    "inputQuantity": 1,
+    "inputOptions": [
+      {
+        "itemId": 242612,
+        "outputs": []
+      },
+      {
+        "itemId": 242727,
+        "outputs": []
+      },
+      {
+        "itemId": 242554,
+        "outputs": []
+      },
+      {
+        "itemId": 242722,
+        "outputs": []
+      },
+      {
+        "itemId": 242608,
+        "outputs": []
+      },
+      {
+        "itemId": 242712,
+        "outputs": []
+      },
+      {
+        "itemId": 242610,
+        "outputs": []
+      },
+      {
+        "itemId": 242726,
+        "outputs": []
+      },
+      {
+        "itemId": 242607,
+        "outputs": []
+      },
+      {
+        "itemId": 242720,
+        "outputs": []
+      },
+      {
+        "itemId": 242611,
+        "outputs": []
+      },
+      {
+        "itemId": 242725,
+        "outputs": []
+      },
+      {
+        "itemId": 242606,
+        "outputs": []
+      },
+      {
+        "itemId": 242721,
+        "outputs": []
+      },
+      {
+        "itemId": 242613,
+        "outputs": []
+      },
+      {
+        "itemId": 242724,
+        "outputs": []
+      },
+      {
+        "itemId": 242553,
+        "outputs": []
+      },
+      {
+        "itemId": 242723,
+        "outputs": []
+      }
+    ]
+  },
+  {
+    "recipeId": 1233129,
+    "recipeName": "Recycle Potions",
+    "useSalvageInputs": false,
+    "inputQuantity": 1,
+    "inputOptions": [
+      {
+        "itemId": 241289,
+        "outputs": []
+      },
+      {
+        "itemId": 241292,
+        "outputs": []
+      },
+      {
+        "itemId": 241293,
+        "outputs": []
+      },
+      {
+        "itemId": 241288,
+        "outputs": []
+      },
+      {
+        "itemId": 241294,
+        "outputs": []
+      },
+      {
+        "itemId": 241295,
+        "outputs": []
+      },
+      {
+        "itemId": 241298,
+        "outputs": []
+      },
+      {
+        "itemId": 241299,
+        "outputs": []
+      },
+      {
+        "itemId": 241302,
+        "outputs": []
+      },
+      {
+        "itemId": 241303,
+        "outputs": []
+      },
+      {
+        "itemId": 241338,
+        "outputs": []
+      },
+      {
+        "itemId": 241339,
+        "outputs": []
+      },
+      {
+        "itemId": 241296,
+        "outputs": []
+      },
+      {
+        "itemId": 241297,
+        "outputs": []
+      },
+      {
+        "itemId": 241300,
+        "outputs": []
+      },
+      {
+        "itemId": 241301,
+        "outputs": []
+      },
+      {
+        "itemId": 241304,
+        "outputs": []
+      },
+      {
+        "itemId": 241305,
+        "outputs": []
+      },
+      {
+        "itemId": 241306,
+        "outputs": []
+      },
+      {
+        "itemId": 241307,
+        "outputs": []
+      },
+      {
+        "itemId": 241308,
+        "outputs": []
+      },
+      {
+        "itemId": 241309,
+        "outputs": []
+      },
+      {
+        "itemId": 241286,
+        "outputs": []
+      },
+      {
+        "itemId": 241287,
+        "outputs": []
+      },
+      {
+        "itemId": 268954,
+        "outputs": []
+      },
+      {
+        "itemId": 268955,
+        "outputs": []
+      }
+    ]
+  },
+  {
+    "recipeId": 1233130,
+    "recipeName": "Recycle Flasks",
+    "useSalvageInputs": false,
+    "inputQuantity": 1,
+    "inputOptions": [
+      {
+        "itemId": 241327,
+        "outputs": []
+      },
+      {
+        "itemId": 241320,
+        "outputs": []
+      },
+      {
+        "itemId": 241321,
+        "outputs": []
+      },
+      {
+        "itemId": 241322,
+        "outputs": []
+      },
+      {
+        "itemId": 241323,
+        "outputs": []
+      },
+      {
+        "itemId": 241324,
+        "outputs": []
+      },
+      {
+        "itemId": 241325,
+        "outputs": []
+      },
+      {
+        "itemId": 241326,
+        "outputs": []
+      },
+      {
+        "itemId": 241334,
+        "outputs": []
+      }
+    ]
+  },
+  {
+    "recipeId": 1235731,
+    "recipeName": "Shatter Essence",
+    "useSalvageInputs": true,
+    "inputQuantity": 1,
+    "inputOptions": [
+      {
+        "itemId": 236951,
+        "outputs": []
+      },
+      {
+        "itemId": 236949,
+        "outputs": []
+      },
+      {
+        "itemId": 236950,
+        "outputs": []
+      },
+      {
+        "itemId": 236952,
+        "outputs": []
+      }
+    ]
+  },
+  {
+    "recipeId": 1259655,
+    "recipeName": "Thalassian Filet",
+    "useSalvageInputs": true,
+    "inputQuantity": 1,
+    "inputOptions": [
+      {
+        "itemId": 238365,
+        "outputs": []
+      },
+      {
+        "itemId": 238366,
+        "outputs": []
+      },
+      {
+        "itemId": 238367,
+        "outputs": []
+      },
+      {
+        "itemId": 238368,
+        "outputs": []
+      },
+      {
+        "itemId": 238369,
+        "outputs": []
+      },
+      {
+        "itemId": 238370,
+        "outputs": []
+      },
+      {
+        "itemId": 238371,
+        "outputs": []
+      },
+      {
+        "itemId": 238372,
+        "outputs": []
+      },
+      {
+        "itemId": 238373,
+        "outputs": []
+      },
+      {
+        "itemId": 238374,
+        "outputs": []
+      },
+      {
+        "itemId": 238376,
+        "outputs": []
+      },
+      {
+        "itemId": 238377,
+        "outputs": []
+      },
+      {
+        "itemId": 238378,
+        "outputs": []
+      },
+      {
+        "itemId": 238379,
+        "outputs": []
+      },
+      {
+        "itemId": 238380,
+        "outputs": []
+      },
+      {
+        "itemId": 238381,
+        "outputs": []
+      },
+      {
+        "itemId": 238382,
+        "outputs": []
+      },
+      {
+        "itemId": 238383,
+        "outputs": []
+      },
+      {
+        "itemId": 238384,
+        "outputs": []
+      },
+      {
+        "itemId": 238375,
+        "outputs": []
+      }
+    ]
+  },
+  {
+    "recipeId": 1269575,
+    "recipeName": "Midnight Milling",
+    "useSalvageInputs": true,
+    "inputQuantity": 1,
+    "inputOptions": [
+      {
+        "itemId": 236761,
+        "outputs": []
+      },
+      {
+        "itemId": 236767,
+        "outputs": []
+      },
+      {
+        "itemId": 236770,
+        "outputs": []
+      },
+      {
+        "itemId": 236771,
+        "outputs": []
+      },
+      {
+        "itemId": 236776,
+        "outputs": []
+      },
+      {
+        "itemId": 236777,
+        "outputs": []
+      },
+      {
+        "itemId": 236778,
+        "outputs": []
+      },
+      {
+        "itemId": 236779,
+        "outputs": []
+      }
+    ]
+  },
+  {
+    "recipeId": 1280394,
+    "recipeName": "Radiant Shatter",
+    "useSalvageInputs": true,
+    "inputQuantity": 1,
+    "inputOptions": [
+      {
+        "itemId": 243602,
+        "outputs": []
+      },
+      {
+        "itemId": 243603,
+        "outputs": []
+      }
+    ]
+  },
+  {
+    "recipeId": 1280401,
+    "recipeName": "Dawn Shatter",
+    "useSalvageInputs": true,
+    "inputQuantity": 1,
+    "inputOptions": [
+      {
+        "itemId": 243605,
+        "outputs": []
+      },
+      {
+        "itemId": 243606,
+        "outputs": []
+      }
+    ]
+  }
+]

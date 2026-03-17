@@ -47,6 +47,9 @@ export interface RankScenario {
   outputUnitPrice: number | null;
   outputTotalPrice: number | null;
   profit: number | null;
+  isSalvage?: boolean;
+  scenarioLabel?: string;
+  inputItemId?: number;
 }
 
 export interface ProfessionRecipeCost {

@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "bun run --hot src/index.ts",
     "reimport": "bun run src/scripts/reimport-game-data.ts",
+    "generate-salvage-config": "bun run src/scripts/generate-salvaging-config.ts",
     "sync-prices": "bun run src/scripts/sync-prices.ts",
     "db:generate": "bunx drizzle-kit generate",
     "db:migrate": "bunx drizzle-kit migrate",
