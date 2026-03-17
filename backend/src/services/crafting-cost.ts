@@ -1,10 +1,10 @@
-import { eq, and, desc, inArray, sql } from "drizzle-orm";
+import { eq, and, desc, inArray, sql, gte } from "drizzle-orm";
 import { db } from "../db";
-import { professions, recipes, recipeOutputQualities, recipeReagentSlots, recipeReagentSlotOptions, commoditySnapshots, items } from "../db/schema";
+import { professions, recipes, recipeOutputQualities, recipeReagentSlots, recipeReagentSlotOptions, commoditySnapshots, realmSnapshots, items } from "../db/schema";
 
 // ─── Types ───────────────────────────────────────────────────────────
 
-interface PriceData {
+export interface PriceData {
   minPrice: number;
   avgPrice: number;
   medianPrice: number;
@@ -57,12 +57,12 @@ interface ProfessionRecipeCost {
   scenarios: RankScenario[];
 }
 
-// ─── Get Latest Prices ──────────────────────────────────────────────
+// ─── Get Latest Commodity Prices ────────────────────────────────────
 
-export async function getLatestPrices(regionId: string, itemIds: number[]): Promise<Map<number, PriceData>> {
+export async function getLatestCommodityPrices(regionId: string, itemIds: number[]): Promise<Map<number, PriceData>> {
   if (itemIds.length === 0) return new Map();
 
-  // Get the most recent snapshot time for this region
+  // Get the most recent commodity snapshot time for this region
   const [latest] = await db
     .select({ maxTime: sql<string>`max(${commoditySnapshots.snapshotTime})::text` })
     .from(commoditySnapshots)
@@ -72,7 +72,6 @@ export async function getLatestPrices(regionId: string, itemIds: number[]): Prom
 
   const latestTime = new Date(latest.maxTime);
 
-  // Fetch prices at the latest snapshot time for requested items
   const BATCH = 500;
   const priceMap = new Map<number, PriceData>();
 
@@ -94,6 +93,91 @@ export async function getLatestPrices(regionId: string, itemIds: number[]): Prom
         avgPrice: Number(row.avgPrice ?? row.minPrice),
         medianPrice: Number(row.medianPrice ?? row.minPrice),
       });
+    }
+  }
+
+  return priceMap;
+}
+
+// ─── Get Latest Realm Prices (Region Average) ───────────────────────
+
+export async function getLatestRealmPrices(regionId: string, itemIds: number[]): Promise<Map<number, PriceData>> {
+  if (itemIds.length === 0) return new Map();
+
+  // Get the most recent realm snapshot time for this region
+  const [latestRealm] = await db
+    .select({ maxTime: sql<string>`max(${realmSnapshots.snapshotTime})::text` })
+    .from(realmSnapshots)
+    .where(eq(realmSnapshots.regionId, regionId));
+
+  if (!latestRealm?.maxTime) return new Map();
+
+  // Use a 4-hour window to capture all realms from the same sync cycle
+  const latestTime = new Date(latestRealm.maxTime);
+  const windowStart = new Date(latestTime.getTime() - 4 * 60 * 60 * 1000);
+
+  const BATCH = 500;
+  const priceMap = new Map<number, PriceData>();
+
+  for (let i = 0; i < itemIds.length; i += BATCH) {
+    const batch = itemIds.slice(i, i + BATCH);
+
+    // Inner query: get the latest snapshot per realm per item within the window
+    const latestPerRealm = db
+      .select({
+        itemId: realmSnapshots.itemId,
+        connectedRealmId: realmSnapshots.connectedRealmId,
+        minBuyout: sql<number>`(array_agg(${realmSnapshots.minBuyout} ORDER BY ${realmSnapshots.snapshotTime} DESC))[1]`.as("min_buyout_latest"),
+        avgBuyout: sql<number>`(array_agg(coalesce(${realmSnapshots.avgBuyout}, ${realmSnapshots.minBuyout}) ORDER BY ${realmSnapshots.snapshotTime} DESC))[1]`.as(
+          "avg_buyout_latest",
+        ),
+        medianBuyout: sql<number>`(array_agg(coalesce(${realmSnapshots.medianBuyout}, ${realmSnapshots.minBuyout}) ORDER BY ${realmSnapshots.snapshotTime} DESC))[1]`.as(
+          "median_buyout_latest",
+        ),
+      })
+      .from(realmSnapshots)
+      .where(and(eq(realmSnapshots.regionId, regionId), inArray(realmSnapshots.itemId, batch), gte(realmSnapshots.snapshotTime, windowStart)))
+      .groupBy(realmSnapshots.itemId, realmSnapshots.connectedRealmId)
+      .as("latest_per_realm");
+
+    // Outer query: average across all connected realms
+    const rows = await db
+      .select({
+        itemId: latestPerRealm.itemId,
+        minPrice: sql<number>`avg(${latestPerRealm.minBuyout})::bigint`,
+        avgPrice: sql<number>`avg(${latestPerRealm.avgBuyout})::bigint`,
+        medianPrice: sql<number>`avg(${latestPerRealm.medianBuyout})::bigint`,
+      })
+      .from(latestPerRealm)
+      .groupBy(latestPerRealm.itemId);
+
+    for (const row of rows) {
+      priceMap.set(Number(row.itemId), {
+        minPrice: Number(row.minPrice),
+        avgPrice: Number(row.avgPrice),
+        medianPrice: Number(row.medianPrice),
+      });
+    }
+  }
+
+  console.log(`[CraftingCost] Fetched realm prices for ${priceMap.size}/${itemIds.length} items in region ${regionId}`);
+  return priceMap;
+}
+
+// ─── Get Latest Prices (Commodity + Realm Fallback) ─────────────────
+
+export async function getLatestPrices(regionId: string, itemIds: number[]): Promise<Map<number, PriceData>> {
+  if (itemIds.length === 0) return new Map();
+
+  // First: try commodity snapshots
+  const priceMap = await getLatestCommodityPrices(regionId, itemIds);
+
+  // Second: for items not found in commodity data, try realm snapshots
+  const missingItemIds = itemIds.filter((id) => !priceMap.has(id));
+  if (missingItemIds.length > 0) {
+    const realmPrices = await getLatestRealmPrices(regionId, missingItemIds);
+    for (const [itemId, price] of realmPrices) {
+      priceMap.set(itemId, price);
     }
   }
 

@@ -1,9 +1,77 @@
 import { Hono } from "hono";
-import { eq, and, gte, desc, sql } from "drizzle-orm";
+import { eq, and, gte, desc, sql, ilike } from "drizzle-orm";
 import { db } from "../db";
 import { items, commoditySnapshots, realmSnapshots, commodityDaily, realmDaily, realms, connectedRealms } from "../db/schema";
+import { getLatestCommodityPrices, getLatestRealmPrices, type PriceData } from "../services/crafting-cost";
 
 const itemRoutes = new Hono();
+
+// ─── GET / — List all items with latest prices ─────────────────────
+
+itemRoutes.get("/", async (c) => {
+  const region = c.req.query("region") || "eu";
+  const type = c.req.query("type") || "all";
+  const search = c.req.query("search") || "";
+  const page = Math.max(1, Number(c.req.query("page")) || 1);
+  const limit = Math.min(100, Math.max(1, Number(c.req.query("limit")) || 50));
+  const offset = (page - 1) * limit;
+
+  try {
+    // Build filter conditions
+    const conditions = [];
+    if (type === "reagent") conditions.push(eq(items.isReagent, true));
+    else if (type === "crafted") conditions.push(eq(items.isCraftedOutput, true));
+    if (search) {
+      const safeSearch = search.replace(/[%_\\]/g, "\\$&");
+      conditions.push(ilike(items.name, `%${safeSearch}%`));
+    }
+
+    const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
+    // Count total matching items
+    const countResult = await db
+      .select({ total: sql<number>`count(*)::int` })
+      .from(items)
+      .where(whereClause);
+    const total = countResult[0]?.total ?? 0;
+
+    // Get paginated items
+    const itemRows = await db.select().from(items).where(whereClause).orderBy(items.name).limit(limit).offset(offset);
+
+    // Fetch prices for these items
+    const itemIds = itemRows.map((i) => i.id);
+    const commodityPrices = await getLatestCommodityPrices(region, itemIds);
+
+    const needRealmPriceIds = itemIds.filter((id) => !commodityPrices.has(id));
+    const realmPrices = needRealmPriceIds.length > 0 ? await getLatestRealmPrices(region, needRealmPriceIds) : new Map<number, PriceData>();
+
+    // Build response with price source info
+    const enrichedItems = itemRows.map((item) => {
+      const comPrice = commodityPrices.get(item.id);
+      const rlmPrice = realmPrices.get(item.id);
+
+      return {
+        id: item.id,
+        name: item.name,
+        qualityRank: item.qualityRank,
+        isReagent: item.isReagent,
+        isCraftedOutput: item.isCraftedOutput,
+        priceSource: comPrice ? ("commodity" as const) : rlmPrice ? ("realm" as const) : null,
+        latestPrice: comPrice ?? rlmPrice ?? null,
+      };
+    });
+
+    return c.json({
+      items: enrichedItems,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+    });
+  } catch (err) {
+    console.error("[Items] Error listing items:", err);
+    return c.json({ error: "Failed to list items" }, 500);
+  }
+});
 
 // ─── GET /:itemId — Item metadata ───────────────────────────────────
 

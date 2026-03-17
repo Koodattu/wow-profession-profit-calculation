@@ -9,6 +9,8 @@ import itemRoutes from "./routes/items";
 import professionRoutes from "./routes/professions";
 import realmRoutes from "./routes/realms";
 import craftingRoutes from "./routes/crafting";
+import searchRoutes from "./routes/search";
+import flippingRoutes from "./routes/flipping";
 
 const app = new Hono();
 
@@ -22,6 +24,8 @@ app.route("/api/items", itemRoutes);
 app.route("/api/professions", professionRoutes);
 app.route("/api/realms", realmRoutes);
 app.route("/api/crafting", craftingRoutes);
+app.route("/api/search", searchRoutes);
+app.route("/api/flipping", flippingRoutes);
 
 // Start cron jobs and initial data load
 startScheduler();

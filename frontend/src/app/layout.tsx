@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
+import SearchBar from "./SearchBar";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -28,11 +29,14 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans`}>
         <div className="flex min-h-screen">
           <nav className="w-56 shrink-0 border-r border-border bg-card p-4 flex flex-col gap-1">
-            <Link href="/" className="text-lg font-bold text-accent mb-6 block">
+            <Link href="/" className="text-lg font-bold text-accent mb-4 block">
               WoW Tools
             </Link>
+            <SearchBar />
             <NavLink href="/">Dashboard</NavLink>
             <NavLink href="/professions">Professions</NavLink>
+            <NavLink href="/items">Items</NavLink>
+            <NavLink href="/flipping">Flipping</NavLink>
           </nav>
           <main className="flex-1 p-6 overflow-auto">{children}</main>
         </div>
