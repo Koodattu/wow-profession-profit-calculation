@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { formatPrice, type RecipeProfitResult, type RankScenario } from "@/lib/api";
+import WowheadLink from "@/app/WowheadLink";
 import { getTierStats, TOOL_TIERS, TOOL_TIER_LABELS, type ToolTier } from "@/lib/tool-tiers";
 import { calculateAdjustedProfit, type AdjustedProfit } from "@/lib/profit-calc";
 
@@ -19,7 +20,17 @@ export default function RecipeClient({ recipe }: Props) {
         <Link href="/" className="text-sm text-muted hover:text-accent transition-colors">
           &larr; Back
         </Link>
-        <h1 className="text-2xl font-bold mt-2">{recipe.recipeName}</h1>
+        <h1 className="text-2xl font-bold mt-2">
+          <a
+            href={`https://www.wowhead.com/spell=${recipe.recipeId}`}
+            data-wowhead={`spell=${recipe.recipeId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:underline"
+          >
+            {recipe.recipeName}
+          </a>
+        </h1>
         <p className="text-sm text-muted">
           Quality type: {recipe.qualityTierType} &middot; {recipe.professionName}
         </p>
@@ -63,9 +74,9 @@ function ScenarioCard({ scenario, tierResults }: { scenario: RankScenario; tierR
             {scenario.cost.reagents.map((r) => (
               <tr key={r.slotIndex} className="border-b border-border/30">
                 <td className="py-1">
-                  <Link href={`/items/${r.itemId}`} className="text-accent hover:underline">
+                  <WowheadLink href={`/items/${r.itemId}`} type="item" id={r.itemId} className="text-accent hover:underline">
                     {r.itemName}
-                  </Link>
+                  </WowheadLink>
                 </td>
                 <td className="py-1 text-right text-muted">×{r.quantity}</td>
                 <td className="py-1 text-right">{formatPrice(r.unitPrice)}</td>
@@ -91,9 +102,9 @@ function ScenarioCard({ scenario, tierResults }: { scenario: RankScenario; tierR
         <div className="flex justify-between text-sm">
           <span>
             {scenario.outputItemName ? (
-              <Link href={`/items/${scenario.outputItemId}`} className="text-accent hover:underline">
+              <WowheadLink href={`/items/${scenario.outputItemId}`} type="item" id={scenario.outputItemId!} className="text-accent hover:underline">
                 {scenario.outputItemName}
-              </Link>
+              </WowheadLink>
             ) : (
               <span className="text-muted">Unknown</span>
             )}

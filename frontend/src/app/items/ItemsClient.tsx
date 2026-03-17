@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useTransition } from "react";
-import Link from "next/link";
+import WowheadLink from "@/app/WowheadLink";
 import { fetchItems, formatPrice, type ItemWithPrice, type ItemListResponse } from "@/lib/api";
 
 const TYPE_FILTERS = ["all", "reagent", "crafted"] as const;
@@ -13,12 +13,14 @@ const TYPE_LABELS: Record<TypeFilter, string> = {
   crafted: "Crafted",
 };
 
-const PAGE_SIZE = 50;
+const PAGE_SIZE_OPTIONS = [50, 100, 250, 500, 1000] as const;
+const DEFAULT_PAGE_SIZE = 1000;
 
 export default function ItemsClient() {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
   const [page, setPage] = useState(1);
   const [data, setData] = useState<ItemListResponse | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -48,7 +50,7 @@ export default function ItemsClient() {
           type: typeFilter === "all" ? undefined : typeFilter,
           search: debouncedSearch || undefined,
           page,
-          limit: PAGE_SIZE,
+          limit: pageSize,
         });
         if (!cancelled) setData(result);
       } catch {
@@ -61,7 +63,7 @@ export default function ItemsClient() {
     return () => {
       cancelled = true;
     };
-  }, [debouncedSearch, typeFilter, page]);
+  }, [debouncedSearch, typeFilter, page, pageSize]);
 
   const loading = initialLoad || isPending;
 
@@ -78,6 +80,20 @@ export default function ItemsClient() {
           onChange={(e) => setSearch(e.target.value)}
           className="flex-1 px-3 py-2 rounded-md bg-card border border-border text-foreground placeholder:text-muted focus:outline-none focus:border-accent"
         />
+        <select
+          value={pageSize}
+          onChange={(e) => {
+            setPageSize(Number(e.target.value));
+            setPage(1);
+          }}
+          className="px-3 py-2 rounded-md bg-card border border-border text-foreground focus:outline-none focus:border-accent"
+        >
+          {PAGE_SIZE_OPTIONS.map((size) => (
+            <option key={size} value={size}>
+              {size} per page
+            </option>
+          ))}
+        </select>
         <div className="flex gap-1">
           {TYPE_FILTERS.map((t) => (
             <button
@@ -156,9 +172,9 @@ function ItemRow({ item }: { item: ItemWithPrice }) {
   return (
     <tr className="border-b border-border/50 hover:bg-card-hover transition-colors">
       <td className="py-2 pr-4">
-        <Link href={`/items/${item.id}`} className="text-accent hover:underline">
-          {item.name}
-        </Link>
+        <WowheadLink href={`/items/${item.id}`} type="item" id={item.id} className="text-accent hover:underline">
+          {item.name || <span className="text-muted italic">Unknown item #{item.id}</span>}
+        </WowheadLink>
       </td>
       <td className="py-2 pr-4 text-muted">{item.qualityRank ? `R${item.qualityRank}` : "—"}</td>
       <td className="py-2 pr-4">

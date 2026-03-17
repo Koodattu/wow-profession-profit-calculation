@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useTransition } from "react";
-import Link from "next/link";
+import WowheadLink from "@/app/WowheadLink";
 import { fetchFlippingOpportunities, formatPrice, type FlippingOpportunity } from "@/lib/api";
 
 const LIMIT_OPTIONS = [25, 50, 100] as const;
@@ -114,9 +114,9 @@ function FlipRow({ opp }: { opp: FlippingOpportunity }) {
   return (
     <tr className="border-b border-border/50 hover:bg-card-hover transition-colors">
       <td className="py-2 pr-4">
-        <Link href={`/items/${opp.itemId}`} className="text-accent hover:underline">
+        <WowheadLink href={`/items/${opp.itemId}`} type="item" id={opp.itemId} className="text-accent hover:underline">
           {opp.itemName}
-        </Link>
+        </WowheadLink>
       </td>
       <td className="py-2 pr-4 text-muted">{opp.qualityRank ? `R${opp.qualityRank}` : "—"}</td>
       <td className="py-2 pr-4 text-right">{formatPrice(opp.regionAvgPrice)}</td>

@@ -197,7 +197,6 @@ export function formatPrice(copper: number): string {
   const abs = Math.abs(copper);
   const gold = Math.floor(abs / 10000);
   const silver = Math.floor((abs % 10000) / 100);
-  const cop = abs % 100;
-  const str = `${gold}g ${silver}s ${cop}c`;
+  const str = `${gold}g ${silver}s`;
   return negative ? `−${str}` : str;
 }

@@ -3,6 +3,7 @@
 import { useSyncExternalStore, useCallback } from "react";
 import Link from "next/link";
 import { formatPrice, type ProfessionRecipeCost, type ProfessionDetail, type RecipeCategory } from "@/lib/api";
+import WowheadLink from "@/app/WowheadLink";
 import { getSelectedTier, setSelectedTier, subscribeToTier } from "@/lib/profession-stats";
 import { getTierStats, TOOL_TIER_LABELS, TOOL_TIERS, type ToolTier } from "@/lib/tool-tiers";
 import { calculateAdjustedProfit } from "@/lib/profit-calc";
@@ -132,9 +133,9 @@ function RecipeTable({ recipes, professionName, tier }: { recipes: ProfessionRec
           return (
             <tr key={recipe.recipeId} className="border-b border-border/50 hover:bg-card-hover transition-colors">
               <td className="py-2 pr-4">
-                <Link href={`/recipes/${recipe.recipeId}`} className="text-accent hover:underline">
+                <WowheadLink href={`/recipes/${recipe.recipeId}`} type="spell" id={recipe.recipeId} className="text-accent hover:underline">
                   {recipe.recipeName}
-                </Link>
+                </WowheadLink>
                 {s1 && s1.outputQuantity > 1 && <span className="text-muted ml-1">×{s1.outputQuantity}</span>}
               </td>
               <td className="py-2 pr-4 text-muted">{recipe.qualityTierType}</td>

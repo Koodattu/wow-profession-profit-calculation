@@ -15,7 +15,11 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ id:
         <Link href="/" className="text-sm text-muted hover:text-accent transition-colors">
           &larr; Back
         </Link>
-        <h1 className="text-2xl font-bold mt-2">{item.name}</h1>
+        <h1 className="text-2xl font-bold mt-2">
+          <a href={`https://www.wowhead.com/item=${itemId}`} data-wowhead={`item=${itemId}`} target="_blank" rel="noopener noreferrer" className="hover:underline">
+            {item.name}
+          </a>
+        </h1>
         <div className="flex gap-3 text-sm text-muted mt-1">
           {item.qualityRank && <span>Rank {item.qualityRank}</span>}
           {item.isReagent && <span>Reagent</span>}

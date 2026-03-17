@@ -13,7 +13,7 @@ itemRoutes.get("/", async (c) => {
   const type = c.req.query("type") || "all";
   const search = c.req.query("search") || "";
   const page = Math.max(1, Number(c.req.query("page")) || 1);
-  const limit = Math.min(100, Math.max(1, Number(c.req.query("limit")) || 50));
+  const limit = Math.min(2000, Math.max(1, Number(c.req.query("limit")) || 50));
   const offset = (page - 1) * limit;
 
   try {
