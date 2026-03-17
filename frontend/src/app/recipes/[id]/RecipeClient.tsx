@@ -1,17 +1,25 @@
 "use client";
 
+import { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { formatPrice, type RecipeProfitResult, type RankScenario } from "@/lib/api";
+import { fetchItem, fetchItemPrices, formatPrice, type RecipeProfitResult, type RankScenario, type PricePoint } from "@/lib/api";
 import WowheadLink from "@/app/WowheadLink";
 import { getTierStats, TOOL_TIERS, TOOL_TIER_LABELS, type ToolTier } from "@/lib/tool-tiers";
 import { calculateAdjustedProfit, type AdjustedProfit } from "@/lib/profit-calc";
 import { getItemQualityClass } from "@/lib/item-quality";
+import TimeRangeTabs from "@/app/TimeRangeTabs";
+import HistoryLineChart from "@/app/HistoryLineChart";
+import type { HistoryRange } from "@/lib/time-ranges";
+import { getSelectedConnectedRealmId, subscribeToConnectedRealm } from "@/lib/realm-state";
 
 interface Props {
   recipe: RecipeProfitResult;
 }
 
 export default function RecipeClient({ recipe }: Props) {
+  const connectedRealmId = useSyncExternalStore(subscribeToConnectedRealm, getSelectedConnectedRealmId, () => null);
+  const [historyRange, setHistoryRange] = useState<HistoryRange>("24h");
+
   // Compute adjusted profits for all tiers with stats
   const activeTiers = TOOL_TIERS.filter((t) => t !== "none");
 
@@ -37,6 +45,13 @@ export default function RecipeClient({ recipe }: Props) {
         </p>
       </div>
 
+      <div className="border border-border rounded-lg bg-card p-4 mb-6">
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="text-sm text-muted">Scenario Chart Range</h2>
+          <TimeRangeTabs value={historyRange} onChange={setHistoryRange} />
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {recipe.scenarios.map((scenario) => {
           const tierResults: { tier: ToolTier; adj: AdjustedProfit }[] = [];
@@ -53,14 +68,126 @@ export default function RecipeClient({ recipe }: Props) {
             if (adj) tierResults.push({ tier, adj });
           }
 
-          return <ScenarioCard key={`${scenario.reagentRank}-${scenario.outputRank}-${scenario.inputItemId ?? "none"}`} scenario={scenario} tierResults={tierResults} />;
+          return (
+            <ScenarioCard
+              key={`${scenario.reagentRank}-${scenario.outputRank}-${scenario.inputItemId ?? "none"}`}
+              scenario={scenario}
+              tierResults={tierResults}
+              connectedRealmId={connectedRealmId}
+              historyRange={historyRange}
+            />
+          );
         })}
       </div>
     </div>
   );
 }
 
-function ScenarioCard({ scenario, tierResults }: { scenario: RankScenario; tierResults: { tier: ToolTier; adj: AdjustedProfit }[] }) {
+async function buildRecipeHistory(
+  scenario: RankScenario,
+  range: HistoryRange,
+  connectedRealmId: number,
+): Promise<Array<{ time: string; cost: number | null; output: number | null; outputQuantity: number | null }>> {
+  if (!scenario.outputItemId) return [];
+
+  const outputItem = await fetchItem(scenario.outputItemId);
+  const outputUsesRealm = outputItem.isCraftedOutput && !outputItem.isReagent;
+
+  const reagentItems = scenario.cost.reagents.map((reagent) => ({ itemId: reagent.itemId, quantity: reagent.quantity }));
+  const itemIds = [...new Set([scenario.outputItemId, ...reagentItems.map((reagent) => reagent.itemId)])];
+
+  const historyPairs = await Promise.all(
+    itemIds.map(async (itemId) => {
+      const isOutput = itemId === scenario.outputItemId;
+      const series = await fetchItemPrices(itemId, "eu", range, isOutput && outputUsesRealm ? { type: "realm", connectedRealmId } : { type: "auto" });
+      return [itemId, [...series].reverse()] as const;
+    }),
+  );
+
+  const historyMap = new Map<number, PricePoint[]>(historyPairs);
+  const timelineMs = [
+    ...new Set([...historyMap.values()].flatMap((series) => series.map((point) => new Date(point.time).getTime()).filter((value) => Number.isFinite(value)))),
+  ].sort((a, b) => a - b);
+
+  if (timelineMs.length === 0) return [];
+
+  const filledPricesByItem = new Map<number, Array<number | null>>();
+
+  for (const [itemId, series] of historyMap) {
+    const values: Array<number | null> = new Array(timelineMs.length).fill(null);
+    let pointer = 0;
+    let lastValue: number | null = null;
+
+    for (let i = 0; i < timelineMs.length; i += 1) {
+      const bucketTime = timelineMs[i];
+      while (pointer < series.length) {
+        const pointTime = new Date(series[pointer].time).getTime();
+        if (pointTime > bucketTime) break;
+        const nextValue = series[pointer].min_price;
+        if (nextValue != null) lastValue = nextValue;
+        pointer += 1;
+      }
+      values[i] = lastValue;
+    }
+
+    filledPricesByItem.set(itemId, values);
+  }
+
+  const outputSeries = historyMap.get(scenario.outputItemId) ?? [];
+  const outputQuantityByTime = new Map<number, number | null>();
+  let outputPointer = 0;
+  let lastQuantity: number | null = null;
+
+  for (const bucketTime of timelineMs) {
+    while (outputPointer < outputSeries.length) {
+      const pointTime = new Date(outputSeries[outputPointer].time).getTime();
+      if (pointTime > bucketTime) break;
+      const nextQuantity = outputSeries[outputPointer].total_quantity;
+      if (nextQuantity != null) lastQuantity = nextQuantity;
+      outputPointer += 1;
+    }
+    outputQuantityByTime.set(bucketTime, lastQuantity);
+  }
+
+  const points: Array<{ time: string; cost: number | null; output: number | null; outputQuantity: number | null }> = [];
+
+  for (let i = 0; i < timelineMs.length; i += 1) {
+    let totalCost = 0;
+    let hasCost = true;
+
+    for (const reagent of reagentItems) {
+      const reagentPrice = filledPricesByItem.get(reagent.itemId)?.[i] ?? null;
+      if (reagentPrice == null) {
+        hasCost = false;
+        break;
+      }
+      totalCost += reagentPrice * reagent.quantity;
+    }
+
+    const outputPrice = filledPricesByItem.get(scenario.outputItemId)?.[i] ?? null;
+
+    points.push({
+      time: new Date(timelineMs[i]).toISOString(),
+      cost: hasCost ? Math.round(totalCost) : null,
+      output: outputPrice != null ? Math.round(outputPrice * scenario.outputQuantity) : null,
+      outputQuantity: outputQuantityByTime.get(timelineMs[i]) ?? null,
+    });
+  }
+
+  return points;
+}
+
+function ScenarioCard({
+  scenario,
+  tierResults,
+  connectedRealmId,
+  historyRange,
+}: {
+  scenario: RankScenario;
+  tierResults: { tier: ToolTier; adj: AdjustedProfit }[];
+  connectedRealmId: number | null;
+  historyRange: HistoryRange;
+}) {
   const profitColor = scenario.profit !== null ? (scenario.profit >= 0 ? "text-positive" : "text-negative") : "text-muted";
   const title = scenario.scenarioLabel ?? (scenario.reagentRank === 1 && scenario.outputRank === 2 ? "Conc R1→R2" : `Rank ${scenario.reagentRank} Reagents`);
 
@@ -127,10 +254,13 @@ function ScenarioCard({ scenario, tierResults }: { scenario: RankScenario; tierR
         <span className={`text-lg font-bold ${profitColor}`}>{scenario.profit !== null ? formatPrice(scenario.profit) : "—"}</span>
       </div>
 
+      <div className="border-t border-border pt-4 mt-4">
+        <ScenarioHistoryChart scenario={scenario} connectedRealmId={connectedRealmId} range={historyRange} />
+      </div>
+
       {/* Tier comparison */}
       {tierResults.length > 0 && (
         <div className="border-t border-border pt-4 mt-4">
-          <h3 className="text-sm text-muted mb-3">Expected Profit by Tool Tier</h3>
           <div className="space-y-3">
             {tierResults.map(({ tier, adj }) => {
               const hasEffect = adj.multicraftChance > 0 || adj.resourcefulnessChance > 0;
@@ -161,5 +291,77 @@ function ScenarioCard({ scenario, tierResults }: { scenario: RankScenario; tierR
         </div>
       )}
     </div>
+  );
+}
+
+function ScenarioHistoryChart({ scenario, connectedRealmId, range }: { scenario: RankScenario; connectedRealmId: number | null; range: HistoryRange }) {
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<Array<{ time: string; cost: number | null; output: number | null; outputQuantity: number | null }>>([]);
+
+  useEffect(() => {
+    if (!scenario.outputItemId || connectedRealmId === null) {
+      setData([]);
+      return;
+    }
+
+    const realmId = connectedRealmId;
+
+    let cancelled = false;
+
+    async function load() {
+      setLoading(true);
+      try {
+        const nextData = await buildRecipeHistory(scenario, range, realmId);
+        if (!cancelled) {
+          setData(nextData);
+        }
+      } catch {
+        if (!cancelled) {
+          setData([]);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    void load();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [connectedRealmId, range, scenario]);
+
+  if (connectedRealmId === null) {
+    return <p className="text-xs text-muted">Select a realm to view scenario history.</p>;
+  }
+
+  if (loading) {
+    return <p className="text-xs text-muted">Loading scenario history...</p>;
+  }
+
+  if (data.length <= 1) {
+    return <p className="text-xs text-muted">Not enough data points for this scenario.</p>;
+  }
+
+  return (
+    <HistoryLineChart
+      title="Cost vs Output History"
+      data={data}
+      series={[
+        { key: "cost", label: "Crafted Cost", color: "var(--negative)" },
+        { key: "output", label: "Output Value", color: "var(--positive)" },
+        {
+          key: "outputQuantity",
+          label: "Output Quantity",
+          color: "#3da3d4",
+          axis: "right",
+          type: "bar",
+          formatValue: (value) => Math.round(value).toLocaleString(),
+        },
+      ]}
+      formatValue={formatPrice}
+    />
   );
 }

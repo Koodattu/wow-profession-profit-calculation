@@ -1,3 +1,5 @@
+import type { HistoryRange } from "@/lib/time-ranges";
+
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4111";
 
 // --- Types ---
@@ -204,7 +206,12 @@ export function fetchItem(id: number): Promise<Item> {
   return apiFetch(`/api/items/${id}`);
 }
 
-export function fetchItemPrices(id: number, region = "eu", range = "24h", options?: { type?: "auto" | "commodity" | "realm"; connectedRealmId?: number }): Promise<PricePoint[]> {
+export function fetchItemPrices(
+  id: number,
+  region = "eu",
+  range: HistoryRange = "24h",
+  options?: { type?: "auto" | "commodity" | "realm"; connectedRealmId?: number },
+): Promise<PricePoint[]> {
   return apiFetch(
     `/api/items/${id}/prices${qs({
       region,
@@ -256,6 +263,7 @@ export function formatPrice(copper: number): string {
   const abs = Math.abs(copper);
   const gold = Math.floor(abs / 10000);
   const silver = Math.floor((abs % 10000) / 100);
-  const str = `${gold}g ${silver}s`;
+  const groupedGold = gold.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  const str = `${groupedGold}g ${silver}s`;
   return negative ? `−${str}` : str;
 }

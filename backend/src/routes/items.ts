@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { eq, and, gte, desc, sql, ilike } from "drizzle-orm";
+import { eq, and, gte, desc, sql, ilike, inArray } from "drizzle-orm";
 import { db } from "../db";
 import { items, commoditySnapshots, realmSnapshots, commodityDaily, realmDaily, realms, connectedRealms } from "../db/schema";
 import { getLatestCommodityPrices, getLatestRealmPrices, getLatestRealmPricesForConnectedRealm, type PriceData } from "../services/crafting-cost";
@@ -123,6 +123,8 @@ function getTimeRangeCutoff(range: string): Date | null {
       return new Date(now.getTime() - 24 * 60 * 60 * 1000);
     case "7d":
       return new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    case "14d":
+      return new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
     case "30d":
       return new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     case "6m":
@@ -178,18 +180,21 @@ async function getCommoditySnapshots(itemId: number, regionId: string, range: st
   const conditions = [eq(commoditySnapshots.itemId, itemId), eq(commoditySnapshots.regionId, regionId)];
   if (cutoff) conditions.push(gte(commoditySnapshots.snapshotTime, cutoff));
 
+  const hourBucket = sql<Date>`date_trunc('hour', ${commoditySnapshots.snapshotTime})`;
+
   return db
     .select({
-      time: commoditySnapshots.snapshotTime,
-      min_price: commoditySnapshots.minPrice,
-      avg_price: commoditySnapshots.avgPrice,
-      median_price: commoditySnapshots.medianPrice,
-      max_price: commoditySnapshots.maxPrice,
-      total_quantity: commoditySnapshots.totalQuantity,
+      time: hourBucket,
+      min_price: sql<number>`(array_agg(${commoditySnapshots.minPrice} ORDER BY ${commoditySnapshots.snapshotTime} DESC))[1]`,
+      avg_price: sql<number>`(array_agg(${commoditySnapshots.avgPrice} ORDER BY ${commoditySnapshots.snapshotTime} DESC))[1]`,
+      median_price: sql<number>`(array_agg(${commoditySnapshots.medianPrice} ORDER BY ${commoditySnapshots.snapshotTime} DESC))[1]`,
+      max_price: sql<number>`(array_agg(${commoditySnapshots.maxPrice} ORDER BY ${commoditySnapshots.snapshotTime} DESC))[1]`,
+      total_quantity: sql<number>`(array_agg(${commoditySnapshots.totalQuantity} ORDER BY ${commoditySnapshots.snapshotTime} DESC))[1]`,
     })
     .from(commoditySnapshots)
     .where(and(...conditions))
-    .orderBy(desc(commoditySnapshots.snapshotTime));
+    .groupBy(hourBucket)
+    .orderBy(desc(hourBucket));
 }
 
 async function getCommodityDaily(itemId: number, regionId: string, range: string) {
@@ -218,18 +223,21 @@ async function getRealmSnapshots(itemId: number, regionId: string, range: string
   if (cutoff) conditions.push(gte(realmSnapshots.snapshotTime, cutoff));
   if (connectedRealmId !== undefined) conditions.push(eq(realmSnapshots.connectedRealmId, connectedRealmId));
 
+  const hourBucket = sql<Date>`date_trunc('hour', ${realmSnapshots.snapshotTime})`;
+
   return db
     .select({
-      time: realmSnapshots.snapshotTime,
-      min_price: realmSnapshots.minBuyout,
-      avg_price: realmSnapshots.avgBuyout,
-      median_price: realmSnapshots.medianBuyout,
-      max_price: realmSnapshots.maxBuyout,
-      total_quantity: realmSnapshots.totalQuantity,
+      time: hourBucket,
+      min_price: sql<number>`(array_agg(${realmSnapshots.minBuyout} ORDER BY ${realmSnapshots.snapshotTime} DESC))[1]`,
+      avg_price: sql<number>`(array_agg(${realmSnapshots.avgBuyout} ORDER BY ${realmSnapshots.snapshotTime} DESC))[1]`,
+      median_price: sql<number>`(array_agg(${realmSnapshots.medianBuyout} ORDER BY ${realmSnapshots.snapshotTime} DESC))[1]`,
+      max_price: sql<number>`(array_agg(${realmSnapshots.maxBuyout} ORDER BY ${realmSnapshots.snapshotTime} DESC))[1]`,
+      total_quantity: sql<number>`(array_agg(${realmSnapshots.totalQuantity} ORDER BY ${realmSnapshots.snapshotTime} DESC))[1]`,
     })
     .from(realmSnapshots)
     .where(and(...conditions))
-    .orderBy(desc(realmSnapshots.snapshotTime));
+    .groupBy(hourBucket)
+    .orderBy(desc(hourBucket));
 }
 
 async function getRealmDaily(itemId: number, regionId: string, range: string, connectedRealmId?: number) {
@@ -255,36 +263,55 @@ async function getRealmDaily(itemId: number, regionId: string, range: string, co
     .orderBy(desc(realmDaily.date));
 }
 
-// ─── GET /:itemId/realm-prices — Per-realm price comparison ─────────
+// ─── GET /:itemId/realm-prices — Per-realm current snapshot ─────────
 
 itemRoutes.get("/:itemId/realm-prices", async (c) => {
   const itemId = Number(c.req.param("itemId"));
   if (isNaN(itemId)) return c.json({ error: "Invalid item ID" }, 400);
 
-  const range = c.req.query("range") || "24h";
   const region = c.req.query("region") || "eu";
 
   try {
-    const cutoff = getTimeRangeCutoff(range);
     const conditions = [eq(realmSnapshots.itemId, itemId), eq(realmSnapshots.regionId, region)];
-    if (cutoff) conditions.push(gte(realmSnapshots.snapshotTime, cutoff));
 
-    const data = await db
+    const latestPrices = await db
       .select({
         realm_id: realmSnapshots.connectedRealmId,
-        realm_name: sql<string>`(
-          SELECT ${realms.name} FROM ${realms}
-          WHERE ${realms.connectedRealmId} = ${realmSnapshots.connectedRealmId}
-            AND ${realms.regionId} = ${realmSnapshots.regionId}
-          LIMIT 1
-        )`,
-        min_buyout: sql<number>`min(${realmSnapshots.minBuyout})`,
-        avg_buyout: sql<number>`avg(${realmSnapshots.avgBuyout})::bigint`,
-        total_quantity: sql<number>`sum(${realmSnapshots.totalQuantity})`,
+        min_buyout: sql<number>`(array_agg(${realmSnapshots.minBuyout} ORDER BY ${realmSnapshots.snapshotTime} DESC))[1]`,
+        avg_buyout: sql<number>`(array_agg(coalesce(${realmSnapshots.avgBuyout}, ${realmSnapshots.minBuyout}) ORDER BY ${realmSnapshots.snapshotTime} DESC))[1]`,
+        total_quantity: sql<number>`(array_agg(${realmSnapshots.totalQuantity} ORDER BY ${realmSnapshots.snapshotTime} DESC))[1]`,
       })
       .from(realmSnapshots)
       .where(and(...conditions))
       .groupBy(realmSnapshots.connectedRealmId, realmSnapshots.regionId);
+
+    if (latestPrices.length === 0) {
+      return c.json([]);
+    }
+
+    const connectedRealmIds = [...new Set(latestPrices.map((row) => row.realm_id))];
+    const realmRows = await db
+      .select({ connectedRealmId: realms.connectedRealmId, name: realms.name })
+      .from(realms)
+      .where(and(eq(realms.regionId, region), inArray(realms.connectedRealmId, connectedRealmIds)))
+      .orderBy(realms.name);
+
+    const realmNameByConnectedRealm = new Map<number, string>();
+    for (const row of realmRows) {
+      if (!realmNameByConnectedRealm.has(row.connectedRealmId)) {
+        realmNameByConnectedRealm.set(row.connectedRealmId, row.name);
+      }
+    }
+
+    const data = latestPrices
+      .map((row) => ({
+        realm_id: row.realm_id,
+        realm_name: realmNameByConnectedRealm.get(row.realm_id) ?? null,
+        min_buyout: row.min_buyout,
+        avg_buyout: row.avg_buyout,
+        total_quantity: row.total_quantity,
+      }))
+      .sort((a, b) => b.min_buyout - a.min_buyout);
 
     return c.json(data);
   } catch (err) {

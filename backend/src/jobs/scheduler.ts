@@ -7,6 +7,12 @@ import { syncCommodities, syncAllRealmAuctions } from "../services/auction-sync"
 import { syncConnectedRealms } from "../services/realm-sync";
 import { importGameData } from "../services/game-data-import";
 
+type SchedulerGlobalState = typeof globalThis & {
+  __wowSchedulerStarted?: boolean;
+};
+
+const schedulerGlobalState = globalThis as SchedulerGlobalState;
+
 const PRICE_SYNC_MIN_INTERVAL_MS = 60 * 60 * 1000;
 
 function toTimestampMs(value: Date | string | null | undefined): number | null {
@@ -42,25 +48,36 @@ async function shouldRunPriceSync(regionId: string): Promise<boolean> {
 }
 
 export function startScheduler(): void {
-  // Hourly auction sync — every hour at minute 5
-  cron.schedule("5 * * * *", async () => {
-    console.log(`[Scheduler] Hourly auction sync started at ${new Date().toISOString()}`);
-    for (const regionId of ACTIVE_REGIONS) {
-      try {
-        const shouldSync = await shouldRunPriceSync(regionId);
-        if (!shouldSync) {
-          console.log(`[Scheduler] Hourly auction sync skipped for ${regionId} (latest price data is under 1 hour old)`);
-          continue;
-        }
+  if (schedulerGlobalState.__wowSchedulerStarted) {
+    console.log(`[Scheduler] Cron jobs already registered in pid ${process.pid}, skipping duplicate start`);
+    return;
+  }
 
-        await syncCommodities(regionId);
-        await syncAllRealmAuctions(regionId);
-      } catch (err) {
-        console.error(`[Scheduler] Hourly auction sync failed for ${regionId}:`, err);
+  schedulerGlobalState.__wowSchedulerStarted = true;
+
+  // Hourly auction sync — every hour at minute 5
+  cron.schedule(
+    "5 * * * *",
+    async () => {
+      console.log(`[Scheduler] Hourly auction sync started at ${new Date().toISOString()}`);
+      for (const regionId of ACTIVE_REGIONS) {
+        try {
+          const shouldSync = await shouldRunPriceSync(regionId);
+          if (!shouldSync) {
+            console.log(`[Scheduler] Hourly auction sync skipped for ${regionId} (latest price data is under 1 hour old)`);
+            continue;
+          }
+
+          await syncCommodities(regionId);
+          await syncAllRealmAuctions(regionId);
+        } catch (err) {
+          console.error(`[Scheduler] Hourly auction sync failed for ${regionId}:`, err);
+        }
       }
-    }
-    console.log(`[Scheduler] Hourly auction sync finished at ${new Date().toISOString()}`);
-  });
+      console.log(`[Scheduler] Hourly auction sync finished at ${new Date().toISOString()}`);
+    },
+    { noOverlap: true, name: "hourly-auction-sync" },
+  );
 
   // Daily realm refresh — 04:00
   cron.schedule("0 4 * * *", async () => {
@@ -75,7 +92,7 @@ export function startScheduler(): void {
     console.log(`[Scheduler] Daily realm refresh finished at ${new Date().toISOString()}`);
   });
 
-  console.log("[Scheduler] Cron jobs registered");
+  console.log(`[Scheduler] Cron jobs registered in pid ${process.pid}`);
 }
 
 export async function runInitialSync(): Promise<void> {
