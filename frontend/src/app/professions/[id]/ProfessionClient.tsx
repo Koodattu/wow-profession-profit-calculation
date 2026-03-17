@@ -46,24 +46,34 @@ export default function ProfessionClient({ profession, recipeCosts }: Props) {
         <Link href="/professions" className="text-sm text-muted hover:text-accent transition-colors">
           &larr; Professions
         </Link>
-        <h1 className="text-2xl font-bold mt-2">{profession.name}</h1>
-        <p className="text-sm text-muted">{recipeCosts.length} recipes</p>
-      </div>
-
-      {/* Tool Tier Selector */}
-      <div className="mb-6 p-4 border border-border rounded-lg bg-card">
-        <label className="flex items-center gap-3 text-sm">
-          <span className="text-muted font-medium">Tool Tier</span>
-          <select value={tier} onChange={(e) => setSelectedTier(e.target.value as ToolTier)} className="px-3 py-1.5 rounded bg-background border border-border text-foreground">
-            {TOOL_TIERS.map((t) => (
-              <option key={t} value={t}>
-                {TOOL_TIER_LABELS[t]}
-              </option>
-            ))}
-          </select>
-          {hasTier && tierStats.multicraftRating > 0 && <span className="text-muted text-xs">MC: {tierStats.multicraftRating}</span>}
-          {hasTier && tierStats.resourcefulnessRating > 0 && <span className="text-muted text-xs">Res: {tierStats.resourcefulnessRating}</span>}
-        </label>
+        <div className="mt-2 flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold">{profession.name}</h1>
+            <p className="text-sm text-muted">{recipeCosts.length} recipes</p>
+          </div>
+          <div className="flex items-center gap-3 text-sm">
+            <span className="text-muted font-medium">Tool Tier</span>
+            {hasTier && tierStats.multicraftRating > 0 && <span className="text-muted text-xs">MC: {tierStats.multicraftRating}</span>}
+            {hasTier && tierStats.resourcefulnessRating > 0 && <span className="text-muted text-xs">Res: {tierStats.resourcefulnessRating}</span>}
+            <div role="radiogroup" aria-label="Tool tier" className="flex gap-1">
+              {TOOL_TIERS.map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  role="radio"
+                  aria-checked={tier === t}
+                  aria-label={TOOL_TIER_LABELS[t]}
+                  onClick={() => setSelectedTier(t)}
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                    tier === t ? "bg-accent text-background" : "bg-card border border-border text-muted hover:text-foreground hover:bg-card-hover"
+                  }`}
+                >
+                  {t === "none" ? "None" : t === "blue" ? "Blue" : "Epic"}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
       {sortedCategories.map(([categoryId, recipes]) => {
