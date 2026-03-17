@@ -144,6 +144,8 @@ export interface FlippingCategory {
   categoryName: string | null;
 }
 
+export type FlippingSortBy = "spread" | "regionAvgPrice";
+
 export interface RealmPrice {
   realm_id: number;
   realm_name: string | null;
@@ -239,8 +241,24 @@ export function fetchSearch(q: string, region = "eu"): Promise<SearchResult> {
   return apiFetch(`/api/search${qs({ q, region })}`);
 }
 
-export function fetchFlippingOpportunities(region = "eu", minSpread?: number, limit?: number): Promise<FlippingOpportunity[]> {
-  return apiFetch(`/api/flipping/opportunities${qs({ region, minSpread: minSpread?.toString(), limit: limit?.toString() })}`);
+export function fetchFlippingOpportunities(
+  region = "eu",
+  minSpread?: number,
+  limit?: number,
+  categoryName?: string,
+  sortBy: FlippingSortBy = "spread",
+  uncategorized?: boolean,
+): Promise<FlippingOpportunity[]> {
+  return apiFetch(
+    `/api/flipping/opportunities${qs({
+      region,
+      minSpread: minSpread?.toString(),
+      limit: limit?.toString(),
+      categoryName,
+      sortBy,
+      uncategorized: uncategorized ? "true" : undefined,
+    })}`,
+  );
 }
 
 export function fetchFlippingCategories(region = "eu"): Promise<FlippingCategory[]> {

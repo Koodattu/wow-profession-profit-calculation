@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { fetchRealms, type ConnectedRealmGroup } from "@/lib/api";
 import { TOOL_TIERS, TOOL_TIER_LABELS, type ToolTier } from "@/lib/tool-tiers";
 import { getSelectedTier, setSelectedTier, subscribeToTier } from "@/lib/profession-stats";
@@ -19,6 +19,7 @@ export default function NavSettings() {
   const [realmGroups, setRealmGroups] = useState<ConnectedRealmGroup[]>([]);
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
+  const realmDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -63,6 +64,21 @@ export default function NavSettings() {
     }
   }, [options, selectedRealmId]);
 
+  useEffect(() => {
+    if (!open) return;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!realmDropdownRef.current?.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+    };
+  }, [open]);
+
   const selectedRealm = options.find((o) => o.connectedRealmId === selectedRealmId) ?? options[0] ?? null;
   const query = search.trim().toLowerCase();
   const filtered = query ? options.filter((o) => o.name.toLowerCase().includes(query)) : options;
@@ -90,7 +106,7 @@ export default function NavSettings() {
         </div>
       </div>
 
-      <div className="w-full max-w-48 relative">
+      <div className="w-full max-w-48 relative" ref={realmDropdownRef}>
         <p className="text-xs text-muted mb-1 text-center">Realm</p>
         <button
           type="button"

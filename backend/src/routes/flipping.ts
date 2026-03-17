@@ -11,18 +11,18 @@ flippingRoutes.get("/categories", async (c) => {
 
   try {
     const rows = await db.execute(sql`
-      SELECT DISTINCT
-        r.category_id,
+      SELECT
         rc.name AS category_name
       FROM recipes r
       JOIN items i ON i.id = r.output_item_id
       LEFT JOIN recipe_categories rc ON rc.id = r.category_id
       WHERE i.is_crafted_output = true
-      ORDER BY (r.category_id IS NULL) ASC, rc.name ASC
+      GROUP BY rc.name
+      ORDER BY (rc.name IS NULL) ASC, rc.name ASC
     `);
 
     const categories = Array.from(rows as Iterable<Record<string, unknown>>).map((row) => ({
-      categoryId: row.category_id ? Number(row.category_id) : null,
+      categoryId: null,
       categoryName: (row.category_name as string | null) ?? null,
     }));
 
@@ -40,6 +40,22 @@ flippingRoutes.get("/opportunities", async (c) => {
   const region = c.req.query("region") || "eu";
   const minSpread = Math.max(0, Number(c.req.query("minSpread")) || 0);
   const limit = Math.min(200, Math.max(1, Number(c.req.query("limit")) || 50));
+  const categoryIdQuery = c.req.query("categoryId");
+  const parsedCategoryId = categoryIdQuery ? Number(categoryIdQuery) : undefined;
+  const categoryId = Number.isFinite(parsedCategoryId) ? parsedCategoryId : undefined;
+  const categoryNameQuery = c.req.query("categoryName")?.trim();
+  const categoryName = categoryNameQuery && categoryNameQuery.length > 0 ? categoryNameQuery : undefined;
+  const uncategorized = c.req.query("uncategorized") === "true";
+  const sortByQuery = c.req.query("sortBy");
+  const sortBy = sortByQuery === "regionAvgPrice" ? "regionAvgPrice" : "spread";
+  const orderByClause = sortBy === "regionAvgPrice" ? sql`ia.region_avg_price DESC` : sql`(ia.max_price - ia.min_price) DESC`;
+  const categoryClause = uncategorized
+    ? sql`AND cat.category_name IS NULL`
+    : categoryName !== undefined
+      ? sql`AND cat.category_name = ${categoryName}`
+      : categoryId !== undefined
+        ? sql`AND cat.category_id = ${categoryId}`
+        : sql``;
 
   try {
     const rows = await db.execute(sql`
@@ -120,7 +136,8 @@ flippingRoutes.get("/opportunities", async (c) => {
       JOIN cheapest c ON c.item_id = ia.item_id
       JOIN expensive e ON e.item_id = ia.item_id
       WHERE i.is_crafted_output = true
-      ORDER BY (ia.max_price - ia.min_price) DESC
+      ${categoryClause}
+      ORDER BY ${orderByClause}
       LIMIT ${limit}
     `);
 

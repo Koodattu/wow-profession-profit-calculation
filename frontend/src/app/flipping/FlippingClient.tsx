@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useTransition } from "react";
+import { useState, useEffect, useRef, useTransition } from "react";
 import WowheadLink from "@/app/WowheadLink";
-import { fetchFlippingCategories, fetchFlippingOpportunities, formatPrice, type FlippingCategory, type FlippingOpportunity } from "@/lib/api";
+import { fetchFlippingCategories, fetchFlippingOpportunities, formatPrice, type FlippingCategory, type FlippingOpportunity, type FlippingSortBy } from "@/lib/api";
 import { getItemQualityClass } from "@/lib/item-quality";
 
 const LIMIT_OPTIONS = [25, 50, 100] as const;
@@ -11,10 +11,14 @@ export default function FlippingClient() {
   const [minSpreadGold, setMinSpreadGold] = useState(0);
   const [limit, setLimit] = useState<number>(25);
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [categorySearch, setCategorySearch] = useState("");
+  const [categoryOpen, setCategoryOpen] = useState(false);
+  const [sortBy, setSortBy] = useState<FlippingSortBy>("spread");
   const [categories, setCategories] = useState<FlippingCategory[]>([]);
   const [data, setData] = useState<FlippingOpportunity[]>([]);
   const [isPending, startTransition] = useTransition();
   const [initialLoad, setInitialLoad] = useState(true);
+  const categoryDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -39,7 +43,8 @@ export default function FlippingClient() {
     startTransition(async () => {
       try {
         const minSpreadCopper = minSpreadGold > 0 ? minSpreadGold * 10000 : undefined;
-        const result = await fetchFlippingOpportunities("eu", minSpreadCopper, limit);
+        const selectedCategoryName = categoryFilter.startsWith("name:") ? categoryFilter.slice(5) : undefined;
+        const result = await fetchFlippingOpportunities("eu", minSpreadCopper, limit, selectedCategoryName, sortBy, categoryFilter === "none");
         if (!cancelled) setData(result);
       } catch {
         if (!cancelled) setData([]);
@@ -51,22 +56,36 @@ export default function FlippingClient() {
     return () => {
       cancelled = true;
     };
-  }, [minSpreadGold, limit]);
+  }, [minSpreadGold, limit, categoryFilter, sortBy]);
+
+  useEffect(() => {
+    if (!categoryOpen) return;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!categoryDropdownRef.current?.contains(event.target as Node)) {
+        setCategoryOpen(false);
+      }
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+    };
+  }, [categoryOpen]);
 
   const loading = initialLoad || isPending;
+  const hasUncategorized = categories.some((category) => category.categoryName === null);
+  const uniqueNamedCategories = Array.from(new Set(categories.map((category) => category.categoryName).filter((categoryName): categoryName is string => categoryName !== null))).sort((a, b) =>
+    a.localeCompare(b),
+  );
   const categoryOptions = [
-    "all",
-    ...Array.from(
-      new Set((categories.length > 0 ? categories.map((category) => category.categoryName ?? "__none__") : data.map((item) => item.categoryName ?? "__none__")) as string[]),
-    ),
+    { value: "all", label: "All categories" },
+    ...(hasUncategorized ? [{ value: "none", label: "No category" }] : []),
+    ...uniqueNamedCategories.map((categoryName) => ({ value: `name:${categoryName}`, label: categoryName })),
   ];
-  const filteredAndSorted = data
-    .filter((opp) => {
-      if (categoryFilter === "all") return true;
-      if (categoryFilter === "__none__") return !opp.categoryName;
-      return opp.categoryName === categoryFilter;
-    })
-    .sort((a, b) => b.spread - a.spread);
+  const categorySearchLower = categorySearch.trim().toLowerCase();
+  const visibleCategoryOptions = categorySearchLower.length === 0 ? categoryOptions : categoryOptions.filter((option) => option.label.toLowerCase().includes(categorySearchLower));
+  const selectedCategoryLabel = categoryOptions.find((option) => option.value === categoryFilter)?.label ?? "All categories";
 
   return (
     <div>
@@ -111,20 +130,68 @@ export default function FlippingClient() {
         </div>
 
         <div className="flex items-center gap-2">
-          <label htmlFor="category" className="text-sm text-muted whitespace-nowrap">
-            Category
+          <label className="text-sm text-muted whitespace-nowrap">Category</label>
+          <div className="w-52 relative" ref={categoryDropdownRef}>
+            <button
+              type="button"
+              className="w-full px-3 py-2 rounded-md bg-card border border-border text-sm text-left text-foreground hover:bg-card-hover transition-colors"
+              onClick={() => {
+                setCategoryOpen((prev) => !prev);
+                setCategorySearch("");
+              }}
+            >
+              {selectedCategoryLabel}
+            </button>
+
+            {categoryOpen && (
+              <div className="absolute left-0 right-0 top-full mt-2 bg-card border border-border rounded-lg shadow-lg z-50">
+                <div className="p-2 border-b border-border/60">
+                  <input
+                    id="categorySearch"
+                    type="text"
+                    autoFocus
+                    value={categorySearch}
+                    onChange={(e) => setCategorySearch(e.target.value)}
+                    placeholder="Search category..."
+                    className="w-full bg-background border border-border rounded-md px-2 py-1 text-xs text-foreground placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-accent"
+                  />
+                </div>
+                <div className="max-h-56 overflow-y-auto py-1">
+                  {visibleCategoryOptions.map((category) => (
+                    <button
+                      key={category.value}
+                      type="button"
+                      onClick={() => {
+                        setCategoryFilter(category.value);
+                        setCategoryOpen(false);
+                        setCategorySearch("");
+                      }}
+                      className={`w-full px-3 py-1.5 text-sm text-left hover:bg-card-hover transition-colors ${
+                        categoryFilter === category.value ? "text-accent" : "text-foreground"
+                      }`}
+                    >
+                      {category.label}
+                    </button>
+                  ))}
+                  {visibleCategoryOptions.length === 0 && <p className="px-3 py-2 text-xs text-muted">No categories found</p>}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <label htmlFor="sortBy" className="text-sm text-muted whitespace-nowrap">
+            Sort by
           </label>
           <select
-            id="category"
-            value={categoryFilter}
-            onChange={(e) => setCategoryFilter(e.target.value)}
+            id="sortBy"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as FlippingSortBy)}
             className="px-3 py-2 rounded-md bg-card border border-border text-foreground focus:outline-none focus:border-accent"
           >
-            {categoryOptions.map((category) => (
-              <option key={category} value={category}>
-                {category === "all" ? "All categories" : category === "__none__" ? "No category" : category}
-              </option>
-            ))}
+            <option value="spread">Spread</option>
+            <option value="regionAvgPrice">Region avg</option>
           </select>
         </div>
       </div>
@@ -132,7 +199,7 @@ export default function FlippingClient() {
       {/* Table */}
       {loading ? (
         <p className="text-muted py-8 text-center">Loading…</p>
-      ) : filteredAndSorted.length === 0 ? (
+      ) : data.length === 0 ? (
         <p className="text-muted py-8 text-center">No flipping opportunities found</p>
       ) : (
         <div className="overflow-x-auto">
@@ -151,7 +218,7 @@ export default function FlippingClient() {
               </tr>
             </thead>
             <tbody>
-              {filteredAndSorted.map((opp) => (
+              {data.map((opp) => (
                 <FlipRow key={`${opp.itemId}-${opp.qualityRank ?? 0}`} opp={opp} />
               ))}
             </tbody>
