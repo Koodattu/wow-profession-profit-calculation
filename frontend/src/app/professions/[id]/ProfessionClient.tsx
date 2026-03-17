@@ -1,25 +1,50 @@
 "use client";
 
-import { useSyncExternalStore, useCallback } from "react";
+import { useSyncExternalStore, useCallback, useEffect, useState, useTransition } from "react";
 import Link from "next/link";
-import { formatPrice, type ProfessionRecipeCost, type ProfessionDetail, type RecipeCategory } from "@/lib/api";
+import { fetchProfessionCostsForRealm, formatPrice, type ProfessionRecipeCost, type ProfessionDetail, type RecipeCategory } from "@/lib/api";
 import WowheadLink from "@/app/WowheadLink";
-import { getSelectedTier, setSelectedTier, subscribeToTier } from "@/lib/profession-stats";
-import { getTierStats, TOOL_TIER_LABELS, TOOL_TIERS, type ToolTier } from "@/lib/tool-tiers";
+import { getSelectedTier, subscribeToTier } from "@/lib/profession-stats";
+import { getTierStats, type ToolTier } from "@/lib/tool-tiers";
 import { calculateAdjustedProfit } from "@/lib/profit-calc";
+import { getSelectedConnectedRealmId, subscribeToConnectedRealm } from "@/lib/realm-state";
 
 interface Props {
   profession: ProfessionDetail;
-  recipeCosts: ProfessionRecipeCost[];
 }
 
-export default function ProfessionClient({ profession, recipeCosts }: Props) {
+export default function ProfessionClient({ profession }: Props) {
   const getSnapshot = useCallback(() => getSelectedTier(), []);
   const getServerSnapshot = useCallback((): ToolTier => "none", []);
   const tier = useSyncExternalStore(subscribeToTier, getSnapshot, getServerSnapshot);
+  const connectedRealmId = useSyncExternalStore(subscribeToConnectedRealm, getSelectedConnectedRealmId, () => null);
+  const [recipeCosts, setRecipeCosts] = useState<ProfessionRecipeCost[]>([]);
+  const [initialLoad, setInitialLoad] = useState(true);
+  const [isPending, startTransition] = useTransition();
 
   const tierStats = getTierStats(profession.name, tier);
   const hasTier = tier !== "none";
+
+  useEffect(() => {
+    if (connectedRealmId === null) return;
+
+    let cancelled = false;
+
+    startTransition(async () => {
+      try {
+        const nextRecipeCosts = await fetchProfessionCostsForRealm(profession.id, "eu", connectedRealmId);
+        if (!cancelled) setRecipeCosts(nextRecipeCosts);
+      } catch {
+        if (!cancelled) setRecipeCosts([]);
+      } finally {
+        if (!cancelled) setInitialLoad(false);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [connectedRealmId, profession.id]);
 
   // Group recipes by category
   const categoryMap = new Map<number, RecipeCategory>();
@@ -46,35 +71,21 @@ export default function ProfessionClient({ profession, recipeCosts }: Props) {
         <Link href="/professions" className="text-sm text-muted hover:text-accent transition-colors">
           &larr; Professions
         </Link>
-        <div className="mt-2 flex items-start justify-between gap-4">
+        <div className="mt-2">
           <div>
             <h1 className="text-2xl font-bold">{profession.name}</h1>
             <p className="text-sm text-muted">{recipeCosts.length} recipes</p>
           </div>
-          <div className="flex items-center gap-3 text-sm">
-            <span className="text-muted font-medium">Tool Tier</span>
-            {hasTier && tierStats.multicraftRating > 0 && <span className="text-muted text-xs">MC: {tierStats.multicraftRating}</span>}
-            {hasTier && tierStats.resourcefulnessRating > 0 && <span className="text-muted text-xs">Res: {tierStats.resourcefulnessRating}</span>}
-            <div role="radiogroup" aria-label="Tool tier" className="flex gap-1">
-              {TOOL_TIERS.map((t) => (
-                <button
-                  key={t}
-                  type="button"
-                  role="radio"
-                  aria-checked={tier === t}
-                  aria-label={TOOL_TIER_LABELS[t]}
-                  onClick={() => setSelectedTier(t)}
-                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                    tier === t ? "bg-accent text-background" : "bg-card border border-border text-muted hover:text-foreground hover:bg-card-hover"
-                  }`}
-                >
-                  {t === "none" ? "None" : t === "blue" ? "Blue" : "Epic"}
-                </button>
-              ))}
+          {hasTier && (
+            <div className="mt-1 flex items-center gap-3 text-sm">
+              {tierStats.multicraftRating > 0 && <span className="text-muted text-xs">MC: {tierStats.multicraftRating}</span>}
+              {tierStats.resourcefulnessRating > 0 && <span className="text-muted text-xs">Res: {tierStats.resourcefulnessRating}</span>}
             </div>
-          </div>
+          )}
         </div>
       </div>
+
+      {(initialLoad || isPending) && <p className="text-sm text-muted mb-4">Loading recipe prices...</p>}
 
       {sortedCategories.map(([categoryId, recipes]) => {
         const category = categoryId ? categoryMap.get(categoryId) : null;

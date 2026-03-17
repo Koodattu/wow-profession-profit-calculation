@@ -119,6 +119,11 @@ itemRoutes.get("/:itemId/prices", async (c) => {
   const range = c.req.query("range") || "24h";
   const region = c.req.query("region") || "eu";
   const type = c.req.query("type") || "auto";
+  const connectedRealmIdQuery = c.req.query("connectedRealmId");
+  const connectedRealmId = connectedRealmIdQuery ? Number(connectedRealmIdQuery) : undefined;
+  if (connectedRealmIdQuery && !Number.isFinite(connectedRealmId)) {
+    return c.json({ error: "Invalid connected realm ID" }, 400);
+  }
 
   try {
     if (type === "commodity" || type === "auto") {
@@ -131,7 +136,7 @@ itemRoutes.get("/:itemId/prices", async (c) => {
     }
 
     // Realm data (or auto fallback)
-    const data = useDailyTable(range) ? await getRealmDaily(itemId, region, range) : await getRealmSnapshots(itemId, region, range);
+    const data = useDailyTable(range) ? await getRealmDaily(itemId, region, range, connectedRealmId) : await getRealmSnapshots(itemId, region, range, connectedRealmId);
 
     return c.json(data);
   } catch (err) {
@@ -179,10 +184,11 @@ async function getCommodityDaily(itemId: number, regionId: string, range: string
     .orderBy(desc(commodityDaily.date));
 }
 
-async function getRealmSnapshots(itemId: number, regionId: string, range: string) {
+async function getRealmSnapshots(itemId: number, regionId: string, range: string, connectedRealmId?: number) {
   const cutoff = getTimeRangeCutoff(range);
   const conditions = [eq(realmSnapshots.itemId, itemId), eq(realmSnapshots.regionId, regionId)];
   if (cutoff) conditions.push(gte(realmSnapshots.snapshotTime, cutoff));
+  if (connectedRealmId !== undefined) conditions.push(eq(realmSnapshots.connectedRealmId, connectedRealmId));
 
   return db
     .select({
@@ -198,11 +204,14 @@ async function getRealmSnapshots(itemId: number, regionId: string, range: string
     .orderBy(desc(realmSnapshots.snapshotTime));
 }
 
-async function getRealmDaily(itemId: number, regionId: string, range: string) {
+async function getRealmDaily(itemId: number, regionId: string, range: string, connectedRealmId?: number) {
   const cutoff = getTimeRangeCutoff(range);
   const conditions = [eq(realmDaily.itemId, itemId), eq(realmDaily.regionId, regionId)];
   if (cutoff) {
     conditions.push(gte(realmDaily.date, cutoff.toISOString().split("T")[0]!));
+  }
+  if (connectedRealmId !== undefined) {
+    conditions.push(eq(realmDaily.connectedRealmId, connectedRealmId));
   }
 
   return db

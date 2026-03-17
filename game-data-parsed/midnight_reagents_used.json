@@ -16,586 +16,6 @@
     "inferredReagentRankByNameID": null
   },
   {
-    "itemID": 240164,
-    "itemName": "Add Embellishment",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 240164,
-    "reagentName": "Add Embellishment",
-    "itemQuality": 3,
-    "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
-  },
-  {
-    "itemID": 240165,
-    "itemName": "Add Embellishment",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 240165,
-    "reagentName": "Add Embellishment",
-    "itemQuality": 3,
-    "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
-  },
-  {
-    "itemID": 240166,
-    "itemName": "Add Embellishment",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 240166,
-    "reagentName": "Add Embellishment",
-    "itemQuality": 3,
-    "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 3
-  },
-  {
-    "itemID": 240167,
-    "itemName": "Add Embellishment",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 240167,
-    "reagentName": "Add Embellishment",
-    "itemQuality": 3,
-    "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 4
-  },
-  {
-    "itemID": 244603,
-    "itemName": "Add Embellishment",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Inscription",
-      "Midnight Jewelcrafting",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 244603,
-    "reagentName": "Add Embellishment",
-    "itemQuality": 3,
-    "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 5
-  },
-  {
-    "itemID": 244604,
-    "itemName": "Add Embellishment",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Inscription",
-      "Midnight Jewelcrafting",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 244604,
-    "reagentName": "Add Embellishment",
-    "itemQuality": 3,
-    "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 6
-  },
-  {
-    "itemID": 244607,
-    "itemName": "Add Embellishment",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Inscription",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 244607,
-    "reagentName": "Add Embellishment",
-    "itemQuality": 3,
-    "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 7
-  },
-  {
-    "itemID": 244608,
-    "itemName": "Add Embellishment",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Inscription",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 244608,
-    "reagentName": "Add Embellishment",
-    "itemQuality": 3,
-    "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 8
-  },
-  {
-    "itemID": 244674,
-    "itemName": "Add Embellishment",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Inscription",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 244674,
-    "reagentName": "Add Embellishment",
-    "itemQuality": 3,
-    "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 9
-  },
-  {
-    "itemID": 244675,
-    "itemName": "Add Embellishment",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Inscription",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 244675,
-    "reagentName": "Add Embellishment",
-    "itemQuality": 3,
-    "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 10
-  },
-  {
-    "itemID": 245871,
-    "itemName": "Add Embellishment",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Engineering",
-      "Midnight Inscription"
-    ],
-    "reagentItemID": 245871,
-    "reagentName": "Add Embellishment",
-    "itemQuality": 3,
-    "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 11
-  },
-  {
-    "itemID": 245872,
-    "itemName": "Add Embellishment",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Engineering",
-      "Midnight Inscription"
-    ],
-    "reagentItemID": 245872,
-    "reagentName": "Add Embellishment",
-    "itemQuality": 3,
-    "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 12
-  },
-  {
-    "itemID": 245873,
-    "itemName": "Add Embellishment",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Engineering",
-      "Midnight Inscription"
-    ],
-    "reagentItemID": 245873,
-    "reagentName": "Add Embellishment",
-    "itemQuality": 3,
-    "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 13
-  },
-  {
-    "itemID": 245874,
-    "itemName": "Add Embellishment",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Engineering",
-      "Midnight Inscription"
-    ],
-    "reagentItemID": 245874,
-    "reagentName": "Add Embellishment",
-    "itemQuality": 3,
-    "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 14
-  },
-  {
-    "itemID": 245875,
-    "itemName": "Add Embellishment",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Engineering",
-      "Midnight Inscription"
-    ],
-    "reagentItemID": 245875,
-    "reagentName": "Add Embellishment",
-    "itemQuality": 3,
-    "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 15
-  },
-  {
-    "itemID": 245876,
-    "itemName": "Add Embellishment",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Engineering",
-      "Midnight Inscription"
-    ],
-    "reagentItemID": 245876,
-    "reagentName": "Add Embellishment",
-    "itemQuality": 3,
-    "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 16
-  },
-  {
-    "itemID": 245877,
-    "itemName": "Add Embellishment",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Engineering",
-      "Midnight Inscription"
-    ],
-    "reagentItemID": 245877,
-    "reagentName": "Add Embellishment",
-    "itemQuality": 3,
-    "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 17
-  },
-  {
-    "itemID": 245878,
-    "itemName": "Add Embellishment",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Engineering",
-      "Midnight Inscription"
-    ],
-    "reagentItemID": 245878,
-    "reagentName": "Add Embellishment",
-    "itemQuality": 3,
-    "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 18
-  },
-  {
-    "itemID": 248130,
-    "itemName": "Add Embellishment",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Engineering",
-      "Midnight Inscription",
-      "Midnight Jewelcrafting",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 248130,
-    "reagentName": "Add Embellishment",
-    "itemQuality": null,
-    "qualityRank": 19,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 19
-  },
-  {
-    "itemID": 248132,
-    "itemName": "Add Embellishment",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Engineering"
-    ],
-    "reagentItemID": 248132,
-    "reagentName": "Add Embellishment",
-    "itemQuality": 3,
-    "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 20
-  },
-  {
-    "itemID": 248133,
-    "itemName": "Add Embellishment",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Engineering"
-    ],
-    "reagentItemID": 248133,
-    "reagentName": "Add Embellishment",
-    "itemQuality": 3,
-    "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 21
-  },
-  {
-    "itemID": 248135,
-    "itemName": "Add Embellishment",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Engineering"
-    ],
-    "reagentItemID": 248135,
-    "reagentName": "Add Embellishment",
-    "itemQuality": 3,
-    "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 22
-  },
-  {
-    "itemID": 248136,
-    "itemName": "Add Embellishment",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Engineering"
-    ],
-    "reagentItemID": 248136,
-    "reagentName": "Add Embellishment",
-    "itemQuality": null,
-    "qualityRank": 23,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 23
-  },
-  {
-    "itemID": 248592,
-    "itemName": "Add Embellishment",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Engineering"
-    ],
-    "reagentItemID": 248592,
-    "reagentName": "Add Embellishment",
-    "itemQuality": 3,
-    "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 24
-  },
-  {
-    "itemID": 251489,
-    "itemName": "Add Embellishment",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Jewelcrafting",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 251489,
-    "reagentName": "Add Embellishment",
-    "itemQuality": 3,
-    "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 25
-  },
-  {
-    "itemID": 251490,
-    "itemName": "Add Embellishment",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Jewelcrafting",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 251490,
-    "reagentName": "Add Embellishment",
-    "itemQuality": 3,
-    "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 26
-  },
-  {
-    "itemID": 255843,
-    "itemName": "Add Embellishment",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Engineering"
-    ],
-    "reagentItemID": 255843,
-    "reagentName": "Add Embellishment",
-    "itemQuality": 3,
-    "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 27
-  },
-  {
-    "itemID": 255844,
-    "itemName": "Add Embellishment",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Engineering"
-    ],
-    "reagentItemID": 255844,
-    "reagentName": "Add Embellishment",
-    "itemQuality": 3,
-    "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 28
-  },
-  {
-    "itemID": 257735,
-    "itemName": "Add Embellishment",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Engineering"
-    ],
-    "reagentItemID": 257735,
-    "reagentName": "Add Embellishment",
-    "itemQuality": 3,
-    "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 29
-  },
-  {
-    "itemID": 257741,
-    "itemName": "Add Embellishment",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Engineering"
-    ],
-    "reagentItemID": 257741,
-    "reagentName": "Add Embellishment",
-    "itemQuality": 3,
-    "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 30
-  },
-  {
     "itemID": 239656,
     "itemName": "Adherent's Silken Shroud",
     "entryTypes": [
@@ -623,10 +43,10 @@
     ],
     "reagentItemID": 243578,
     "reagentName": "Aetherlume",
-    "itemQuality": null,
+    "itemQuality": 3,
     "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 243579,
@@ -640,10 +60,10 @@
     ],
     "reagentItemID": 243579,
     "reagentName": "Aetherlume",
-    "itemQuality": null,
+    "itemQuality": 3,
     "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 244748,
@@ -944,10 +364,10 @@
     ],
     "reagentItemID": 242554,
     "reagentName": "Amani Lapis",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 242722,
@@ -960,10 +380,10 @@
     ],
     "reagentItemID": 242722,
     "reagentName": "Amani Lapis",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 241131,
@@ -1078,6 +498,29 @@
     "inferredReagentRankByNameID": null
   },
   {
+    "itemID": 246447,
+    "itemName": "Apprentice's Scribbles",
+    "entryTypes": [
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Alchemy",
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Engineering",
+      "Midnight Inscription",
+      "Midnight Jewelcrafting",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 246447,
+    "reagentName": "Apprentice's Scribbles",
+    "itemQuality": 1,
+    "qualityRank": null,
+    "qualityRankSource": null,
+    "inferredReagentRankByNameID": null
+  },
+  {
     "itemID": 238371,
     "itemName": "Arcane Wyrmfish",
     "entryTypes": [
@@ -1120,10 +563,10 @@
     ],
     "reagentItemID": 237017,
     "reagentName": "Arcanoweave",
-    "itemQuality": null,
-    "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "itemQuality": 3,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 237018,
@@ -1136,10 +579,10 @@
     ],
     "reagentItemID": 237018,
     "reagentName": "Arcanoweave",
-    "itemQuality": null,
-    "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "itemQuality": 3,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 239198,
@@ -1156,8 +599,8 @@
     "reagentName": "Arcanoweave Bolt",
     "itemQuality": 4,
     "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 239200,
@@ -1174,8 +617,8 @@
     "reagentName": "Arcanoweave Bolt",
     "itemQuality": 4,
     "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 239660,
@@ -1223,6 +666,44 @@
     "itemQuality": null,
     "qualityRank": null,
     "qualityRankSource": null,
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 240166,
+    "itemName": "Arcanoweave Lining",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 240166,
+    "reagentName": "Arcanoweave Lining",
+    "itemQuality": 3,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 240167,
+    "itemName": "Arcanoweave Lining",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 240167,
+    "reagentName": "Arcanoweave Lining",
+    "itemQuality": 3,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
     "inferredReagentRankByNameID": null
   },
   {
@@ -1301,10 +782,10 @@
     ],
     "reagentItemID": 236776,
     "reagentName": "Argentleaf",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 236777,
@@ -1318,10 +799,10 @@
     ],
     "reagentItemID": 236777,
     "reagentName": "Argentleaf",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 245803,
@@ -1334,10 +815,10 @@
     ],
     "reagentItemID": 245803,
     "reagentName": "Argentleaf Pigment",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 245804,
@@ -1350,10 +831,10 @@
     ],
     "reagentItemID": 245804,
     "reagentName": "Argentleaf Pigment",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 242298,
@@ -1372,77 +853,8 @@
     "inferredReagentRankByNameID": null
   },
   {
-    "itemID": 246447,
-    "itemName": "Artisan's Authenticity",
-    "entryTypes": [
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Alchemy",
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Engineering",
-      "Midnight Inscription",
-      "Midnight Jewelcrafting",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 246447,
-    "reagentName": "Artisan's Authenticity",
-    "itemQuality": null,
-    "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
-  },
-  {
-    "itemID": 246448,
-    "itemName": "Artisan's Authenticity",
-    "entryTypes": [
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Alchemy",
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Engineering",
-      "Midnight Inscription",
-      "Midnight Jewelcrafting",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 246448,
-    "reagentName": "Artisan's Authenticity",
-    "itemQuality": null,
-    "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
-  },
-  {
-    "itemID": 246449,
-    "itemName": "Artisan's Authenticity",
-    "entryTypes": [
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Alchemy",
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Engineering",
-      "Midnight Inscription",
-      "Midnight Jewelcrafting",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 246449,
-    "reagentName": "Artisan's Authenticity",
-    "itemQuality": null,
-    "qualityRank": 3,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 3
-  },
-  {
     "itemID": 246450,
-    "itemName": "Artisan's Authenticity",
+    "itemName": "Artisan's Consortium Gold Star",
     "entryTypes": [
       "reagent"
     ],
@@ -1457,15 +869,15 @@
       "Midnight Tailoring"
     ],
     "reagentItemID": 246450,
-    "reagentName": "Artisan's Authenticity",
-    "itemQuality": null,
-    "qualityRank": 4,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 4
+    "reagentName": "Artisan's Consortium Gold Star",
+    "itemQuality": 4,
+    "qualityRank": null,
+    "qualityRankSource": null,
+    "inferredReagentRankByNameID": null
   },
   {
-    "itemID": 247719,
-    "itemName": "Artisan's Authenticity",
+    "itemID": 246448,
+    "itemName": "Artisan's Ledger",
     "entryTypes": [
       "reagent"
     ],
@@ -1479,127 +891,12 @@
       "Midnight Leatherworking",
       "Midnight Tailoring"
     ],
-    "reagentItemID": 247719,
-    "reagentName": "Artisan's Authenticity",
-    "itemQuality": null,
-    "qualityRank": 5,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 5
-  },
-  {
-    "itemID": 247724,
-    "itemName": "Artisan's Authenticity",
-    "entryTypes": [
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Alchemy",
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Engineering",
-      "Midnight Inscription",
-      "Midnight Jewelcrafting",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 247724,
-    "reagentName": "Artisan's Authenticity",
-    "itemQuality": null,
-    "qualityRank": 6,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 6
-  },
-  {
-    "itemID": 247725,
-    "itemName": "Artisan's Authenticity",
-    "entryTypes": [
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Alchemy",
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Engineering",
-      "Midnight Inscription",
-      "Midnight Jewelcrafting",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 247725,
-    "reagentName": "Artisan's Authenticity",
-    "itemQuality": null,
-    "qualityRank": 7,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 7
-  },
-  {
-    "itemID": 247726,
-    "itemName": "Artisan's Authenticity",
-    "entryTypes": [
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Alchemy",
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Engineering",
-      "Midnight Inscription",
-      "Midnight Jewelcrafting",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 247726,
-    "reagentName": "Artisan's Authenticity",
-    "itemQuality": null,
-    "qualityRank": 8,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 8
-  },
-  {
-    "itemID": 247788,
-    "itemName": "Artisan's Authenticity",
-    "entryTypes": [
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Alchemy",
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Engineering",
-      "Midnight Inscription",
-      "Midnight Jewelcrafting",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 247788,
-    "reagentName": "Artisan's Authenticity",
-    "itemQuality": null,
-    "qualityRank": 9,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 9
-  },
-  {
-    "itemID": 260630,
-    "itemName": "Artisan's Authenticity",
-    "entryTypes": [
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Alchemy",
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Engineering",
-      "Midnight Inscription",
-      "Midnight Jewelcrafting",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 260630,
-    "reagentName": "Artisan's Authenticity",
-    "itemQuality": null,
-    "qualityRank": 10,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 10
+    "reagentItemID": 246448,
+    "reagentName": "Artisan's Ledger",
+    "itemQuality": 2,
+    "qualityRank": null,
+    "qualityRankSource": null,
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 246527,
@@ -1647,10 +944,10 @@
     ],
     "reagentItemID": 236774,
     "reagentName": "Azeroot",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 236775,
@@ -1666,10 +963,10 @@
     ],
     "reagentItemID": 236775,
     "reagentName": "Azeroot",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 242301,
@@ -1682,6 +979,90 @@
     ],
     "reagentItemID": 242301,
     "reagentName": "Azeroot Tea",
+    "itemQuality": null,
+    "qualityRank": null,
+    "qualityRankSource": null,
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 257735,
+    "itemName": "B0P, Curator of Booms",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Engineering"
+    ],
+    "reagentItemID": 257735,
+    "reagentName": "B0P, Curator of Booms",
+    "itemQuality": 3,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 257741,
+    "itemName": "B0P, Curator of Booms",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Engineering"
+    ],
+    "reagentItemID": 257741,
+    "reagentName": "B0P, Curator of Booms",
+    "itemQuality": 3,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 248135,
+    "itemName": "B1P, Scorcher of Souls",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Engineering"
+    ],
+    "reagentItemID": 248135,
+    "reagentName": "B1P, Scorcher of Souls",
+    "itemQuality": 3,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 248592,
+    "itemName": "B1P, Scorcher of Souls",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Engineering"
+    ],
+    "reagentItemID": 248592,
+    "reagentName": "B1P, Scorcher of Souls",
+    "itemQuality": 3,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 265803,
+    "itemName": "Bazaar Bites",
+    "entryTypes": [
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Cooking"
+    ],
+    "reagentItemID": 265803,
+    "reagentName": "Bazaar Bites",
     "itemQuality": null,
     "qualityRank": null,
     "qualityRankSource": null,
@@ -1701,6 +1082,50 @@
     "itemQuality": null,
     "qualityRank": null,
     "qualityRankSource": null,
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 244603,
+    "itemName": "Blessed Pango Charm",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Inscription",
+      "Midnight Jewelcrafting",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 244603,
+    "reagentName": "Blessed Pango Charm",
+    "itemQuality": 3,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 244604,
+    "itemName": "Blessed Pango Charm",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Inscription",
+      "Midnight Jewelcrafting",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 244604,
+    "reagentName": "Blessed Pango Charm",
+    "itemQuality": 3,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
     "inferredReagentRankByNameID": null
   },
   {
@@ -2051,7 +1476,7 @@
     ],
     "reagentItemID": 238369,
     "reagentName": "Bloomtail Minnow",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -2163,10 +1588,10 @@
     ],
     "reagentItemID": 236963,
     "reagentName": "Bright Linen",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 236965,
@@ -2179,10 +1604,10 @@
     ],
     "reagentItemID": 236965,
     "reagentName": "Bright Linen",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 239641,
@@ -2246,8 +1671,8 @@
     "reagentName": "Bright Linen Bolt",
     "itemQuality": 2,
     "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 239701,
@@ -2263,8 +1688,8 @@
     "reagentName": "Bright Linen Bolt",
     "itemQuality": 2,
     "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 239643,
@@ -2406,10 +1831,10 @@
     ],
     "reagentItemID": 237364,
     "reagentName": "Brilliant Silver Ore",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 237365,
@@ -2423,10 +1848,10 @@
     ],
     "reagentItemID": 237365,
     "reagentName": "Brilliant Silver Ore",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 242280,
@@ -2457,7 +1882,7 @@
     ],
     "reagentItemID": 238523,
     "reagentName": "Carving Canine",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -2572,8 +1997,8 @@
     "reagentName": "Codified Azeroot",
     "itemQuality": 3,
     "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 245765,
@@ -2589,8 +2014,8 @@
     "reagentName": "Codified Azeroot",
     "itemQuality": 3,
     "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 241143,
@@ -2609,69 +2034,6 @@
     "inferredReagentRankByNameID": null
   },
   {
-    "itemID": 256559,
-    "itemName": "Competitor's Heraldry",
-    "entryTypes": [
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Engineering",
-      "Midnight Inscription",
-      "Midnight Jewelcrafting",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 256559,
-    "reagentName": "Competitor's Heraldry",
-    "itemQuality": null,
-    "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
-  },
-  {
-    "itemID": 256607,
-    "itemName": "Competitor's Heraldry",
-    "entryTypes": [
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Engineering",
-      "Midnight Inscription",
-      "Midnight Jewelcrafting",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 256607,
-    "reagentName": "Competitor's Heraldry",
-    "itemQuality": null,
-    "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
-  },
-  {
-    "itemID": 256608,
-    "itemName": "Competitor's Heraldry",
-    "entryTypes": [
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Engineering",
-      "Midnight Inscription",
-      "Midnight Jewelcrafting",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 256608,
-    "reagentName": "Competitor's Heraldry",
-    "itemQuality": null,
-    "qualityRank": 3,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 3
-  },
-  {
     "itemID": 241280,
     "itemName": "Composite Flora",
     "entryTypes": [
@@ -2686,8 +2048,8 @@
     "reagentName": "Composite Flora",
     "itemQuality": 2,
     "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 241281,
@@ -2704,8 +2066,8 @@
     "reagentName": "Composite Flora",
     "itemQuality": 2,
     "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 244703,
@@ -2721,8 +2083,8 @@
     "reagentName": "Consistent Cogwheel",
     "itemQuality": 2,
     "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 244704,
@@ -2738,8 +2100,8 @@
     "reagentName": "Consistent Cogwheel",
     "itemQuality": 2,
     "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 245797,
@@ -3058,9 +2420,9 @@
     "reagentItemID": 242786,
     "reagentName": "Crystalline Glass",
     "itemQuality": null,
-    "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 242787,
@@ -3074,10 +2436,10 @@
     ],
     "reagentItemID": 242787,
     "reagentName": "Crystalline Glass",
-    "itemQuality": null,
-    "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "itemQuality": 1,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 248138,
@@ -3096,538 +2458,6 @@
     "inferredReagentRankByNameID": null
   },
   {
-    "itemID": 245814,
-    "itemName": "Customize Crafting Stat",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Engineering",
-      "Midnight Inscription"
-    ],
-    "reagentItemID": 245814,
-    "reagentName": "Customize Crafting Stat",
-    "itemQuality": 2,
-    "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
-  },
-  {
-    "itemID": 245815,
-    "itemName": "Customize Crafting Stat",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Engineering",
-      "Midnight Inscription"
-    ],
-    "reagentItemID": 245815,
-    "reagentName": "Customize Crafting Stat",
-    "itemQuality": 2,
-    "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
-  },
-  {
-    "itemID": 245816,
-    "itemName": "Customize Crafting Stat",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Engineering",
-      "Midnight Inscription"
-    ],
-    "reagentItemID": 245816,
-    "reagentName": "Customize Crafting Stat",
-    "itemQuality": 2,
-    "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 3
-  },
-  {
-    "itemID": 245817,
-    "itemName": "Customize Crafting Stat",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Engineering",
-      "Midnight Inscription"
-    ],
-    "reagentItemID": 245817,
-    "reagentName": "Customize Crafting Stat",
-    "itemQuality": 2,
-    "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 4
-  },
-  {
-    "itemID": 245818,
-    "itemName": "Customize Crafting Stat",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Engineering",
-      "Midnight Inscription"
-    ],
-    "reagentItemID": 245818,
-    "reagentName": "Customize Crafting Stat",
-    "itemQuality": 2,
-    "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 5
-  },
-  {
-    "itemID": 245819,
-    "itemName": "Customize Crafting Stat",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Engineering",
-      "Midnight Inscription"
-    ],
-    "reagentItemID": 245819,
-    "reagentName": "Customize Crafting Stat",
-    "itemQuality": 2,
-    "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 6
-  },
-  {
-    "itemID": 245820,
-    "itemName": "Customize Crafting Stat",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Engineering",
-      "Midnight Inscription"
-    ],
-    "reagentItemID": 245820,
-    "reagentName": "Customize Crafting Stat",
-    "itemQuality": 2,
-    "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 7
-  },
-  {
-    "itemID": 245821,
-    "itemName": "Customize Crafting Stat",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Engineering",
-      "Midnight Inscription"
-    ],
-    "reagentItemID": 245821,
-    "reagentName": "Customize Crafting Stat",
-    "itemQuality": 2,
-    "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 8
-  },
-  {
-    "itemID": 245822,
-    "itemName": "Customize Gathering Stat",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Inscription"
-    ],
-    "reagentItemID": 245822,
-    "reagentName": "Customize Gathering Stat",
-    "itemQuality": 2,
-    "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
-  },
-  {
-    "itemID": 245823,
-    "itemName": "Customize Gathering Stat",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Inscription"
-    ],
-    "reagentItemID": 245823,
-    "reagentName": "Customize Gathering Stat",
-    "itemQuality": 2,
-    "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
-  },
-  {
-    "itemID": 245824,
-    "itemName": "Customize Gathering Stat",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Inscription"
-    ],
-    "reagentItemID": 245824,
-    "reagentName": "Customize Gathering Stat",
-    "itemQuality": 2,
-    "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 3
-  },
-  {
-    "itemID": 245825,
-    "itemName": "Customize Gathering Stat",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Inscription"
-    ],
-    "reagentItemID": 245825,
-    "reagentName": "Customize Gathering Stat",
-    "itemQuality": 2,
-    "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 4
-  },
-  {
-    "itemID": 245826,
-    "itemName": "Customize Gathering Stat",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Inscription"
-    ],
-    "reagentItemID": 245826,
-    "reagentName": "Customize Gathering Stat",
-    "itemQuality": 2,
-    "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 5
-  },
-  {
-    "itemID": 245827,
-    "itemName": "Customize Gathering Stat",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Inscription"
-    ],
-    "reagentItemID": 245827,
-    "reagentName": "Customize Gathering Stat",
-    "itemQuality": 2,
-    "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 6
-  },
-  {
-    "itemID": 245781,
-    "itemName": "Customize Secondary Stats",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Inscription",
-      "Midnight Jewelcrafting",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 245781,
-    "reagentName": "Customize Secondary Stats",
-    "itemQuality": 2,
-    "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
-  },
-  {
-    "itemID": 245782,
-    "itemName": "Customize Secondary Stats",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Inscription",
-      "Midnight Jewelcrafting",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 245782,
-    "reagentName": "Customize Secondary Stats",
-    "itemQuality": 2,
-    "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
-  },
-  {
-    "itemID": 245783,
-    "itemName": "Customize Secondary Stats",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Inscription",
-      "Midnight Jewelcrafting",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 245783,
-    "reagentName": "Customize Secondary Stats",
-    "itemQuality": 2,
-    "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 3
-  },
-  {
-    "itemID": 245784,
-    "itemName": "Customize Secondary Stats",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Inscription",
-      "Midnight Jewelcrafting",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 245784,
-    "reagentName": "Customize Secondary Stats",
-    "itemQuality": 2,
-    "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 4
-  },
-  {
-    "itemID": 245785,
-    "itemName": "Customize Secondary Stats",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Inscription",
-      "Midnight Jewelcrafting",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 245785,
-    "reagentName": "Customize Secondary Stats",
-    "itemQuality": 2,
-    "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 5
-  },
-  {
-    "itemID": 245786,
-    "itemName": "Customize Secondary Stats",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Inscription",
-      "Midnight Jewelcrafting",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 245786,
-    "reagentName": "Customize Secondary Stats",
-    "itemQuality": 2,
-    "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 6
-  },
-  {
-    "itemID": 245787,
-    "itemName": "Customize Secondary Stats",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Inscription",
-      "Midnight Jewelcrafting",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 245787,
-    "reagentName": "Customize Secondary Stats",
-    "itemQuality": 2,
-    "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 7
-  },
-  {
-    "itemID": 245788,
-    "itemName": "Customize Secondary Stats",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Inscription",
-      "Midnight Jewelcrafting",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 245788,
-    "reagentName": "Customize Secondary Stats",
-    "itemQuality": 2,
-    "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 8
-  },
-  {
-    "itemID": 245789,
-    "itemName": "Customize Secondary Stats",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Inscription",
-      "Midnight Jewelcrafting",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 245789,
-    "reagentName": "Customize Secondary Stats",
-    "itemQuality": 2,
-    "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 9
-  },
-  {
-    "itemID": 245790,
-    "itemName": "Customize Secondary Stats",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Inscription",
-      "Midnight Jewelcrafting",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 245790,
-    "reagentName": "Customize Secondary Stats",
-    "itemQuality": 2,
-    "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 10
-  },
-  {
-    "itemID": 245791,
-    "itemName": "Customize Secondary Stats",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Inscription",
-      "Midnight Jewelcrafting",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 245791,
-    "reagentName": "Customize Secondary Stats",
-    "itemQuality": 2,
-    "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 11
-  },
-  {
-    "itemID": 245792,
-    "itemName": "Customize Secondary Stats",
-    "entryTypes": [
-      "craftedOutput",
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Blacksmithing",
-      "Midnight Enchanting",
-      "Midnight Inscription",
-      "Midnight Jewelcrafting",
-      "Midnight Leatherworking",
-      "Midnight Tailoring"
-    ],
-    "reagentItemID": 245792,
-    "reagentName": "Customize Secondary Stats",
-    "itemQuality": 2,
-    "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 12
-  },
-  {
     "itemID": 245855,
     "itemName": "Darkmoon Deck: Blood",
     "entryTypes": [
@@ -3638,7 +2468,7 @@
     ],
     "reagentItemID": 245855,
     "reagentName": "Darkmoon Deck: Blood",
-    "itemQuality": null,
+    "itemQuality": 4,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -3654,7 +2484,7 @@
     ],
     "reagentItemID": 245829,
     "reagentName": "Darkmoon Deck: Hunt",
-    "itemQuality": null,
+    "itemQuality": 4,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -3670,7 +2500,7 @@
     ],
     "reagentItemID": 245846,
     "reagentName": "Darkmoon Deck: Rot",
-    "itemQuality": null,
+    "itemQuality": 4,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -3686,7 +2516,7 @@
     ],
     "reagentItemID": 245750,
     "reagentName": "Darkmoon Deck: Void",
-    "itemQuality": null,
+    "itemQuality": 4,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -3756,6 +2586,166 @@
     "inferredReagentRankByNameID": null
   },
   {
+    "itemID": 245871,
+    "itemName": "Darkmoon Sigil: Blood",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Engineering",
+      "Midnight Inscription"
+    ],
+    "reagentItemID": 245871,
+    "reagentName": "Darkmoon Sigil: Blood",
+    "itemQuality": 3,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245872,
+    "itemName": "Darkmoon Sigil: Blood",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Engineering",
+      "Midnight Inscription"
+    ],
+    "reagentItemID": 245872,
+    "reagentName": "Darkmoon Sigil: Blood",
+    "itemQuality": 3,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245875,
+    "itemName": "Darkmoon Sigil: Hunt",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Engineering",
+      "Midnight Inscription"
+    ],
+    "reagentItemID": 245875,
+    "reagentName": "Darkmoon Sigil: Hunt",
+    "itemQuality": 3,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245876,
+    "itemName": "Darkmoon Sigil: Hunt",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Engineering",
+      "Midnight Inscription"
+    ],
+    "reagentItemID": 245876,
+    "reagentName": "Darkmoon Sigil: Hunt",
+    "itemQuality": 3,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245877,
+    "itemName": "Darkmoon Sigil: Rot",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Engineering",
+      "Midnight Inscription"
+    ],
+    "reagentItemID": 245877,
+    "reagentName": "Darkmoon Sigil: Rot",
+    "itemQuality": 3,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245878,
+    "itemName": "Darkmoon Sigil: Rot",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Engineering",
+      "Midnight Inscription"
+    ],
+    "reagentItemID": 245878,
+    "reagentName": "Darkmoon Sigil: Rot",
+    "itemQuality": 3,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245873,
+    "itemName": "Darkmoon Sigil: Void",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Engineering",
+      "Midnight Inscription"
+    ],
+    "reagentItemID": 245873,
+    "reagentName": "Darkmoon Sigil: Void",
+    "itemQuality": 3,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245874,
+    "itemName": "Darkmoon Sigil: Void",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Engineering",
+      "Midnight Inscription"
+    ],
+    "reagentItemID": 245874,
+    "reagentName": "Darkmoon Sigil: Void",
+    "itemQuality": 3,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
     "itemID": 243605,
     "itemName": "Dawn Crystal",
     "entryTypes": [
@@ -3769,8 +2759,8 @@
     "reagentName": "Dawn Crystal",
     "itemQuality": null,
     "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 243606,
@@ -3786,8 +2776,8 @@
     "reagentName": "Dawn Crystal",
     "itemQuality": null,
     "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 267401,
@@ -3898,7 +2888,7 @@
     ],
     "reagentItemID": 237366,
     "reagentName": "Dazzling Thorium",
-    "itemQuality": null,
+    "itemQuality": 3,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -4048,6 +3038,48 @@
     "inferredReagentRankByNameID": null
   },
   {
+    "itemID": 244674,
+    "itemName": "Devouring Banding",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Inscription",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 244674,
+    "reagentName": "Devouring Banding",
+    "itemQuality": 3,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 244675,
+    "itemName": "Devouring Banding",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Inscription",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 244675,
+    "reagentName": "Devouring Banding",
+    "itemQuality": 3,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
     "itemID": 241292,
     "itemName": "Draught of Rampant Abandon",
     "entryTypes": [
@@ -4094,10 +3126,10 @@
     ],
     "reagentItemID": 242788,
     "reagentName": "Duskshrouded Stone",
-    "itemQuality": null,
+    "itemQuality": 1,
     "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 242789,
@@ -4114,10 +3146,26 @@
     ],
     "reagentItemID": 242789,
     "reagentName": "Duskshrouded Stone",
-    "itemQuality": null,
+    "itemQuality": 1,
     "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 265800,
+    "itemName": "Earthy Garnish",
+    "entryTypes": [
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Cooking"
+    ],
+    "reagentItemID": 265800,
+    "reagentName": "Earthy Garnish",
+    "itemQuality": null,
+    "qualityRank": null,
+    "qualityRankSource": null,
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 239635,
@@ -4242,7 +3290,7 @@
     ],
     "reagentItemID": 251691,
     "reagentName": "Embroidery Floss",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -5689,7 +4737,7 @@
     ],
     "reagentItemID": 38682,
     "reagentName": "Enchanting Vellum",
-    "itemQuality": null,
+    "itemQuality": 1,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -5852,6 +4900,38 @@
     "itemQuality": null,
     "qualityRank": null,
     "qualityRankSource": null,
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 243581,
+    "itemName": "Evercore",
+    "entryTypes": [
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Engineering"
+    ],
+    "reagentItemID": 243581,
+    "reagentName": "Evercore",
+    "itemQuality": 2,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 243582,
+    "itemName": "Evercore",
+    "entryTypes": [
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Engineering"
+    ],
+    "reagentItemID": 243582,
+    "reagentName": "Evercore",
+    "itemQuality": 2,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
     "inferredReagentRankByNameID": null
   },
   {
@@ -6075,10 +5155,10 @@
     ],
     "reagentItemID": 243599,
     "reagentName": "Eversinging Dust",
-    "itemQuality": null,
+    "itemQuality": 1,
     "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 243600,
@@ -6093,10 +5173,10 @@
     ],
     "reagentItemID": 243600,
     "reagentName": "Eversinging Dust",
-    "itemQuality": null,
+    "itemQuality": 1,
     "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 244615,
@@ -6127,8 +5207,8 @@
     "reagentName": "Eversong Diamond",
     "itemQuality": null,
     "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 242712,
@@ -6143,8 +5223,8 @@
     "reagentName": "Eversong Diamond",
     "itemQuality": null,
     "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 244623,
@@ -6190,7 +5270,7 @@
     ],
     "reagentItemID": 238383,
     "reagentName": "Eversong Trout",
-    "itemQuality": null,
+    "itemQuality": 3,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -6225,7 +5305,7 @@
     ],
     "reagentItemID": 238525,
     "reagentName": "Fantastic Fur",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -6738,10 +5818,10 @@
     ],
     "reagentItemID": 242612,
     "reagentName": "Flawless Amani Lapis",
-    "itemQuality": null,
+    "itemQuality": 3,
     "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 242727,
@@ -6757,8 +5837,8 @@
     "reagentName": "Flawless Amani Lapis",
     "itemQuality": null,
     "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 240897,
@@ -6902,8 +5982,8 @@
     "reagentName": "Flawless Harandar Peridot",
     "itemQuality": null,
     "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 242726,
@@ -6919,8 +5999,8 @@
     "reagentName": "Flawless Harandar Peridot",
     "itemQuality": null,
     "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 240895,
@@ -7189,10 +6269,10 @@
     ],
     "reagentItemID": 242613,
     "reagentName": "Flawless Sanguine Garnet",
-    "itemQuality": null,
+    "itemQuality": 3,
     "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 242724,
@@ -7207,8 +6287,8 @@
     "reagentName": "Flawless Sanguine Garnet",
     "itemQuality": null,
     "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 242611,
@@ -7222,10 +6302,10 @@
     ],
     "reagentItemID": 242611,
     "reagentName": "Flawless Tenebrous Amethyst",
-    "itemQuality": null,
+    "itemQuality": 3,
     "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 242725,
@@ -7239,10 +6319,10 @@
     ],
     "reagentItemID": 242725,
     "reagentName": "Flawless Tenebrous Amethyst",
-    "itemQuality": null,
+    "itemQuality": 3,
     "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 246524,
@@ -7450,8 +6530,8 @@
     "reagentName": "Flux Cogwheel",
     "itemQuality": 2,
     "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 244698,
@@ -7467,8 +6547,8 @@
     "reagentName": "Flux Cogwheel",
     "itemQuality": 2,
     "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 262455,
@@ -7567,7 +6647,70 @@
     ],
     "reagentItemID": 245345,
     "reagentName": "Fused Vitality",
-    "itemQuality": null,
+    "itemQuality": 3,
+    "qualityRank": null,
+    "qualityRankSource": null,
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 256607,
+    "itemName": "Galactic Aspirant's Heraldry",
+    "entryTypes": [
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Engineering",
+      "Midnight Inscription",
+      "Midnight Jewelcrafting",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 256607,
+    "reagentName": "Galactic Aspirant's Heraldry",
+    "itemQuality": 3,
+    "qualityRank": null,
+    "qualityRankSource": null,
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 256559,
+    "itemName": "Galactic Combatant's Heraldry",
+    "entryTypes": [
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Engineering",
+      "Midnight Inscription",
+      "Midnight Jewelcrafting",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 256559,
+    "reagentName": "Galactic Combatant's Heraldry",
+    "itemQuality": 2,
+    "qualityRank": null,
+    "qualityRankSource": null,
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 256608,
+    "itemName": "Galactic Gladiator's Heraldry",
+    "entryTypes": [
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Engineering",
+      "Midnight Inscription",
+      "Midnight Jewelcrafting",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 256608,
+    "reagentName": "Galactic Gladiator's Heraldry",
+    "itemQuality": 4,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -8512,10 +7655,10 @@
     ],
     "reagentItemID": 242620,
     "reagentName": "Glimmering Gemdust",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 242621,
@@ -8529,10 +7672,10 @@
     ],
     "reagentItemID": 242621,
     "reagentName": "Glimmering Gemdust",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 242281,
@@ -8566,8 +7709,8 @@
     "reagentName": "Gloaming Alloy",
     "itemQuality": 2,
     "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 238203,
@@ -8585,8 +7728,8 @@
     "reagentName": "Gloaming Alloy",
     "itemQuality": 2,
     "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 244699,
@@ -8602,8 +7745,8 @@
     "reagentName": "Greased Cogwheel",
     "itemQuality": 2,
     "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 244700,
@@ -8619,8 +7762,42 @@
     "reagentName": "Greased Cogwheel",
     "itemQuality": 2,
     "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 255843,
+    "itemName": "HU5H, Nonchalant Pup",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Engineering"
+    ],
+    "reagentItemID": 255843,
+    "reagentName": "HU5H, Nonchalant Pup",
+    "itemQuality": 3,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 255844,
+    "itemName": "HU5H, Nonchalant Pup",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Engineering"
+    ],
+    "reagentItemID": 255844,
+    "reagentName": "HU5H, Nonchalant Pup",
+    "itemQuality": 3,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 255846,
@@ -8649,10 +7826,10 @@
     ],
     "reagentItemID": 242607,
     "reagentName": "Harandar Peridot",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 242720,
@@ -8667,8 +7844,8 @@
     "reagentName": "Harandar Peridot",
     "itemQuality": null,
     "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 241137,
@@ -9165,8 +8342,8 @@
     "reagentName": "Imbued Bright Linen Bolt",
     "itemQuality": 3,
     "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 239703,
@@ -9183,8 +8360,8 @@
     "reagentName": "Imbued Bright Linen Bolt",
     "itemQuality": 3,
     "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 255847,
@@ -9281,8 +8458,8 @@
     "reagentName": "Infused Scalewoven Hide",
     "itemQuality": null,
     "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 244634,
@@ -9299,8 +8476,54 @@
     "reagentName": "Infused Scalewoven Hide",
     "itemQuality": null,
     "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 260630,
+    "itemName": "Ingenious Identifier",
+    "entryTypes": [
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Alchemy",
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Engineering",
+      "Midnight Inscription",
+      "Midnight Jewelcrafting",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 260630,
+    "reagentName": "Ingenious Identifier",
+    "itemQuality": 1,
+    "qualityRank": null,
+    "qualityRankSource": null,
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 247788,
+    "itemName": "Ingenious Identity",
+    "entryTypes": [
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Alchemy",
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Engineering",
+      "Midnight Inscription",
+      "Midnight Jewelcrafting",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 247788,
+    "reagentName": "Ingenious Identity",
+    "itemQuality": 2,
+    "qualityRank": null,
+    "qualityRankSource": null,
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 251919,
@@ -9428,8 +8651,8 @@
     "reagentName": "Kaleidoscopic Prism",
     "itemQuality": null,
     "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 240975,
@@ -9445,8 +8668,42 @@
     "reagentName": "Kaleidoscopic Prism",
     "itemQuality": null,
     "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 248132,
+    "itemName": "Kinetic Ankle Primers",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Engineering"
+    ],
+    "reagentItemID": 248132,
+    "reagentName": "Kinetic Ankle Primers",
+    "itemQuality": 3,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 248133,
+    "itemName": "Kinetic Ankle Primers",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Engineering"
+    ],
+    "reagentItemID": 248133,
+    "reagentName": "Kinetic Ankle Primers",
+    "itemQuality": 3,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 244472,
@@ -9524,7 +8781,7 @@
     ],
     "reagentItemID": 245881,
     "reagentName": "Lexicologist's Vellum",
-    "itemQuality": null,
+    "itemQuality": 1,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -9658,36 +8915,27 @@
     "inferredReagentRankByNameID": null
   },
   {
-    "itemID": 243581,
-    "itemName": "Lumiflux",
+    "itemID": 248130,
+    "itemName": "Lucky Keychain",
     "entryTypes": [
+      "craftedOutput",
       "reagent"
     ],
     "professionNames": [
-      "Midnight Engineering"
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Engineering",
+      "Midnight Inscription",
+      "Midnight Jewelcrafting",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
     ],
-    "reagentItemID": 243581,
-    "reagentName": "Lumiflux",
-    "itemQuality": null,
-    "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
-  },
-  {
-    "itemID": 243582,
-    "itemName": "Lumiflux",
-    "entryTypes": [
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Engineering"
-    ],
-    "reagentItemID": 243582,
-    "reagentName": "Lumiflux",
-    "itemQuality": null,
-    "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "reagentItemID": 248130,
+    "reagentName": "Lucky Keychain",
+    "itemQuality": 3,
+    "qualityRank": null,
+    "qualityRankSource": null,
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 243060,
@@ -9701,7 +8949,7 @@
     ],
     "reagentItemID": 243060,
     "reagentName": "Luminant Flux",
-    "itemQuality": null,
+    "itemQuality": 1,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -9766,6 +9014,23 @@
     "reagentItemID": 248137,
     "reagentName": "M3DDY",
     "itemQuality": null,
+    "qualityRank": null,
+    "qualityRankSource": null,
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 248136,
+    "itemName": "M3DDY, Travel-Sized",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Engineering"
+    ],
+    "reagentItemID": 248136,
+    "reagentName": "M3DDY, Travel-Sized",
+    "itemQuality": 3,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -9913,7 +9178,7 @@
     ],
     "reagentItemID": 238528,
     "reagentName": "Majestic Claw",
-    "itemQuality": null,
+    "itemQuality": 4,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -9933,7 +9198,7 @@
     ],
     "reagentItemID": 238530,
     "reagentName": "Majestic Fin",
-    "itemQuality": null,
+    "itemQuality": 4,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -9954,7 +9219,7 @@
     ],
     "reagentItemID": 238529,
     "reagentName": "Majestic Hide",
-    "itemQuality": null,
+    "itemQuality": 4,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -9970,7 +9235,7 @@
     ],
     "reagentItemID": 253302,
     "reagentName": "Malleable Wireframe",
-    "itemQuality": null,
+    "itemQuality": 3,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -9987,10 +9252,10 @@
     ],
     "reagentItemID": 236778,
     "reagentName": "Mana Lily",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 236779,
@@ -10004,10 +9269,10 @@
     ],
     "reagentItemID": 236779,
     "reagentName": "Mana Lily",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 245866,
@@ -10020,10 +9285,10 @@
     ],
     "reagentItemID": 245866,
     "reagentName": "Mana Lily Pigment",
-    "itemQuality": null,
-    "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "itemQuality": 2,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 245867,
@@ -10036,10 +9301,10 @@
     ],
     "reagentItemID": 245867,
     "reagentName": "Mana Lily Pigment",
-    "itemQuality": null,
-    "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "itemQuality": 2,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 242297,
@@ -10394,6 +9659,29 @@
     "inferredReagentRankByNameID": null
   },
   {
+    "itemID": 246449,
+    "itemName": "Mentor's Helpful Handiwork",
+    "entryTypes": [
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Alchemy",
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Engineering",
+      "Midnight Inscription",
+      "Midnight Jewelcrafting",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 246449,
+    "reagentName": "Mentor's Helpful Handiwork",
+    "itemQuality": 3,
+    "qualityRank": null,
+    "qualityRankSource": null,
+    "inferredReagentRankByNameID": null
+  },
+  {
     "itemID": 201926,
     "itemName": "Midnight Crushing",
     "entryTypes": [
@@ -10475,7 +9763,7 @@
     ],
     "reagentItemID": 236949,
     "reagentName": "Mote of Light",
-    "itemQuality": null,
+    "itemQuality": 3,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -10499,7 +9787,7 @@
     ],
     "reagentItemID": 236950,
     "reagentName": "Mote of Primal Energy",
-    "itemQuality": null,
+    "itemQuality": 3,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -10522,7 +9810,7 @@
     ],
     "reagentItemID": 236952,
     "reagentName": "Mote of Pure Void",
-    "itemQuality": null,
+    "itemQuality": 3,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -10546,7 +9834,53 @@
     ],
     "reagentItemID": 236951,
     "reagentName": "Mote of Wild Magic",
-    "itemQuality": null,
+    "itemQuality": 3,
+    "qualityRank": null,
+    "qualityRankSource": null,
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 247724,
+    "itemName": "Multicraft Manifold",
+    "entryTypes": [
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Alchemy",
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Engineering",
+      "Midnight Inscription",
+      "Midnight Jewelcrafting",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 247724,
+    "reagentName": "Multicraft Manifold",
+    "itemQuality": 3,
+    "qualityRank": null,
+    "qualityRankSource": null,
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 247719,
+    "itemName": "Multicraft Matrix",
+    "entryTypes": [
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Alchemy",
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Engineering",
+      "Midnight Inscription",
+      "Midnight Jewelcrafting",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 247719,
+    "reagentName": "Multicraft Matrix",
+    "itemQuality": 2,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -10566,8 +9900,8 @@
     "reagentName": "Munsell Ink",
     "itemQuality": 3,
     "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 245802,
@@ -10584,8 +9918,8 @@
     "reagentName": "Munsell Ink",
     "itemQuality": 3,
     "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 244679,
@@ -10647,7 +9981,7 @@
     ],
     "reagentItemID": 236780,
     "reagentName": "Nocturnal Lotus",
-    "itemQuality": null,
+    "itemQuality": 3,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -10711,7 +10045,7 @@
     ],
     "reagentItemID": 247811,
     "reagentName": "Oil of Heartwood",
-    "itemQuality": null,
+    "itemQuality": 1,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -10781,42 +10115,6 @@
     "inferredReagentRankByNameID": null
   },
   {
-    "itemID": 236761,
-    "itemName": "Peacebloom",
-    "entryTypes": [
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Alchemy",
-      "Midnight Cooking",
-      "Midnight Leatherworking"
-    ],
-    "reagentItemID": 236761,
-    "reagentName": "Peacebloom",
-    "itemQuality": null,
-    "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
-  },
-  {
-    "itemID": 236767,
-    "itemName": "Peacebloom",
-    "entryTypes": [
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Alchemy",
-      "Midnight Cooking",
-      "Midnight Leatherworking"
-    ],
-    "reagentItemID": 236767,
-    "reagentName": "Peacebloom",
-    "itemQuality": null,
-    "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
-  },
-  {
     "itemID": 238522,
     "itemName": "Peerless Plumage",
     "entryTypes": [
@@ -10829,7 +10127,7 @@
     ],
     "reagentItemID": 238522,
     "reagentName": "Peerless Plumage",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -10848,8 +10146,8 @@
     "reagentName": "Perfected Cogwheel",
     "itemQuality": 2,
     "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 244702,
@@ -10865,8 +10163,8 @@
     "reagentName": "Perfected Cogwheel",
     "itemQuality": 2,
     "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 251285,
@@ -10886,7 +10184,7 @@
     ],
     "reagentItemID": 251285,
     "reagentName": "Petrified Root",
-    "itemQuality": null,
+    "itemQuality": 3,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -10902,7 +10200,7 @@
     ],
     "reagentItemID": 253303,
     "reagentName": "Pile of Junk",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -10918,7 +10216,7 @@
     ],
     "reagentItemID": 242640,
     "reagentName": "Plant Protein",
-    "itemQuality": null,
+    "itemQuality": 1,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -11094,10 +10392,10 @@
     ],
     "reagentItemID": 245807,
     "reagentName": "Powder Pigment",
-    "itemQuality": null,
+    "itemQuality": 1,
     "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 245808,
@@ -11110,10 +10408,10 @@
     ],
     "reagentItemID": 245808,
     "reagentName": "Powder Pigment",
-    "itemQuality": null,
+    "itemQuality": 1,
     "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 240966,
@@ -11158,7 +10456,7 @@
     ],
     "reagentItemID": 242639,
     "reagentName": "Practically Pork",
-    "itemQuality": null,
+    "itemQuality": 1,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -11177,6 +10475,48 @@
     "itemQuality": null,
     "qualityRank": null,
     "qualityRankSource": null,
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 244607,
+    "itemName": "Primal Spore Binding",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Inscription",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 244607,
+    "reagentName": "Primal Spore Binding",
+    "itemQuality": 3,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 244608,
+    "itemName": "Primal Spore Binding",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Inscription",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 244608,
+    "reagentName": "Primal Spore Binding",
+    "itemQuality": 3,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
     "inferredReagentRankByNameID": null
   },
   {
@@ -11225,8 +10565,8 @@
     "reagentName": "Prismatic Focusing Iris",
     "itemQuality": null,
     "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 251488,
@@ -11242,8 +10582,8 @@
     "reagentName": "Prismatic Focusing Iris",
     "itemQuality": null,
     "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 244756,
@@ -11610,10 +10950,10 @@
     ],
     "reagentItemID": 243602,
     "reagentName": "Radiant Shard",
-    "itemQuality": null,
+    "itemQuality": 3,
     "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 243603,
@@ -11628,10 +10968,10 @@
     ],
     "reagentItemID": 243603,
     "reagentName": "Radiant Shard",
-    "itemQuality": null,
+    "itemQuality": 3,
     "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 267393,
@@ -11727,8 +11067,8 @@
     "reagentName": "Refreshing Serum",
     "itemQuality": 1,
     "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 241307,
@@ -11744,8 +11084,8 @@
     "reagentName": "Refreshing Serum",
     "itemQuality": 1,
     "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 238197,
@@ -11762,8 +11102,8 @@
     "reagentName": "Refulgent Copper Ingot",
     "itemQuality": 2,
     "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 238198,
@@ -11780,8 +11120,8 @@
     "reagentName": "Refulgent Copper Ingot",
     "itemQuality": 2,
     "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 237359,
@@ -11796,10 +11136,10 @@
     ],
     "reagentItemID": 237359,
     "reagentName": "Refulgent Copper Ore",
-    "itemQuality": null,
+    "itemQuality": 1,
     "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 237361,
@@ -11814,10 +11154,10 @@
     ],
     "reagentItemID": 237361,
     "reagentName": "Refulgent Copper Ore",
-    "itemQuality": null,
+    "itemQuality": 1,
     "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 244174,
@@ -12071,6 +11411,52 @@
     "reagentItemID": 262613,
     "reagentName": "Replica Haranir Mural",
     "itemQuality": null,
+    "qualityRank": null,
+    "qualityRankSource": null,
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 247725,
+    "itemName": "Resourceful Rebar",
+    "entryTypes": [
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Alchemy",
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Engineering",
+      "Midnight Inscription",
+      "Midnight Jewelcrafting",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 247725,
+    "reagentName": "Resourceful Rebar",
+    "itemQuality": 2,
+    "qualityRank": null,
+    "qualityRankSource": null,
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 247726,
+    "itemName": "Resourceful Routing",
+    "entryTypes": [
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Alchemy",
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Engineering",
+      "Midnight Inscription",
+      "Midnight Jewelcrafting",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 247726,
+    "reagentName": "Resourceful Routing",
+    "itemQuality": 3,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -12358,10 +11744,10 @@
     ],
     "reagentItemID": 242553,
     "reagentName": "Sanguine Garnet",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 242723,
@@ -12376,8 +11762,8 @@
     "reagentName": "Sanguine Garnet",
     "itemQuality": null,
     "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 241135,
@@ -12423,10 +11809,10 @@
     ],
     "reagentItemID": 236770,
     "reagentName": "Sanguithorn",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 236771,
@@ -12440,10 +11826,10 @@
     ],
     "reagentItemID": 236771,
     "reagentName": "Sanguithorn",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 245864,
@@ -12456,10 +11842,10 @@
     ],
     "reagentItemID": 245864,
     "reagentName": "Sanguithorn Pigment",
-    "itemQuality": null,
-    "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "itemQuality": 2,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 245865,
@@ -12472,10 +11858,10 @@
     ],
     "reagentItemID": 245865,
     "reagentName": "Sanguithorn Pigment",
-    "itemQuality": null,
-    "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "itemQuality": 2,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 242299,
@@ -12494,6 +11880,22 @@
     "inferredReagentRankByNameID": null
   },
   {
+    "itemID": 265801,
+    "itemName": "Savory Anomaly",
+    "entryTypes": [
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Cooking"
+    ],
+    "reagentItemID": 265801,
+    "reagentName": "Savory Anomaly",
+    "itemQuality": 2,
+    "qualityRank": null,
+    "qualityRankSource": null,
+    "inferredReagentRankByNameID": null
+  },
+  {
     "itemID": 244631,
     "itemName": "Scalewoven Hide",
     "entryTypes": [
@@ -12507,8 +11909,8 @@
     "reagentName": "Scalewoven Hide",
     "itemQuality": null,
     "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 244632,
@@ -12524,8 +11926,8 @@
     "reagentName": "Scalewoven Hide",
     "itemQuality": null,
     "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 245647,
@@ -12704,54 +12106,6 @@
     "inferredReagentRankByNameID": null
   },
   {
-    "itemID": 265800,
-    "itemName": "Secret Ingredient",
-    "entryTypes": [
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Cooking"
-    ],
-    "reagentItemID": 265800,
-    "reagentName": "Secret Ingredient",
-    "itemQuality": null,
-    "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
-  },
-  {
-    "itemID": 265801,
-    "itemName": "Secret Ingredient",
-    "entryTypes": [
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Cooking"
-    ],
-    "reagentItemID": 265801,
-    "reagentName": "Secret Ingredient",
-    "itemQuality": null,
-    "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
-  },
-  {
-    "itemID": 265803,
-    "itemName": "Secret Ingredient",
-    "entryTypes": [
-      "reagent"
-    ],
-    "professionNames": [
-      "Midnight Cooking"
-    ],
-    "reagentItemID": 265803,
-    "reagentName": "Secret Ingredient",
-    "itemQuality": null,
-    "qualityRank": 3,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 3
-  },
-  {
     "itemID": 246693,
     "itemName": "Self-Pouring Thalassian Sunwine",
     "entryTypes": [
@@ -12846,8 +12200,8 @@
     "reagentName": "Sienna Ink",
     "itemQuality": 3,
     "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 245806,
@@ -12864,8 +12218,8 @@
     "reagentName": "Sienna Ink",
     "itemQuality": 3,
     "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 241140,
@@ -12897,7 +12251,7 @@
     ],
     "reagentItemID": 251665,
     "reagentName": "Silverleaf Thread",
-    "itemQuality": null,
+    "itemQuality": 1,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -13189,10 +12543,10 @@
     ],
     "reagentItemID": 244637,
     "reagentName": "Silvermoon Weapon Wrap",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 244638,
@@ -13209,10 +12563,10 @@
     ],
     "reagentItemID": 244638,
     "reagentName": "Silvermoon Weapon Wrap",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 262589,
@@ -13291,10 +12645,10 @@
     ],
     "reagentItemID": 244635,
     "reagentName": "Sin'dorei Armor Banding",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 244636,
@@ -13309,10 +12663,10 @@
     ],
     "reagentItemID": 244636,
     "reagentName": "Sin'dorei Armor Banding",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 244714,
@@ -13504,8 +12858,8 @@
     "reagentName": "Sin'dorei Lens",
     "itemQuality": 1,
     "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 240973,
@@ -13521,8 +12875,8 @@
     "reagentName": "Sin'dorei Lens",
     "itemQuality": null,
     "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 262615,
@@ -13631,7 +12985,7 @@
     ],
     "reagentItemID": 238365,
     "reagentName": "Sin'dorei Swarmer",
-    "itemQuality": null,
+    "itemQuality": 1,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -13715,8 +13069,8 @@
     "reagentName": "Smuggler's Enchanted Edge",
     "itemQuality": null,
     "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 243738,
@@ -13733,8 +13087,8 @@
     "reagentName": "Smuggler's Enchanted Edge",
     "itemQuality": null,
     "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 244585,
@@ -13948,8 +13302,8 @@
     "reagentName": "Song Gear",
     "itemQuality": 2,
     "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 243575,
@@ -13965,8 +13319,8 @@
     "reagentName": "Song Gear",
     "itemQuality": 2,
     "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 245766,
@@ -13982,8 +13336,8 @@
     "reagentName": "Soul Cipher",
     "itemQuality": 3,
     "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 245767,
@@ -13999,8 +13353,8 @@
     "reagentName": "Soul Cipher",
     "itemQuality": 3,
     "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 243576,
@@ -14016,8 +13370,8 @@
     "reagentName": "Soul Sprocket",
     "itemQuality": 3,
     "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 243577,
@@ -14033,12 +13387,12 @@
     "reagentName": "Soul Sprocket",
     "itemQuality": 3,
     "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 232875,
-    "itemName": "Spark",
+    "itemName": "Spark of Radiance",
     "entryTypes": [
       "reagent"
     ],
@@ -14053,8 +13407,8 @@
       "Midnight Tailoring"
     ],
     "reagentItemID": 232875,
-    "reagentName": "Spark",
-    "itemQuality": null,
+    "reagentName": "Spark of Radiance",
+    "itemQuality": 4,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -14326,9 +13680,49 @@
     ],
     "reagentItemID": 242651,
     "reagentName": "Stabilized Derivate",
-    "itemQuality": null,
+    "itemQuality": 3,
     "qualityRank": null,
     "qualityRankSource": null,
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 251489,
+    "itemName": "Stabilizing Gemstone Bandolier",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Jewelcrafting",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 251489,
+    "reagentName": "Stabilizing Gemstone Bandolier",
+    "itemQuality": 3,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 251490,
+    "itemName": "Stabilizing Gemstone Bandolier",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Jewelcrafting",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 251490,
+    "reagentName": "Stabilizing Gemstone Bandolier",
+    "itemQuality": 3,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
     "inferredReagentRankByNameID": null
   },
   {
@@ -14347,8 +13741,8 @@
     "reagentName": "Sterling Alloy",
     "itemQuality": 2,
     "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 238205,
@@ -14366,8 +13760,8 @@
     "reagentName": "Sterling Alloy",
     "itemQuality": 2,
     "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 262600,
@@ -14652,10 +14046,10 @@
     ],
     "reagentItemID": 237015,
     "reagentName": "Sunfire Silk",
-    "itemQuality": null,
+    "itemQuality": 3,
     "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 237016,
@@ -14668,10 +14062,10 @@
     ],
     "reagentItemID": 237016,
     "reagentName": "Sunfire Silk",
-    "itemQuality": null,
+    "itemQuality": 3,
     "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 240161,
@@ -14704,8 +14098,8 @@
     "reagentName": "Sunfire Silk Bolt",
     "itemQuality": 4,
     "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 239202,
@@ -14722,8 +14116,46 @@
     "reagentName": "Sunfire Silk Bolt",
     "itemQuality": 4,
     "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 240164,
+    "itemName": "Sunfire Silk Lining",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 240164,
+    "reagentName": "Sunfire Silk Lining",
+    "itemQuality": 3,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 240165,
+    "itemName": "Sunfire Silk Lining",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 240165,
+    "reagentName": "Sunfire Silk Lining",
+    "itemQuality": 3,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 240094,
@@ -14915,10 +14347,10 @@
     ],
     "reagentItemID": 240990,
     "reagentName": "Sunglass Vial",
-    "itemQuality": null,
+    "itemQuality": 1,
     "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 240991,
@@ -14936,8 +14368,8 @@
     "reagentName": "Sunglass Vial",
     "itemQuality": 1,
     "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 256356,
@@ -15080,8 +14512,8 @@
     "reagentName": "Tenebrous Amethyst",
     "itemQuality": null,
     "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 242721,
@@ -15096,8 +14528,8 @@
     "reagentName": "Tenebrous Amethyst",
     "itemQuality": null,
     "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 241133,
@@ -16262,7 +15694,7 @@
     ],
     "reagentItemID": 251923,
     "reagentName": "Thalassian Essence of the Faire",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -16430,7 +15862,7 @@
     ],
     "reagentItemID": 256963,
     "reagentName": "Thalassian Lumber",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -16449,6 +15881,538 @@
     "itemQuality": null,
     "qualityRank": null,
     "qualityRankSource": null,
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245820,
+    "itemName": "Thalassian Missive of Crafting Speed",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Engineering",
+      "Midnight Inscription"
+    ],
+    "reagentItemID": 245820,
+    "reagentName": "Thalassian Missive of Crafting Speed",
+    "itemQuality": 2,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245821,
+    "itemName": "Thalassian Missive of Crafting Speed",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Engineering",
+      "Midnight Inscription"
+    ],
+    "reagentItemID": 245821,
+    "reagentName": "Thalassian Missive of Crafting Speed",
+    "itemQuality": 2,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245826,
+    "itemName": "Thalassian Missive of Deftness",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Inscription"
+    ],
+    "reagentItemID": 245826,
+    "reagentName": "Thalassian Missive of Deftness",
+    "itemQuality": 2,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245827,
+    "itemName": "Thalassian Missive of Deftness",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Inscription"
+    ],
+    "reagentItemID": 245827,
+    "reagentName": "Thalassian Missive of Deftness",
+    "itemQuality": 2,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245822,
+    "itemName": "Thalassian Missive of Finesse",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Inscription"
+    ],
+    "reagentItemID": 245822,
+    "reagentName": "Thalassian Missive of Finesse",
+    "itemQuality": 2,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245823,
+    "itemName": "Thalassian Missive of Finesse",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Inscription"
+    ],
+    "reagentItemID": 245823,
+    "reagentName": "Thalassian Missive of Finesse",
+    "itemQuality": 2,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245814,
+    "itemName": "Thalassian Missive of Ingenuity",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Engineering",
+      "Midnight Inscription"
+    ],
+    "reagentItemID": 245814,
+    "reagentName": "Thalassian Missive of Ingenuity",
+    "itemQuality": 2,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245815,
+    "itemName": "Thalassian Missive of Ingenuity",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Engineering",
+      "Midnight Inscription"
+    ],
+    "reagentItemID": 245815,
+    "reagentName": "Thalassian Missive of Ingenuity",
+    "itemQuality": 2,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245818,
+    "itemName": "Thalassian Missive of Multicraft",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Engineering",
+      "Midnight Inscription"
+    ],
+    "reagentItemID": 245818,
+    "reagentName": "Thalassian Missive of Multicraft",
+    "itemQuality": 2,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245819,
+    "itemName": "Thalassian Missive of Multicraft",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Engineering",
+      "Midnight Inscription"
+    ],
+    "reagentItemID": 245819,
+    "reagentName": "Thalassian Missive of Multicraft",
+    "itemQuality": 2,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245824,
+    "itemName": "Thalassian Missive of Perception",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Inscription"
+    ],
+    "reagentItemID": 245824,
+    "reagentName": "Thalassian Missive of Perception",
+    "itemQuality": 2,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245825,
+    "itemName": "Thalassian Missive of Perception",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Inscription"
+    ],
+    "reagentItemID": 245825,
+    "reagentName": "Thalassian Missive of Perception",
+    "itemQuality": 2,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245816,
+    "itemName": "Thalassian Missive of Resourcefulness",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Engineering",
+      "Midnight Inscription"
+    ],
+    "reagentItemID": 245816,
+    "reagentName": "Thalassian Missive of Resourcefulness",
+    "itemQuality": 2,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245817,
+    "itemName": "Thalassian Missive of Resourcefulness",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Engineering",
+      "Midnight Inscription"
+    ],
+    "reagentItemID": 245817,
+    "reagentName": "Thalassian Missive of Resourcefulness",
+    "itemQuality": 2,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245781,
+    "itemName": "Thalassian Missive of the Aurora",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Inscription",
+      "Midnight Jewelcrafting",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 245781,
+    "reagentName": "Thalassian Missive of the Aurora",
+    "itemQuality": 2,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245782,
+    "itemName": "Thalassian Missive of the Aurora",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Inscription",
+      "Midnight Jewelcrafting",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 245782,
+    "reagentName": "Thalassian Missive of the Aurora",
+    "itemQuality": 2,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245783,
+    "itemName": "Thalassian Missive of the Feverflare",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Inscription",
+      "Midnight Jewelcrafting",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 245783,
+    "reagentName": "Thalassian Missive of the Feverflare",
+    "itemQuality": 2,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245784,
+    "itemName": "Thalassian Missive of the Feverflare",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Inscription",
+      "Midnight Jewelcrafting",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 245784,
+    "reagentName": "Thalassian Missive of the Feverflare",
+    "itemQuality": 2,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245785,
+    "itemName": "Thalassian Missive of the Fireflash",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Inscription",
+      "Midnight Jewelcrafting",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 245785,
+    "reagentName": "Thalassian Missive of the Fireflash",
+    "itemQuality": 2,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245786,
+    "itemName": "Thalassian Missive of the Fireflash",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Inscription",
+      "Midnight Jewelcrafting",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 245786,
+    "reagentName": "Thalassian Missive of the Fireflash",
+    "itemQuality": 2,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245787,
+    "itemName": "Thalassian Missive of the Harmonious",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Inscription",
+      "Midnight Jewelcrafting",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 245787,
+    "reagentName": "Thalassian Missive of the Harmonious",
+    "itemQuality": 2,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245788,
+    "itemName": "Thalassian Missive of the Harmonious",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Inscription",
+      "Midnight Jewelcrafting",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 245788,
+    "reagentName": "Thalassian Missive of the Harmonious",
+    "itemQuality": 2,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245789,
+    "itemName": "Thalassian Missive of the Peerless",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Inscription",
+      "Midnight Jewelcrafting",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 245789,
+    "reagentName": "Thalassian Missive of the Peerless",
+    "itemQuality": 2,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245790,
+    "itemName": "Thalassian Missive of the Peerless",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Inscription",
+      "Midnight Jewelcrafting",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 245790,
+    "reagentName": "Thalassian Missive of the Peerless",
+    "itemQuality": 2,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245791,
+    "itemName": "Thalassian Missive of the Quickblade",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Inscription",
+      "Midnight Jewelcrafting",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 245791,
+    "reagentName": "Thalassian Missive of the Quickblade",
+    "itemQuality": 2,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 245792,
+    "itemName": "Thalassian Missive of the Quickblade",
+    "entryTypes": [
+      "craftedOutput",
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Blacksmithing",
+      "Midnight Enchanting",
+      "Midnight Inscription",
+      "Midnight Jewelcrafting",
+      "Midnight Leatherworking",
+      "Midnight Tailoring"
+    ],
+    "reagentItemID": 245792,
+    "reagentName": "Thalassian Missive of the Quickblade",
+    "itemQuality": 2,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
     "inferredReagentRankByNameID": null
   },
   {
@@ -16655,7 +16619,7 @@
     ],
     "reagentItemID": 245882,
     "reagentName": "Thalassian Songwater",
-    "itemQuality": null,
+    "itemQuality": 1,
     "qualityRank": null,
     "qualityRankSource": null,
     "inferredReagentRankByNameID": null
@@ -16934,9 +16898,45 @@
     ],
     "reagentItemID": 251283,
     "reagentName": "Tormented Tantalum",
-    "itemQuality": null,
+    "itemQuality": 3,
     "qualityRank": null,
     "qualityRankSource": null,
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 236761,
+    "itemName": "Tranquility Bloom",
+    "entryTypes": [
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Alchemy",
+      "Midnight Cooking",
+      "Midnight Leatherworking"
+    ],
+    "reagentItemID": 236761,
+    "reagentName": "Tranquility Bloom",
+    "itemQuality": 1,
+    "qualityRank": 1,
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
+  },
+  {
+    "itemID": 236767,
+    "itemName": "Tranquility Bloom",
+    "entryTypes": [
+      "reagent"
+    ],
+    "professionNames": [
+      "Midnight Alchemy",
+      "Midnight Cooking",
+      "Midnight Leatherworking"
+    ],
+    "reagentItemID": 236767,
+    "reagentName": "Tranquility Bloom",
+    "itemQuality": 1,
+    "qualityRank": 2,
+    "qualityRankSource": "apiReagentQuality",
     "inferredReagentRankByNameID": null
   },
   {
@@ -17096,10 +17096,10 @@
     ],
     "reagentItemID": 237362,
     "reagentName": "Umbral Tin Ore",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 237363,
@@ -17114,10 +17114,10 @@
     ],
     "reagentItemID": 237363,
     "reagentName": "Umbral Tin Ore",
-    "itemQuality": null,
+    "itemQuality": 2,
     "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 245879,
@@ -17357,10 +17357,10 @@
     ],
     "reagentItemID": 238518,
     "reagentName": "Void-Tempered Hide",
-    "itemQuality": null,
+    "itemQuality": 3,
     "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 238519,
@@ -17376,10 +17376,10 @@
     ],
     "reagentItemID": 238519,
     "reagentName": "Void-Tempered Hide",
-    "itemQuality": null,
+    "itemQuality": 3,
     "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 238511,
@@ -17392,10 +17392,10 @@
     ],
     "reagentItemID": 238511,
     "reagentName": "Void-Tempered Leather",
-    "itemQuality": null,
+    "itemQuality": 1,
     "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 238512,
@@ -17408,10 +17408,10 @@
     ],
     "reagentItemID": 238512,
     "reagentName": "Void-Tempered Leather",
-    "itemQuality": null,
+    "itemQuality": 1,
     "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 238520,
@@ -17426,10 +17426,10 @@
     ],
     "reagentItemID": 238520,
     "reagentName": "Void-Tempered Plating",
-    "itemQuality": null,
+    "itemQuality": 3,
     "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 238521,
@@ -17444,10 +17444,10 @@
     ],
     "reagentItemID": 238521,
     "reagentName": "Void-Tempered Plating",
-    "itemQuality": null,
+    "itemQuality": 3,
     "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 238513,
@@ -17460,10 +17460,10 @@
     ],
     "reagentItemID": 238513,
     "reagentName": "Void-Tempered Scales",
-    "itemQuality": null,
+    "itemQuality": 1,
     "qualityRank": 1,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 238514,
@@ -17476,10 +17476,10 @@
     ],
     "reagentItemID": 238514,
     "reagentName": "Void-Tempered Scales",
-    "itemQuality": null,
+    "itemQuality": 1,
     "qualityRank": 2,
-    "qualityRankSource": "inferredByItemIDOrder",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 244639,
@@ -17687,8 +17687,8 @@
     "reagentName": "Wondrous Synergist",
     "itemQuality": 3,
     "qualityRank": 2,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 1
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 241283,
@@ -17704,8 +17704,8 @@
     "reagentName": "Wondrous Synergist",
     "itemQuality": 3,
     "qualityRank": 1,
-    "qualityRankSource": "recipeOutputRank",
-    "inferredReagentRankByNameID": 2
+    "qualityRankSource": "apiReagentQuality",
+    "inferredReagentRankByNameID": null
   },
   {
     "itemID": 244611,

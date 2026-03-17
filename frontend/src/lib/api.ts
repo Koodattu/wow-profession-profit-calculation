@@ -137,6 +137,18 @@ export interface RealmPrice {
   total_quantity: number;
 }
 
+export interface Realm {
+  id: number;
+  connectedRealmId: number;
+  name: string;
+  slug: string;
+}
+
+export interface ConnectedRealmGroup {
+  connected_realm_id: number;
+  realms: Realm[];
+}
+
 // --- Fetch helpers ---
 
 async function apiFetch<T>(path: string): Promise<T> {
@@ -167,6 +179,10 @@ export function fetchProfessionCosts(id: number, region = "eu"): Promise<Profess
   return apiFetch(`/api/crafting/professions/${id}${qs({ region })}`);
 }
 
+export function fetchProfessionCostsForRealm(id: number, region = "eu", connectedRealmId?: number): Promise<ProfessionRecipeCost[]> {
+  return apiFetch(`/api/crafting/professions/${id}${qs({ region, connectedRealmId: connectedRealmId?.toString() })}`);
+}
+
 export function fetchRecipeCost(id: number, region = "eu"): Promise<RecipeProfitResult> {
   return apiFetch(`/api/crafting/recipes/${id}${qs({ region })}`);
 }
@@ -175,8 +191,15 @@ export function fetchItem(id: number): Promise<Item> {
   return apiFetch(`/api/items/${id}`);
 }
 
-export function fetchItemPrices(id: number, region = "eu", range = "24h"): Promise<PricePoint[]> {
-  return apiFetch(`/api/items/${id}/prices${qs({ region, range })}`);
+export function fetchItemPrices(id: number, region = "eu", range = "24h", options?: { type?: "auto" | "commodity" | "realm"; connectedRealmId?: number }): Promise<PricePoint[]> {
+  return apiFetch(
+    `/api/items/${id}/prices${qs({
+      region,
+      range,
+      type: options?.type,
+      connectedRealmId: options?.connectedRealmId?.toString(),
+    })}`,
+  );
 }
 
 export function fetchItems(params: { region?: string; type?: string; search?: string; page?: number; limit?: number } = {}): Promise<ItemListResponse> {
@@ -193,6 +216,10 @@ export function fetchFlippingOpportunities(region = "eu", minSpread?: number, li
 
 export function fetchItemRealmPrices(itemId: number, region = "eu", range = "24h"): Promise<RealmPrice[]> {
   return apiFetch(`/api/items/${itemId}/realm-prices${qs({ region, range })}`);
+}
+
+export function fetchRealms(region = "eu"): Promise<ConnectedRealmGroup[]> {
+  return apiFetch(`/api/realms${qs({ region })}`);
 }
 
 // --- Utilities ---
