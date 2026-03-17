@@ -2,6 +2,7 @@ import { eq, and } from "drizzle-orm";
 import { db } from "../db";
 import { connectedRealms, realms } from "../db/schema";
 import { BlizzardApi } from "./blizzard-api";
+import { ensureRegionExists } from "./region-sync";
 
 interface ConnectedRealmIndex {
   connected_realms: { href: string }[];
@@ -27,6 +28,8 @@ interface ConnectedRealmDetail {
 }
 
 export async function syncConnectedRealms(regionId: string): Promise<void> {
+  await ensureRegionExists(regionId);
+
   const api = BlizzardApi.getInstance();
 
   console.log(`[RealmSync] Fetching connected realms index for ${regionId}...`);

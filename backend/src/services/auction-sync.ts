@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import { db } from "../db";
 import { commoditySnapshots, realmSnapshots, connectedRealms, items } from "../db/schema";
 import { BlizzardApi } from "./blizzard-api";
+import { ensureRegionExists } from "./region-sync";
 
 // ─── API Response Types ──────────────────────────────────────────────
 
@@ -57,6 +58,8 @@ function weightedPercentile(sorted: PriceEntry[], totalQuantity: number, percent
 // ─── Commodity Sync ─────────────────────────────────────────────────
 
 export async function syncCommodities(regionId: string): Promise<void> {
+  await ensureRegionExists(regionId);
+
   const api = BlizzardApi.getInstance();
   const snapshotTime = new Date();
 
