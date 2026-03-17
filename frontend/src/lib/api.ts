@@ -38,6 +38,7 @@ export interface RecipeCostResult {
 
 export interface RankScenario {
   reagentRank: 1 | 2;
+  outputRank: 1 | 2;
   cost: RecipeCostResult;
   outputItemId: number | null;
   outputItemName: string | null;
@@ -72,6 +73,7 @@ export interface RecipeProfitResult {
 export interface Item {
   id: number;
   name: string;
+  itemQuality: number | null;
   qualityRank: number | null;
   isReagent: boolean;
   isCraftedOutput: boolean;
@@ -89,6 +91,7 @@ export interface PricePoint {
 export interface ItemWithPrice {
   id: number;
   name: string;
+  itemQuality: number | null;
   qualityRank: number | null;
   isReagent: boolean;
   isCraftedOutput: boolean;
@@ -116,6 +119,7 @@ export interface SearchResult {
 export interface FlippingOpportunity {
   itemId: number;
   itemName: string;
+  itemQuality: number | null;
   qualityRank: number | null;
   regionAvgPrice: number;
   cheapestRealm: { realmId: number; realmName: string; minBuyout: number };

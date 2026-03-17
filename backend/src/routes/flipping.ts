@@ -54,6 +54,7 @@ flippingRoutes.get("/opportunities", async (c) => {
       SELECT
         ia.item_id,
         i.name AS item_name,
+        i.item_quality,
         i.quality_rank,
         ia.region_avg_price,
         c.connected_realm_id AS cheapest_realm_id,
@@ -81,6 +82,7 @@ flippingRoutes.get("/opportunities", async (c) => {
     const opportunities = Array.from(rows as Iterable<Record<string, unknown>>).map((row) => ({
       itemId: Number(row.item_id),
       itemName: row.item_name as string,
+      itemQuality: row.item_quality ? Number(row.item_quality) : null,
       qualityRank: row.quality_rank ? Number(row.quality_rank) : null,
       regionAvgPrice: Number(row.region_avg_price),
       cheapestRealm: {

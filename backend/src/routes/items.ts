@@ -53,6 +53,7 @@ itemRoutes.get("/", async (c) => {
       return {
         id: item.id,
         name: item.name,
+        itemQuality: item.itemQuality,
         qualityRank: item.qualityRank,
         isReagent: item.isReagent,
         isCraftedOutput: item.isCraftedOutput,

@@ -21,6 +21,7 @@ export const recipeCategories = pgTable("recipe_categories", {
 export const items = pgTable("items", {
   id: integer("id").primaryKey(),
   name: text("name").notNull(),
+  itemQuality: integer("item_quality"),
   qualityRank: integer("quality_rank"),
   isReagent: boolean("is_reagent").notNull().default(false),
   isCraftedOutput: boolean("is_crafted_output").notNull().default(false),

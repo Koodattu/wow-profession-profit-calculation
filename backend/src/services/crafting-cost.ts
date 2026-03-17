@@ -28,6 +28,7 @@ interface RecipeCostResult {
 
 interface RankScenario {
   reagentRank: 1 | 2;
+  outputRank: 1 | 2;
   cost: RecipeCostResult;
   outputItemId: number | null;
   outputItemName: string | null;
@@ -243,8 +244,8 @@ export async function computeRecipeCost(recipeId: number, regionId: string, reag
   const prices = await getLatestPrices(regionId, itemIds);
 
   // Look up item names
-  const itemRows = itemIds.length > 0 ? await db.select({ id: items.id, name: items.name, qualityRank: items.qualityRank }).from(items).where(inArray(items.id, itemIds)) : [];
-  const itemMetaMap = new Map(itemRows.map((r) => [r.id, { name: r.name, qualityRank: r.qualityRank }]));
+  const itemRows = itemIds.length > 0 ? await db.select({ id: items.id, name: items.name, itemQuality: items.itemQuality }).from(items).where(inArray(items.id, itemIds)) : [];
+  const itemMetaMap = new Map(itemRows.map((r) => [r.id, { name: r.name, itemQuality: r.itemQuality }]));
 
   // Build reagent cost breakdown
   let totalCost = 0;
@@ -262,7 +263,7 @@ export async function computeRecipeCost(recipeId: number, regionId: string, reag
       slotIndex: sel.slotIndex,
       itemId: sel.itemId,
       itemName: itemMetaMap.get(sel.itemId)?.name ?? `Item #${sel.itemId}`,
-      itemQuality: itemMetaMap.get(sel.itemId)?.qualityRank ?? null,
+      itemQuality: itemMetaMap.get(sel.itemId)?.itemQuality ?? null,
       quantity: sel.quantity,
       unitPrice,
       totalPrice: slotTotal,
@@ -317,11 +318,11 @@ export async function computeRecipeProfit(recipeId: number, regionId: string): P
 
   // Look up output item names
   const outputItemRows =
-    outputItemIds.length > 0 ? await db.select({ id: items.id, name: items.name, qualityRank: items.qualityRank }).from(items).where(inArray(items.id, outputItemIds)) : [];
-  const outputMetaMap = new Map(outputItemRows.map((r) => [r.id, { name: r.name, qualityRank: r.qualityRank }]));
+    outputItemIds.length > 0 ? await db.select({ id: items.id, name: items.name, itemQuality: items.itemQuality }).from(items).where(inArray(items.id, outputItemIds)) : [];
+  const outputMetaMap = new Map(outputItemRows.map((r) => [r.id, { name: r.name, itemQuality: r.itemQuality }]));
 
   // Build scenarios
-  function buildScenario(rank: 1 | 2, cost: RecipeCostResult, outputItemId: number | null): RankScenario {
+  function buildScenario(rank: 1 | 2, outputRank: 1 | 2, cost: RecipeCostResult, outputItemId: number | null): RankScenario {
     const price = outputItemId ? outputPrices.get(outputItemId) : null;
     const outputUnitPrice = price?.minPrice ?? null;
     const outputTotalPrice = outputUnitPrice !== null ? outputUnitPrice * outputQuantity : null;
@@ -329,10 +330,11 @@ export async function computeRecipeProfit(recipeId: number, regionId: string): P
 
     return {
       reagentRank: rank,
+      outputRank,
       cost,
       outputItemId,
       outputItemName: outputItemId ? (outputMetaMap.get(outputItemId)?.name ?? null) : null,
-      outputItemQuality: outputItemId ? (outputMetaMap.get(outputItemId)?.qualityRank ?? null) : null,
+      outputItemQuality: outputItemId ? (outputMetaMap.get(outputItemId)?.itemQuality ?? null) : null,
       outputQuantity,
       outputUnitPrice,
       outputTotalPrice,
@@ -348,7 +350,7 @@ export async function computeRecipeProfit(recipeId: number, regionId: string): P
     affectedByResourcefulness: recipe.affectedByResourcefulness,
     professionId: recipe.professionId,
     professionName,
-    scenarios: [buildScenario(1, costRank1, outputRank1ItemId), buildScenario(2, costRank2, outputRank2ItemId)],
+    scenarios: [buildScenario(1, 1, costRank1, outputRank1ItemId), buildScenario(2, 2, costRank2, outputRank2ItemId)],
   };
 }
 
@@ -447,8 +449,8 @@ export async function computeProfessionRecipeCosts(professionId: number, regionI
 
   const allItemIdArray = [...allItemIds];
   const itemRows =
-    allItemIdArray.length > 0 ? await db.select({ id: items.id, name: items.name, qualityRank: items.qualityRank }).from(items).where(inArray(items.id, allItemIdArray)) : [];
-  const itemMetaMap = new Map(itemRows.map((r) => [r.id, { name: r.name, qualityRank: r.qualityRank }]));
+    allItemIdArray.length > 0 ? await db.select({ id: items.id, name: items.name, itemQuality: items.itemQuality }).from(items).where(inArray(items.id, allItemIdArray)) : [];
+  const itemMetaMap = new Map(itemRows.map((r) => [r.id, { name: r.name, itemQuality: r.itemQuality }]));
 
   // ── Compute per-recipe ────────────────────────────────────────────
 
@@ -481,7 +483,7 @@ export async function computeProfessionRecipeCosts(professionId: number, regionI
         slotIndex: slot.slotIndex,
         itemId: chosenOption.itemId,
         itemName: itemMetaMap.get(chosenOption.itemId)?.name ?? `Item #${chosenOption.itemId}`,
-        itemQuality: itemMetaMap.get(chosenOption.itemId)?.qualityRank ?? null,
+        itemQuality: itemMetaMap.get(chosenOption.itemId)?.itemQuality ?? null,
         quantity: slot.quantity,
         unitPrice,
         totalPrice: slotTotal,
@@ -520,7 +522,7 @@ export async function computeProfessionRecipeCosts(professionId: number, regionI
       }
     }
 
-    function buildScenario(rank: 1 | 2, cost: RecipeCostResult, outputItemId: number | null): RankScenario {
+    function buildScenario(rank: 1 | 2, outputRank: 1 | 2, cost: RecipeCostResult, outputItemId: number | null): RankScenario {
       const price = outputItemId ? prices.get(outputItemId) : null;
       const outputUnitPrice = price?.minPrice ?? null;
       const outputTotalPrice = outputUnitPrice !== null ? outputUnitPrice * outputQuantity : null;
@@ -528,10 +530,11 @@ export async function computeProfessionRecipeCosts(professionId: number, regionI
 
       return {
         reagentRank: rank,
+        outputRank,
         cost,
         outputItemId,
         outputItemName: outputItemId ? (itemMetaMap.get(outputItemId)?.name ?? null) : null,
-        outputItemQuality: outputItemId ? (itemMetaMap.get(outputItemId)?.qualityRank ?? null) : null,
+        outputItemQuality: outputItemId ? (itemMetaMap.get(outputItemId)?.itemQuality ?? null) : null,
         outputQuantity,
         outputUnitPrice,
         outputTotalPrice,
@@ -546,7 +549,7 @@ export async function computeProfessionRecipeCosts(professionId: number, regionI
       qualityTierType: recipe.qualityTierType,
       affectedByMulticraft: recipe.affectedByMulticraft,
       affectedByResourcefulness: recipe.affectedByResourcefulness,
-      scenarios: [buildScenario(1, costRank1, outputRank1ItemId), buildScenario(2, costRank2, outputRank2ItemId)],
+      scenarios: [buildScenario(1, 1, costRank1, outputRank1ItemId), buildScenario(2, 2, costRank2, outputRank2ItemId), buildScenario(1, 2, costRank1, outputRank2ItemId)],
     });
   }
 

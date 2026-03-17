@@ -19,6 +19,7 @@ interface ReagentEntry {
   itemName: string;
   entryTypes: string[];
   professionNames: string[];
+  itemQuality: number | null;
   qualityRank: number | null;
 }
 
@@ -137,6 +138,7 @@ export async function importGameData(): Promise<void> {
     .map((r) => ({
       id: r.itemID,
       name: r.itemName,
+      itemQuality: r.itemQuality,
       qualityRank: r.qualityRank,
       isReagent: r.entryTypes.includes("reagent"),
       isCraftedOutput: r.entryTypes.includes("craftedOutput"),

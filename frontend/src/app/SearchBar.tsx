@@ -84,7 +84,7 @@ export default function SearchBar() {
                   onClick={() => navigate(`/items/${item.id}`)}
                   className="w-full text-left px-3 py-1.5 text-sm hover:bg-card-hover transition-colors flex items-center gap-2"
                 >
-                  <span className={getItemQualityClass(item.qualityRank)}>{item.name}</span>
+                  <span className={getItemQualityClass(item.itemQuality)}>{item.name}</span>
                   {item.qualityRank && <span className="text-xs text-muted">R{item.qualityRank}</span>}
                   {item.isReagent && <span className="text-xs bg-blue-500/20 text-blue-400 px-1 rounded">Reagent</span>}
                   {item.isCraftedOutput && <span className="text-xs bg-green-500/20 text-green-400 px-1 rounded">Crafted</span>}

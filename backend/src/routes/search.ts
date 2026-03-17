@@ -24,6 +24,7 @@ searchRoutes.get("/", async (c) => {
       .select({
         id: items.id,
         name: items.name,
+        itemQuality: items.itemQuality,
         qualityRank: items.qualityRank,
         isReagent: items.isReagent,
         isCraftedOutput: items.isCraftedOutput,

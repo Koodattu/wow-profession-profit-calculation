@@ -84,27 +84,45 @@ export default function ProfessionClient({ profession, recipeCosts }: Props) {
 function RecipeTable({ recipes, professionName, tier }: { recipes: ProfessionRecipeCost[]; professionName: string; tier: ToolTier }) {
   const hasTier = tier !== "none";
   const tierStats = getTierStats(professionName, tier);
+  const scenarioColSpan = hasTier ? 4 : 3;
 
   return (
     <table className="w-full text-sm border-collapse">
       <thead>
         <tr className="border-b border-border text-left text-muted">
-          <th className="py-2 pr-4 font-medium">Recipe</th>
-          <th className="py-2 pr-4 font-medium">Type</th>
-          <th className="py-2 pr-4 font-medium text-right">Cost (R1)</th>
-          <th className="py-2 pr-4 font-medium text-right">Output (R1)</th>
-          <th className="py-2 pr-4 font-medium text-right">Profit (R1)</th>
-          {hasTier && <th className="py-2 pr-4 font-medium text-right">Adj. Profit (R1)</th>}
-          <th className="py-2 pr-4 font-medium text-right">Cost (R2)</th>
-          <th className="py-2 pr-4 font-medium text-right">Output (R2)</th>
-          <th className="py-2 pr-4 font-medium text-right">Profit (R2)</th>
-          {hasTier && <th className="py-2 pr-4 font-medium text-right">Adj. Profit (R2)</th>}
+          <th rowSpan={2} className="py-2 pr-4 font-medium align-bottom">
+            Recipe
+          </th>
+          <th colSpan={scenarioColSpan} className="py-2 pr-4 pl-4 font-medium border-l border-border/60 text-center">
+            Pure R1
+          </th>
+          <th colSpan={scenarioColSpan} className="py-2 pr-4 pl-4 font-medium border-l border-border/60 text-center">
+            Pure R2
+          </th>
+          <th colSpan={scenarioColSpan} className="py-2 pr-4 pl-4 font-medium border-l border-border/60 text-center">
+            Conc R1→R2
+          </th>
+        </tr>
+        <tr className="border-b border-border text-left text-muted">
+          <th className="py-2 pr-4 pl-4 font-medium text-right border-l border-border/60">Cost</th>
+          <th className="py-2 pr-4 font-medium text-right">Output</th>
+          <th className="py-2 pr-4 font-medium text-right">Profit</th>
+          {hasTier && <th className="py-2 pr-4 font-medium text-right">Adj. Profit</th>}
+          <th className="py-2 pr-4 pl-4 font-medium text-right border-l border-border/60">Cost</th>
+          <th className="py-2 pr-4 font-medium text-right">Output</th>
+          <th className="py-2 pr-4 font-medium text-right">Profit</th>
+          {hasTier && <th className="py-2 pr-4 font-medium text-right">Adj. Profit</th>}
+          <th className="py-2 pr-4 pl-4 font-medium text-right border-l border-border/60">Cost</th>
+          <th className="py-2 pr-4 font-medium text-right">Output</th>
+          <th className="py-2 pr-4 font-medium text-right">Profit</th>
+          {hasTier && <th className="py-2 pr-4 font-medium text-right">Adj. Profit</th>}
         </tr>
       </thead>
       <tbody>
         {recipes.map((recipe) => {
-          const s1 = recipe.scenarios[0];
-          const s2 = recipe.scenarios[1];
+          const s1 = recipe.scenarios.find((scenario) => scenario.reagentRank === 1 && scenario.outputRank === 1) ?? recipe.scenarios[0];
+          const s2 = recipe.scenarios.find((scenario) => scenario.reagentRank === 2 && scenario.outputRank === 2) ?? recipe.scenarios[1];
+          const s3 = recipe.scenarios.find((scenario) => scenario.reagentRank === 1 && scenario.outputRank === 2) ?? recipe.scenarios[2];
 
           const adj1 =
             hasTier && s1
@@ -130,6 +148,18 @@ function RecipeTable({ recipes, professionName, tier }: { recipes: ProfessionRec
                 })
               : null;
 
+          const adj3 =
+            hasTier && s3
+              ? calculateAdjustedProfit({
+                  tierStats,
+                  baseYield: s3.outputQuantity,
+                  outputUnitPrice: s3.outputUnitPrice,
+                  totalCost: s3.cost.totalCost,
+                  affectedByMulticraft: recipe.affectedByMulticraft,
+                  affectedByResourcefulness: recipe.affectedByResourcefulness,
+                })
+              : null;
+
           return (
             <tr key={recipe.recipeId} className="border-b border-border/50 hover:bg-card-hover transition-colors">
               <td className="py-2 pr-4">
@@ -138,8 +168,7 @@ function RecipeTable({ recipes, professionName, tier }: { recipes: ProfessionRec
                 </WowheadLink>
                 {s1 && s1.outputQuantity > 1 && <span className="text-muted ml-1">×{s1.outputQuantity}</span>}
               </td>
-              <td className="py-2 pr-4 text-muted">{recipe.qualityTierType}</td>
-              <td className="py-2 pr-4 text-right">{s1 ? formatPrice(s1.cost.totalCost) : "—"}</td>
+              <td className="py-2 pr-4 pl-4 text-right border-l border-border/60">{s1 ? formatPrice(s1.cost.totalCost) : "—"}</td>
               <td className="py-2 pr-4 text-right">{s1?.outputTotalPrice != null ? formatPrice(s1.outputTotalPrice) : "—"}</td>
               <td className="py-2 pr-4 text-right">
                 <ProfitCell value={s1?.profit ?? null} />
@@ -149,7 +178,7 @@ function RecipeTable({ recipes, professionName, tier }: { recipes: ProfessionRec
                   <ProfitCell value={adj1?.expectedProfit ?? null} />
                 </td>
               )}
-              <td className="py-2 pr-4 text-right">{s2 ? formatPrice(s2.cost.totalCost) : "—"}</td>
+              <td className="py-2 pr-4 pl-4 text-right border-l border-border/60">{s2 ? formatPrice(s2.cost.totalCost) : "—"}</td>
               <td className="py-2 pr-4 text-right">{s2?.outputTotalPrice != null ? formatPrice(s2.outputTotalPrice) : "—"}</td>
               <td className="py-2 pr-4 text-right">
                 <ProfitCell value={s2?.profit ?? null} />
@@ -157,6 +186,16 @@ function RecipeTable({ recipes, professionName, tier }: { recipes: ProfessionRec
               {hasTier && (
                 <td className="py-2 pr-4 text-right">
                   <ProfitCell value={adj2?.expectedProfit ?? null} />
+                </td>
+              )}
+              <td className="py-2 pr-4 pl-4 text-right border-l border-border/60">{s3 ? formatPrice(s3.cost.totalCost) : "—"}</td>
+              <td className="py-2 pr-4 text-right">{s3?.outputTotalPrice != null ? formatPrice(s3.outputTotalPrice) : "—"}</td>
+              <td className="py-2 pr-4 text-right">
+                <ProfitCell value={s3?.profit ?? null} />
+              </td>
+              {hasTier && (
+                <td className="py-2 pr-4 text-right">
+                  <ProfitCell value={adj3?.expectedProfit ?? null} />
                 </td>
               )}
             </tr>

@@ -173,7 +173,7 @@ function ItemRow({ item }: { item: ItemWithPrice }) {
   return (
     <tr className="border-b border-border/50 hover:bg-card-hover transition-colors">
       <td className="py-2 pr-4">
-        <WowheadLink href={`/items/${item.id}`} type="item" id={item.id} className={`${getItemQualityClass(item.qualityRank)} hover:underline`}>
+        <WowheadLink href={`/items/${item.id}`} type="item" id={item.id} className={`${getItemQualityClass(item.itemQuality)} hover:underline`}>
           {item.name || <span className="text-muted italic">Unknown item #{item.id}</span>}
         </WowheadLink>
       </td>
