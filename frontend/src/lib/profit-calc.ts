@@ -1,16 +1,4 @@
-import type { ProfessionStats } from "./profession-stats";
-
-// Maxed Midnight specialization tree extra percentages by profession name
-const PROFESSION_EXTRAS: Record<string, { mcExtra: number; resExtra: number }> = {
-  Alchemy: { mcExtra: 0.4, resExtra: 0.5 },
-  Blacksmithing: { mcExtra: 1.0, resExtra: 0.55 },
-  Enchanting: { mcExtra: 1.0, resExtra: 0.2 },
-  Engineering: { mcExtra: 1.0, resExtra: 0.55 },
-  Inscription: { mcExtra: 1.0, resExtra: 0.65 },
-  Jewelcrafting: { mcExtra: 0.5, resExtra: 0.5 },
-  Leatherworking: { mcExtra: 0.5, resExtra: 0.5 },
-  Tailoring: { mcExtra: 0.4, resExtra: 0.5 },
-};
+import type { TierStats } from "./tool-tiers";
 
 // Multicraft coefficient by base yield
 function getMulticraftCoefficient(baseYield: number): number {
@@ -34,8 +22,7 @@ export interface AdjustedProfit {
  * Calculate adjusted profit for a recipe scenario accounting for multicraft and resourcefulness.
  */
 export function calculateAdjustedProfit(opts: {
-  professionName: string;
-  stats: ProfessionStats;
+  tierStats: TierStats;
   baseYield: number;
   outputUnitPrice: number | null;
   totalCost: number;
@@ -44,12 +31,12 @@ export function calculateAdjustedProfit(opts: {
 }): AdjustedProfit | null {
   if (opts.outputUnitPrice === null) return null;
 
-  const extras = PROFESSION_EXTRAS[opts.professionName] ?? { mcExtra: 0, resExtra: 0 };
+  const { tierStats } = opts;
 
   // Multicraft
-  const pMc = opts.affectedByMulticraft ? Math.min(opts.stats.multicraftRating / 1100, 1) : 0;
+  const pMc = opts.affectedByMulticraft ? Math.min(tierStats.multicraftRating / 1100, 1) : 0;
   const cMc = getMulticraftCoefficient(opts.baseYield);
-  const maxExtra = cMc * opts.baseYield * (1 + extras.mcExtra);
+  const maxExtra = cMc * opts.baseYield * (1 + tierStats.mcExtra);
   const expectedExtraOnProc = (1 + maxExtra) / 2;
   const multicraftExtraPerCraft = pMc * expectedExtraOnProc;
 
@@ -57,8 +44,8 @@ export function calculateAdjustedProfit(opts: {
   const expectedOutputValue = opts.outputUnitPrice * (opts.baseYield + multicraftExtraPerCraft);
 
   // Resourcefulness
-  const pRes = opts.affectedByResourcefulness ? Math.min(opts.stats.resourcefulnessRating / 900, 1) : 0;
-  const savedOnProc = opts.totalCost * 0.3 * (1 + extras.resExtra);
+  const pRes = opts.affectedByResourcefulness ? Math.min(tierStats.resourcefulnessRating / 900, 1) : 0;
+  const savedOnProc = opts.totalCost * 0.3 * (1 + tierStats.resExtra);
   const resourcefulnessSavingPerCraft = pRes * savedOnProc;
 
   // Adjusted cost

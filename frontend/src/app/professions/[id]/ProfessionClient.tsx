@@ -3,10 +3,9 @@
 import { useSyncExternalStore, useCallback } from "react";
 import Link from "next/link";
 import { formatPrice, type ProfessionRecipeCost, type ProfessionDetail, type RecipeCategory } from "@/lib/api";
-import { getProfessionStats, setProfessionStats, subscribeToStats, type ProfessionStats } from "@/lib/profession-stats";
+import { getSelectedTier, setSelectedTier, subscribeToTier } from "@/lib/profession-stats";
+import { getTierStats, TOOL_TIER_LABELS, TOOL_TIERS, type ToolTier } from "@/lib/tool-tiers";
 import { calculateAdjustedProfit } from "@/lib/profit-calc";
-
-const SERVER_STATS: ProfessionStats = { multicraftRating: 0, resourcefulnessRating: 0 };
 
 interface Props {
   profession: ProfessionDetail;
@@ -14,16 +13,12 @@ interface Props {
 }
 
 export default function ProfessionClient({ profession, recipeCosts }: Props) {
-  const getSnapshot = useCallback(() => getProfessionStats(profession.id), [profession.id]);
-  const getServerSnapshot = useCallback(() => SERVER_STATS, []);
-  const stats = useSyncExternalStore(subscribeToStats, getSnapshot, getServerSnapshot);
+  const getSnapshot = useCallback(() => getSelectedTier(), []);
+  const getServerSnapshot = useCallback((): ToolTier => "none", []);
+  const tier = useSyncExternalStore(subscribeToTier, getSnapshot, getServerSnapshot);
 
-  const updateStats = useCallback(
-    (next: ProfessionStats) => {
-      setProfessionStats(profession.id, next);
-    },
-    [profession.id],
-  );
+  const tierStats = getTierStats(profession.name, tier);
+  const hasTier = tier !== "none";
 
   // Group recipes by category
   const categoryMap = new Map<number, RecipeCategory>();
@@ -44,8 +39,6 @@ export default function ProfessionClient({ profession, recipeCosts }: Props) {
 
   const sortedCategories = [...recipesByCategory.entries()].sort(([a], [b]) => (a ?? 0) - (b ?? 0));
 
-  const hasStats = stats.multicraftRating > 0 || stats.resourcefulnessRating > 0;
-
   return (
     <div>
       <div className="mb-6">
@@ -56,35 +49,20 @@ export default function ProfessionClient({ profession, recipeCosts }: Props) {
         <p className="text-sm text-muted">{recipeCosts.length} recipes</p>
       </div>
 
-      {/* Stats Editor */}
+      {/* Tool Tier Selector */}
       <div className="mb-6 p-4 border border-border rounded-lg bg-card">
-        <h2 className="text-sm font-semibold text-muted mb-3">Your Crafting Stats</h2>
-        <div className="flex flex-wrap gap-6">
-          <label className="flex items-center gap-2 text-sm">
-            <span className="text-muted">Multicraft Rating</span>
-            <input
-              type="number"
-              min={0}
-              max={1100}
-              value={stats.multicraftRating}
-              onChange={(e) => updateStats({ ...stats, multicraftRating: Math.max(0, Number(e.target.value) || 0) })}
-              className="w-24 px-2 py-1 rounded bg-background border border-border text-foreground text-right"
-            />
-            {stats.multicraftRating > 0 && <span className="text-muted text-xs">({(Math.min(stats.multicraftRating / 1100, 1) * 100).toFixed(1)}%)</span>}
-          </label>
-          <label className="flex items-center gap-2 text-sm">
-            <span className="text-muted">Resourcefulness Rating</span>
-            <input
-              type="number"
-              min={0}
-              max={900}
-              value={stats.resourcefulnessRating}
-              onChange={(e) => updateStats({ ...stats, resourcefulnessRating: Math.max(0, Number(e.target.value) || 0) })}
-              className="w-24 px-2 py-1 rounded bg-background border border-border text-foreground text-right"
-            />
-            {stats.resourcefulnessRating > 0 && <span className="text-muted text-xs">({(Math.min(stats.resourcefulnessRating / 900, 1) * 100).toFixed(1)}%)</span>}
-          </label>
-        </div>
+        <label className="flex items-center gap-3 text-sm">
+          <span className="text-muted font-medium">Tool Tier</span>
+          <select value={tier} onChange={(e) => setSelectedTier(e.target.value as ToolTier)} className="px-3 py-1.5 rounded bg-background border border-border text-foreground">
+            {TOOL_TIERS.map((t) => (
+              <option key={t} value={t}>
+                {TOOL_TIER_LABELS[t]}
+              </option>
+            ))}
+          </select>
+          {hasTier && tierStats.multicraftRating > 0 && <span className="text-muted text-xs">MC: {tierStats.multicraftRating}</span>}
+          {hasTier && tierStats.resourcefulnessRating > 0 && <span className="text-muted text-xs">Res: {tierStats.resourcefulnessRating}</span>}
+        </label>
       </div>
 
       {sortedCategories.map(([categoryId, recipes]) => {
@@ -93,7 +71,7 @@ export default function ProfessionClient({ profession, recipeCosts }: Props) {
           <section key={categoryId ?? "uncategorized"} className="mb-8">
             <h2 className="text-lg font-semibold mb-3 text-muted">{category?.name ?? "Other"}</h2>
             <div className="overflow-x-auto">
-              <RecipeTable recipes={recipes} professionName={profession.name} stats={stats} hasStats={hasStats} />
+              <RecipeTable recipes={recipes} professionName={profession.name} tier={tier} />
             </div>
           </section>
         );
@@ -102,7 +80,10 @@ export default function ProfessionClient({ profession, recipeCosts }: Props) {
   );
 }
 
-function RecipeTable({ recipes, professionName, stats, hasStats }: { recipes: ProfessionRecipeCost[]; professionName: string; stats: ProfessionStats; hasStats: boolean }) {
+function RecipeTable({ recipes, professionName, tier }: { recipes: ProfessionRecipeCost[]; professionName: string; tier: ToolTier }) {
+  const hasTier = tier !== "none";
+  const tierStats = getTierStats(professionName, tier);
+
   return (
     <table className="w-full text-sm border-collapse">
       <thead>
@@ -112,11 +93,11 @@ function RecipeTable({ recipes, professionName, stats, hasStats }: { recipes: Pr
           <th className="py-2 pr-4 font-medium text-right">Cost (R1)</th>
           <th className="py-2 pr-4 font-medium text-right">Output (R1)</th>
           <th className="py-2 pr-4 font-medium text-right">Profit (R1)</th>
-          {hasStats && <th className="py-2 pr-4 font-medium text-right">Adj. Profit (R1)</th>}
+          {hasTier && <th className="py-2 pr-4 font-medium text-right">Adj. Profit (R1)</th>}
           <th className="py-2 pr-4 font-medium text-right">Cost (R2)</th>
           <th className="py-2 pr-4 font-medium text-right">Output (R2)</th>
           <th className="py-2 pr-4 font-medium text-right">Profit (R2)</th>
-          {hasStats && <th className="py-2 pr-4 font-medium text-right">Adj. Profit (R2)</th>}
+          {hasTier && <th className="py-2 pr-4 font-medium text-right">Adj. Profit (R2)</th>}
         </tr>
       </thead>
       <tbody>
@@ -125,10 +106,9 @@ function RecipeTable({ recipes, professionName, stats, hasStats }: { recipes: Pr
           const s2 = recipe.scenarios[1];
 
           const adj1 =
-            hasStats && s1
+            hasTier && s1
               ? calculateAdjustedProfit({
-                  professionName,
-                  stats,
+                  tierStats,
                   baseYield: s1.outputQuantity,
                   outputUnitPrice: s1.outputUnitPrice,
                   totalCost: s1.cost.totalCost,
@@ -138,10 +118,9 @@ function RecipeTable({ recipes, professionName, stats, hasStats }: { recipes: Pr
               : null;
 
           const adj2 =
-            hasStats && s2
+            hasTier && s2
               ? calculateAdjustedProfit({
-                  professionName,
-                  stats,
+                  tierStats,
                   baseYield: s2.outputQuantity,
                   outputUnitPrice: s2.outputUnitPrice,
                   totalCost: s2.cost.totalCost,
@@ -164,7 +143,7 @@ function RecipeTable({ recipes, professionName, stats, hasStats }: { recipes: Pr
               <td className="py-2 pr-4 text-right">
                 <ProfitCell value={s1?.profit ?? null} />
               </td>
-              {hasStats && (
+              {hasTier && (
                 <td className="py-2 pr-4 text-right">
                   <ProfitCell value={adj1?.expectedProfit ?? null} />
                 </td>
@@ -174,7 +153,7 @@ function RecipeTable({ recipes, professionName, stats, hasStats }: { recipes: Pr
               <td className="py-2 pr-4 text-right">
                 <ProfitCell value={s2?.profit ?? null} />
               </td>
-              {hasStats && (
+              {hasTier && (
                 <td className="py-2 pr-4 text-right">
                   <ProfitCell value={adj2?.expectedProfit ?? null} />
                 </td>
