@@ -1,7 +1,7 @@
 import cron from "node-cron";
 import { db } from "../db";
 import { professions, commoditySnapshots, realmSnapshots } from "../db/schema";
-import { count, desc, eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { ACTIVE_REGIONS } from "../config/regions";
 import { syncCommodities, syncAllRealmAuctions } from "../services/auction-sync";
 import { syncConnectedRealms } from "../services/realm-sync";
@@ -93,6 +93,9 @@ export async function runInitialSync(): Promise<void> {
 
         console.log(`[Scheduler] Initial sync: commodities for ${regionId}`);
         await syncCommodities(regionId);
+
+        console.log(`[Scheduler] Initial sync: realm auctions for ${regionId}`);
+        await syncAllRealmAuctions(regionId);
       }
     } catch (err) {
       console.error("[Scheduler] Initial sync failed:", err);
@@ -101,23 +104,30 @@ export async function runInitialSync(): Promise<void> {
     return;
   }
 
-  // Game data present — check if price data is also present
-  const [priceCountRow] = await db.select({ count: count() }).from(commoditySnapshots);
-  const snapshotCount = priceCountRow?.count ?? 0;
+  console.log("[Scheduler] Game data present, checking startup price sync freshness...");
+  let ranStartupPriceSync = false;
 
-  if (snapshotCount === 0) {
-    console.log("[Scheduler] Game data present but no price data — syncing auction data...");
+  for (const regionId of ACTIVE_REGIONS) {
     try {
-      for (const regionId of ACTIVE_REGIONS) {
-        await syncConnectedRealms(regionId);
-        await syncCommodities(regionId);
+      const shouldSync = await shouldRunPriceSync(regionId);
+      if (!shouldSync) {
+        console.log(`[Scheduler] Startup price sync skipped for ${regionId} (latest price data is under 1 hour old)`);
+        continue;
       }
+
+      console.log(`[Scheduler] Startup price sync running for ${regionId} (price data is stale or missing)`);
+      await syncCommodities(regionId);
+      await syncAllRealmAuctions(regionId);
+      ranStartupPriceSync = true;
     } catch (err) {
-      console.error("[Scheduler] Price sync failed:", err);
+      console.error(`[Scheduler] Startup price sync failed for ${regionId}:`, err);
     }
-    console.log("[Scheduler] Price sync complete");
+  }
+
+  if (ranStartupPriceSync) {
+    console.log("[Scheduler] Startup price sync complete");
     return;
   }
 
-  console.log("[Scheduler] Data already present, skipping initial sync");
+  console.log("[Scheduler] Startup price sync skipped for all regions (latest price data is fresh)");
 }
