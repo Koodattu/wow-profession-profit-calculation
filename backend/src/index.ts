@@ -3,6 +3,7 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { env } from "./config/env";
 import { startScheduler, runInitialSync } from "./jobs/scheduler";
+import { initializeDatabase } from "./startup";
 
 import health from "./routes/health";
 import itemRoutes from "./routes/items";
@@ -27,7 +28,10 @@ app.route("/api/crafting", craftingRoutes);
 app.route("/api/search", searchRoutes);
 app.route("/api/flipping", flippingRoutes);
 
-// Start cron jobs and initial data load
+// Migrations and the bundled catalog are required for the API to be usable.
+await initializeDatabase();
+
+// External price data can refresh in the background after startup.
 startScheduler();
 runInitialSync().catch((err) => console.error("[Startup] Initial sync error:", err));
 

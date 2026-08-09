@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { fetchRealms, type ConnectedRealmGroup } from "@/lib/api";
-import { TOOL_TIERS, TOOL_TIER_LABELS, type ToolTier } from "@/lib/tool-tiers";
+import { HAS_CONFIGURED_TOOL_TIERS, TOOL_TIERS, TOOL_TIER_LABELS, type ToolTier } from "@/lib/tool-tiers";
 import { getSelectedTier, setSelectedTier, subscribeToTier } from "@/lib/profession-stats";
 import { getSelectedConnectedRealmId, setSelectedConnectedRealmId, subscribeToConnectedRealm } from "@/lib/realm-state";
 
@@ -85,26 +85,28 @@ export default function NavSettings() {
 
   return (
     <div className="w-full mt-auto pt-4 flex flex-col items-center gap-3 border-t border-border/70">
-      <div className="w-full max-w-48">
-        <p className="text-xs text-muted mb-1 text-center">Tool Tier</p>
-        <div role="radiogroup" aria-label="Tool tier" className="grid grid-cols-3 gap-1">
-          {TOOL_TIERS.map((currentTier) => (
-            <button
-              key={currentTier}
-              type="button"
-              role="radio"
-              aria-checked={tier === currentTier}
-              aria-label={TOOL_TIER_LABELS[currentTier]}
-              onClick={() => setSelectedTier(currentTier)}
-              className={`px-2 py-1 rounded-md text-xs font-medium transition-colors ${
-                tier === currentTier ? "bg-accent text-background" : "bg-card border border-border text-muted hover:text-foreground hover:bg-card-hover"
-              }`}
-            >
-              {currentTier === "none" ? "None" : currentTier === "blue" ? "Blue" : "Epic"}
-            </button>
-          ))}
+      {HAS_CONFIGURED_TOOL_TIERS && (
+        <div className="w-full max-w-48">
+          <p className="text-xs text-muted mb-1 text-center">Tool Tier</p>
+          <div role="radiogroup" aria-label="Tool tier" className="grid grid-cols-3 gap-1">
+            {TOOL_TIERS.map((currentTier) => (
+              <button
+                key={currentTier}
+                type="button"
+                role="radio"
+                aria-checked={tier === currentTier}
+                aria-label={TOOL_TIER_LABELS[currentTier]}
+                onClick={() => setSelectedTier(currentTier)}
+                className={`px-2 py-1 rounded-md text-xs font-medium transition-colors ${
+                  tier === currentTier ? "bg-accent text-background" : "bg-card border border-border text-muted hover:text-foreground hover:bg-card-hover"
+                }`}
+              >
+                {currentTier === "none" ? "None" : currentTier === "blue" ? "Blue" : "Epic"}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="w-full max-w-48 relative" ref={realmDropdownRef}>
         <p className="text-xs text-muted mb-1 text-center">Realm</p>

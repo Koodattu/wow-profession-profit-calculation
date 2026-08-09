@@ -7,6 +7,8 @@
   "scripts": {
     "dev": "bun run --hot src/index.ts",
     "start": "bun run src/index.ts",
+    "test": "bun test",
+    "migrate": "bun run src/scripts/migrate.ts",
     "typecheck": "tsc --noEmit",
     "reimport": "bun run src/scripts/reimport-game-data.ts",
     "generate-salvage-config": "bun run src/scripts/generate-salvaging-config.ts",

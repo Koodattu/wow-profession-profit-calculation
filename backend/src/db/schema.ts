@@ -137,6 +137,15 @@ export const realms = pgTable(
   (t) => [primaryKey({ columns: [t.id, t.regionId] })],
 );
 
+export const syncJobs = pgTable("sync_jobs", {
+  name: text("name").primaryKey(),
+  status: text("status").notNull().default("idle"),
+  startedAt: timestamp("started_at", { withTimezone: true }),
+  finishedAt: timestamp("finished_at", { withTimezone: true }),
+  lastSuccessAt: timestamp("last_success_at", { withTimezone: true }),
+  lastError: text("last_error"),
+});
+
 // ─── Time-Series Price Tables ────────────────────────────────────────
 
 export const commoditySnapshots = pgTable(

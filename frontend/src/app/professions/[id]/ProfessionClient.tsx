@@ -5,7 +5,7 @@ import Link from "next/link";
 import { fetchProfessionCostsForRealm, formatPrice, type ProfessionRecipeCost, type ProfessionDetail, type RecipeCategory } from "@/lib/api";
 import WowheadLink from "@/app/WowheadLink";
 import { getSelectedTier, subscribeToTier } from "@/lib/profession-stats";
-import { getTierStats, type ToolTier } from "@/lib/tool-tiers";
+import { getTierStats, isTierConfigured, type ToolTier } from "@/lib/tool-tiers";
 import { calculateAdjustedProfit } from "@/lib/profit-calc";
 import { getSelectedConnectedRealmId, subscribeToConnectedRealm } from "@/lib/realm-state";
 
@@ -23,7 +23,7 @@ export default function ProfessionClient({ profession }: Props) {
   const [, startTransition] = useTransition();
 
   const tierStats = getTierStats(profession.name, tier);
-  const hasTier = tier !== "none";
+  const hasTier = tier !== "none" && isTierConfigured(profession.name, tier);
 
   useEffect(() => {
     if (connectedRealmId === null) return;
@@ -74,6 +74,7 @@ export default function ProfessionClient({ profession }: Props) {
           <div>
             <h1 className="text-2xl font-bold">{profession.name}</h1>
             <p className="text-sm text-muted">{recipeCosts.length} recipes</p>
+            <p className="text-xs text-muted mt-1">Gross estimates exclude auction fees and profession-stat procs.</p>
           </div>
           {hasTier && (
             <div className="mt-1 flex items-center gap-3 text-sm">
@@ -102,7 +103,7 @@ export default function ProfessionClient({ profession }: Props) {
 }
 
 function RecipeTable({ recipes, professionName, tier }: { recipes: ProfessionRecipeCost[]; professionName: string; tier: ToolTier }) {
-  const hasTier = tier !== "none";
+  const hasTier = tier !== "none" && isTierConfigured(professionName, tier);
   const tierStats = getTierStats(professionName, tier);
   const scenarioColSpan = hasTier ? 4 : 3;
   const metricColumnCount = hasTier ? 12 : 9;
@@ -135,15 +136,15 @@ function RecipeTable({ recipes, professionName, tier }: { recipes: ProfessionRec
         <tr className="border-b border-border text-left text-muted">
           <th className="py-2 pr-4 pl-4 font-medium text-right border-l border-border/60">Cost</th>
           <th className="py-2 pr-4 font-medium text-right">Output</th>
-          <th className="py-2 pr-4 font-medium text-right">Profit</th>
+          <th className="py-2 pr-4 font-medium text-right">Gross Profit</th>
           {hasTier && <th className="py-2 pr-4 font-medium text-right">Adj. Profit</th>}
           <th className="py-2 pr-4 pl-4 font-medium text-right border-l border-border/60">Cost</th>
           <th className="py-2 pr-4 font-medium text-right">Output</th>
-          <th className="py-2 pr-4 font-medium text-right">Profit</th>
+          <th className="py-2 pr-4 font-medium text-right">Gross Profit</th>
           {hasTier && <th className="py-2 pr-4 font-medium text-right">Adj. Profit</th>}
           <th className="py-2 pr-4 pl-4 font-medium text-right border-l border-border/60">Cost</th>
           <th className="py-2 pr-4 font-medium text-right">Output</th>
-          <th className="py-2 pr-4 font-medium text-right">Profit</th>
+          <th className="py-2 pr-4 font-medium text-right">Gross Profit</th>
           {hasTier && <th className="py-2 pr-4 font-medium text-right">Adj. Profit</th>}
         </tr>
       </thead>

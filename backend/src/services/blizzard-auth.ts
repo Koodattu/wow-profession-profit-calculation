@@ -1,4 +1,5 @@
 import { env } from "../config/env";
+import { fetchWithTimeout, isRetryableStatus, retryDelayMs, sleep } from "./request-policy";
 
 interface TokenResponse {
   access_token: string;
@@ -9,7 +10,8 @@ interface TokenResponse {
 export class BlizzardAuth {
   private static instance: BlizzardAuth;
   private token: string | null = null;
-  private expiresAt: number = 0;
+  private expiresAt = 0;
+  private refreshPromise: Promise<void> | null = null;
 
   private constructor() {}
 
@@ -21,35 +23,65 @@ export class BlizzardAuth {
   }
 
   async getToken(): Promise<string> {
-    // Refresh if token is missing or expires within 5 minutes
     if (!this.token || Date.now() >= this.expiresAt - 5 * 60 * 1000) {
-      await this.fetchToken();
+      this.refreshPromise ??= this.fetchToken().finally(() => {
+        this.refreshPromise = null;
+      });
+      await this.refreshPromise;
     }
     return this.token!;
   }
 
+  invalidateToken(token?: string): void {
+    if (!token || token === this.token) {
+      this.token = null;
+      this.expiresAt = 0;
+    }
+  }
+
   private async fetchToken(): Promise<void> {
     console.log("[BlizzardAuth] Fetching new OAuth token...");
-
     const credentials = btoa(`${env.BLIZZARD_CLIENT_ID}:${env.BLIZZARD_CLIENT_SECRET}`);
+    let lastError: unknown;
 
-    const response = await fetch("https://oauth.battle.net/token", {
-      method: "POST",
-      headers: {
-        Authorization: `Basic ${credentials}`,
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: "grant_type=client_credentials",
-    });
+    for (let attempt = 0; attempt <= env.BLIZZARD_MAX_RETRIES; attempt++) {
+      let response: Response;
+      try {
+        response = await fetchWithTimeout(
+          "https://oauth.battle.net/token",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Basic ${credentials}`,
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: "grant_type=client_credentials",
+          },
+          env.BLIZZARD_REQUEST_TIMEOUT_MS,
+        );
+      } catch (error) {
+        lastError = error;
+        if (attempt === env.BLIZZARD_MAX_RETRIES) break;
+        await sleep(retryDelayMs(attempt));
+        continue;
+      }
 
-    if (!response.ok) {
-      throw new Error(`[BlizzardAuth] Token fetch failed: ${response.status} ${response.statusText}`);
+      if (response.ok) {
+        const data = (await response.json()) as TokenResponse;
+        this.token = data.access_token;
+        this.expiresAt = Date.now() + data.expires_in * 1_000;
+        console.log(`[BlizzardAuth] Token acquired, expires in ${data.expires_in}s`);
+        return;
+      }
+
+      lastError = new Error(`[BlizzardAuth] Token fetch failed: ${response.status} ${response.statusText}`);
+      if (!isRetryableStatus(response.status) || attempt === env.BLIZZARD_MAX_RETRIES) {
+        throw lastError;
+      }
+
+      await sleep(retryDelayMs(attempt, response.headers.get("Retry-After")));
     }
 
-    const data = (await response.json()) as TokenResponse;
-    this.token = data.access_token;
-    this.expiresAt = Date.now() + data.expires_in * 1000;
-
-    console.log(`[BlizzardAuth] Token acquired, expires in ${data.expires_in}s`);
+    throw lastError instanceof Error ? lastError : new Error("[BlizzardAuth] Token fetch failed");
   }
 }

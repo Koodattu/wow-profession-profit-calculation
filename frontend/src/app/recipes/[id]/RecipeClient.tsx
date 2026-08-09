@@ -4,7 +4,7 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { fetchItem, fetchItemPrices, formatPrice, type RecipeProfitResult, type RankScenario, type PricePoint } from "@/lib/api";
 import WowheadLink from "@/app/WowheadLink";
-import { getTierStats, TOOL_TIERS, TOOL_TIER_LABELS, type ToolTier } from "@/lib/tool-tiers";
+import { getTierStats, isTierConfigured, TOOL_TIERS, TOOL_TIER_LABELS, type ToolTier } from "@/lib/tool-tiers";
 import { calculateAdjustedProfit, type AdjustedProfit } from "@/lib/profit-calc";
 import { getItemQualityClass } from "@/lib/item-quality";
 import TimeRangeTabs from "@/app/TimeRangeTabs";
@@ -21,7 +21,7 @@ export default function RecipeClient({ recipe }: Props) {
   const [historyRange, setHistoryRange] = useState<HistoryRange>("24h");
 
   // Compute adjusted profits for all tiers with stats
-  const activeTiers = TOOL_TIERS.filter((t) => t !== "none");
+  const activeTiers = TOOL_TIERS.filter((tier) => tier !== "none" && isTierConfigured(recipe.professionName, tier));
 
   return (
     <div>
@@ -43,6 +43,7 @@ export default function RecipeClient({ recipe }: Props) {
         <p className="text-sm text-muted">
           Quality type: {recipe.qualityTierType} &middot; {recipe.professionName}
         </p>
+        <p className="text-xs text-muted mt-1">Gross estimates exclude auction fees and profession-stat procs; tool stats are not yet configured.</p>
       </div>
 
       <div className="border border-border rounded-lg bg-card p-4 mb-6">
@@ -65,7 +66,7 @@ export default function RecipeClient({ recipe }: Props) {
               affectedByMulticraft: recipe.affectedByMulticraft,
               affectedByResourcefulness: recipe.affectedByResourcefulness,
             });
-            if (adj) tierResults.push({ tier, adj });
+            if (adj && scenario.cost.hasPriceData) tierResults.push({ tier, adj });
           }
 
           return (
@@ -250,7 +251,7 @@ function ScenarioCard({
 
       {/* Base Profit */}
       <div className="border-t border-border pt-4 mt-4 flex justify-between items-center">
-        <span className="font-medium">Base Profit</span>
+        <span className="font-medium">Gross Profit Estimate</span>
         <span className={`text-lg font-bold ${profitColor}`}>{scenario.profit !== null ? formatPrice(scenario.profit) : "—"}</span>
       </div>
 

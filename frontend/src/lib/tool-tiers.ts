@@ -68,3 +68,13 @@ export function getTierStats(professionName: string, tier: ToolTier): TierStats 
   if (tier === "none") return ZERO;
   return PROFESSION_TIERS[professionName]?.[tier] ?? ZERO;
 }
+
+export function isTierConfigured(professionName: string, tier: ToolTier): boolean {
+  if (tier === "none") return true;
+  const stats = PROFESSION_TIERS[professionName]?.[tier];
+  return Boolean(stats && (stats.multicraftRating > 0 || stats.resourcefulnessRating > 0));
+}
+
+export const HAS_CONFIGURED_TOOL_TIERS = Object.values(PROFESSION_TIERS).some((tiers) =>
+  Object.values(tiers).some((stats) => stats.multicraftRating > 0 || stats.resourcefulnessRating > 0),
+);

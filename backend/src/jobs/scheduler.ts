@@ -1,11 +1,13 @@
 import cron from "node-cron";
-import { db } from "../db";
-import { professions, commoditySnapshots, realmSnapshots } from "../db/schema";
-import { desc, eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { ACTIVE_REGIONS } from "../config/regions";
-import { syncCommodities, syncAllRealmAuctions } from "../services/auction-sync";
+import { db } from "../db";
+import { connectedRealms } from "../db/schema";
+import { syncAllRealmAuctions, syncCommodities } from "../services/auction-sync";
+import { getRegionPriceFreshness } from "../services/price-freshness";
+import { runPriceMaintenance } from "../services/price-maintenance";
 import { syncConnectedRealms } from "../services/realm-sync";
-import { importGameData } from "../services/game-data-import";
+import { runTrackedJob } from "./tracked-job";
 
 type SchedulerGlobalState = typeof globalThis & {
   __wowSchedulerStarted?: boolean;
@@ -13,38 +15,46 @@ type SchedulerGlobalState = typeof globalThis & {
 
 const schedulerGlobalState = globalThis as SchedulerGlobalState;
 
-const PRICE_SYNC_MIN_INTERVAL_MS = 60 * 60 * 1000;
+async function ensureConnectedRealms(regionId: string, force = false): Promise<void> {
+  const [row] = await db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(connectedRealms)
+    .where(eq(connectedRealms.regionId, regionId));
 
-function toTimestampMs(value: Date | string | null | undefined): number | null {
-  if (!value) return null;
-  if (value instanceof Date) return value.getTime();
-  const parsed = Date.parse(value);
-  return Number.isNaN(parsed) ? null : parsed;
-}
-
-async function shouldRunPriceSync(regionId: string): Promise<boolean> {
-  const [latestCommodity] = await db
-    .select({ snapshotTime: commoditySnapshots.snapshotTime })
-    .from(commoditySnapshots)
-    .where(eq(commoditySnapshots.regionId, regionId))
-    .orderBy(desc(commoditySnapshots.snapshotTime))
-    .limit(1);
-
-  const [latestRealm] = await db
-    .select({ snapshotTime: realmSnapshots.snapshotTime })
-    .from(realmSnapshots)
-    .where(eq(realmSnapshots.regionId, regionId))
-    .orderBy(desc(realmSnapshots.snapshotTime))
-    .limit(1);
-
-  const latestTimestamp = Math.max(toTimestampMs(latestCommodity?.snapshotTime) ?? 0, toTimestampMs(latestRealm?.snapshotTime) ?? 0);
-
-  if (latestTimestamp === 0) {
-    return true;
+  if (!force && (row?.count ?? 0) > 0) {
+    return;
   }
 
-  const elapsedMs = Date.now() - latestTimestamp;
-  return elapsedMs >= PRICE_SYNC_MIN_INTERVAL_MS;
+  await runTrackedJob(`realm-catalog:${regionId}`, () => syncConnectedRealms(regionId));
+}
+
+async function syncPrices(regionId: string, force = false): Promise<void> {
+  const freshness = await getRegionPriceFreshness(regionId);
+
+  if (!force && freshness.commodity.fresh) {
+    console.log(`[Scheduler] Commodity sync skipped for ${regionId}; data is fresh`);
+  } else {
+    await runTrackedJob(`commodity-prices:${regionId}`, () => syncCommodities(regionId));
+  }
+
+  if (!force && freshness.realm.fresh) {
+    console.log(`[Scheduler] Realm auction sync skipped for ${regionId}; data is fresh`);
+  } else {
+    await ensureConnectedRealms(regionId);
+    await runTrackedJob(`realm-prices:${regionId}`, () => syncAllRealmAuctions(regionId));
+  }
+}
+
+async function runForEachRegion(label: string, task: (regionId: string) => Promise<void>): Promise<void> {
+  console.log(`[Scheduler] ${label} started at ${new Date().toISOString()}`);
+  for (const regionId of ACTIVE_REGIONS) {
+    try {
+      await task(regionId);
+    } catch (error) {
+      console.error(`[Scheduler] ${label} failed for ${regionId}:`, error);
+    }
+  }
+  console.log(`[Scheduler] ${label} finished at ${new Date().toISOString()}`);
 }
 
 export function startScheduler(): void {
@@ -55,96 +65,31 @@ export function startScheduler(): void {
 
   schedulerGlobalState.__wowSchedulerStarted = true;
 
-  // Hourly auction sync — every hour at minute 5
   cron.schedule(
     "5 * * * *",
-    async () => {
-      console.log(`[Scheduler] Hourly auction sync started at ${new Date().toISOString()}`);
-      for (const regionId of ACTIVE_REGIONS) {
-        try {
-          const shouldSync = await shouldRunPriceSync(regionId);
-          if (!shouldSync) {
-            console.log(`[Scheduler] Hourly auction sync skipped for ${regionId} (latest price data is under 1 hour old)`);
-            continue;
-          }
-
-          await syncCommodities(regionId);
-          await syncAllRealmAuctions(regionId);
-        } catch (err) {
-          console.error(`[Scheduler] Hourly auction sync failed for ${regionId}:`, err);
-        }
-      }
-      console.log(`[Scheduler] Hourly auction sync finished at ${new Date().toISOString()}`);
-    },
-    { noOverlap: true, name: "hourly-auction-sync" },
+    () => runForEachRegion("Hourly price sync", (regionId) => syncPrices(regionId, true)),
+    { noOverlap: true, name: "hourly-price-sync" },
   );
 
-  // Daily realm refresh — 04:00
-  cron.schedule("0 4 * * *", async () => {
-    console.log(`[Scheduler] Daily realm refresh started at ${new Date().toISOString()}`);
-    for (const regionId of ACTIVE_REGIONS) {
-      try {
-        await syncConnectedRealms(regionId);
-      } catch (err) {
-        console.error(`[Scheduler] Daily realm refresh failed for ${regionId}:`, err);
-      }
-    }
-    console.log(`[Scheduler] Daily realm refresh finished at ${new Date().toISOString()}`);
-  });
+  cron.schedule(
+    "0 4 * * *",
+    () => runForEachRegion("Daily realm refresh", (regionId) => ensureConnectedRealms(regionId, true)),
+    { noOverlap: true, name: "daily-realm-refresh" },
+  );
+
+  cron.schedule(
+    "15 3 * * *",
+    () => runTrackedJob("price-history-maintenance", runPriceMaintenance),
+    { noOverlap: true, name: "daily-price-history-maintenance" },
+  );
 
   console.log(`[Scheduler] Cron jobs registered in pid ${process.pid}`);
 }
 
 export async function runInitialSync(): Promise<void> {
-  const existingGame = await db.select({ id: professions.id }).from(professions).limit(1);
-
-  if (existingGame.length === 0) {
-    console.log("[Scheduler] No game data found, running full initial sync...");
-    try {
-      console.log("[Scheduler] Initial sync: importing game data");
-      await importGameData();
-
-      for (const regionId of ACTIVE_REGIONS) {
-        console.log(`[Scheduler] Initial sync: connected realms for ${regionId}`);
-        await syncConnectedRealms(regionId);
-
-        console.log(`[Scheduler] Initial sync: commodities for ${regionId}`);
-        await syncCommodities(regionId);
-
-        console.log(`[Scheduler] Initial sync: realm auctions for ${regionId}`);
-        await syncAllRealmAuctions(regionId);
-      }
-    } catch (err) {
-      console.error("[Scheduler] Initial sync failed:", err);
-    }
-    console.log("[Scheduler] Initial sync complete");
-    return;
-  }
-
-  console.log("[Scheduler] Game data present, checking startup price sync freshness...");
-  let ranStartupPriceSync = false;
-
-  for (const regionId of ACTIVE_REGIONS) {
-    try {
-      const shouldSync = await shouldRunPriceSync(regionId);
-      if (!shouldSync) {
-        console.log(`[Scheduler] Startup price sync skipped for ${regionId} (latest price data is under 1 hour old)`);
-        continue;
-      }
-
-      console.log(`[Scheduler] Startup price sync running for ${regionId} (price data is stale or missing)`);
-      await syncCommodities(regionId);
-      await syncAllRealmAuctions(regionId);
-      ranStartupPriceSync = true;
-    } catch (err) {
-      console.error(`[Scheduler] Startup price sync failed for ${regionId}:`, err);
-    }
-  }
-
-  if (ranStartupPriceSync) {
-    console.log("[Scheduler] Startup price sync complete");
-    return;
-  }
-
-  console.log("[Scheduler] Startup price sync skipped for all regions (latest price data is fresh)");
+  await runForEachRegion("Startup data sync", async (regionId) => {
+    await ensureConnectedRealms(regionId);
+    await syncPrices(regionId);
+  });
+  await runTrackedJob("price-history-maintenance", runPriceMaintenance);
 }

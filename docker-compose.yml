@@ -3,9 +3,9 @@ services:
     image: postgres:16.10-alpine3.22
     restart: unless-stopped
     environment:
-      POSTGRES_USER: wowtools
-      POSTGRES_PASSWORD: wowtools
-      POSTGRES_DB: wowtools
+      POSTGRES_USER: ${POSTGRES_USER:-wowtools}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-wowtools}
+      POSTGRES_DB: ${POSTGRES_DB:-wowtools}
     ports:
       - "127.0.0.1:5566:5432"
     volumes:
@@ -28,20 +28,25 @@ services:
     environment:
       NODE_ENV: production
       BACKEND_PORT: 4111
-      DATABASE_URL: postgresql://wowtools:wowtools@db:5432/wowtools
+      DATABASE_URL: ${APP_DATABASE_URL:-postgresql://wowtools:wowtools@db:5432/wowtools}
       BLIZZARD_CLIENT_ID: ${BLIZZARD_CLIENT_ID:-}
       BLIZZARD_CLIENT_SECRET: ${BLIZZARD_CLIENT_SECRET:-}
+      BLIZZARD_REQUEST_TIMEOUT_MS: ${BLIZZARD_REQUEST_TIMEOUT_MS:-30000}
+      BLIZZARD_MAX_RETRIES: ${BLIZZARD_MAX_RETRIES:-4}
+      PRICE_STALE_AFTER_MINUTES: ${PRICE_STALE_AFTER_MINUTES:-55}
+      PRICE_READINESS_MAX_AGE_MINUTES: ${PRICE_READINESS_MAX_AGE_MINUTES:-90}
+      RAW_SNAPSHOT_RETENTION_DAYS: ${RAW_SNAPSHOT_RETENTION_DAYS:-35}
     depends_on:
       db:
         condition: service_healthy
     ports:
       - "127.0.0.1:4111:4111"
     healthcheck:
-      test: ["CMD", "bun", "-e", "const response = await fetch('http://localhost:4111/api/health'); process.exit(response.ok ? 0 : 1)"]
+      test: ["CMD", "bun", "-e", "const response = await fetch('http://localhost:4111/api/health/ready'); process.exit(response.ok ? 0 : 1)"]
       interval: 10s
       timeout: 3s
       retries: 5
-      start_period: 15s
+      start_period: 45s
 
   frontend:
     profiles: ["app"]
@@ -59,6 +64,27 @@ services:
         condition: service_healthy
     ports:
       - "127.0.0.1:3111:3111"
+
+  db-backup:
+    profiles: ["backup"]
+    image: postgres:16.10-alpine3.22
+    restart: "no"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-wowtools}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-wowtools}
+      POSTGRES_DB: ${POSTGRES_DB:-wowtools}
+      PGPASSWORD: ${POSTGRES_PASSWORD:-wowtools}
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ${BACKUP_DIR:-./backups}:/backups
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - >-
+        umask 077;
+        pg_dump --host=db --username="$${POSTGRES_USER}" --dbname="$${POSTGRES_DB}"
+        --format=custom --file="/backups/wowtools-$$(date -u +%Y%m%dT%H%M%SZ).dump"
 
 volumes:
   pgdata:

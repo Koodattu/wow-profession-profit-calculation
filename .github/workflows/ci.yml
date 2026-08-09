@@ -1,0 +1,71 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16.10-alpine3.22
+        env:
+          POSTGRES_USER: wowtools
+          POSTGRES_PASSWORD: wowtools
+          POSTGRES_DB: wowtools_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U wowtools -d wowtools_test"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      DATABASE_URL: postgresql://wowtools:wowtools@localhost:5432/wowtools_test
+      BLIZZARD_CLIENT_ID: ci-placeholder
+      BLIZZARD_CLIENT_SECRET: ci-placeholder
+    steps:
+      - uses: actions/checkout@v7
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.14
+      - run: bun install --frozen-lockfile
+      - run: bun run typecheck
+      - run: bun test
+      - run: bunx drizzle-kit check
+      - run: bun run migrate
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.18.0
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+
+  containers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: docker compose --profile app config --quiet
+      - run: docker compose --profile app build

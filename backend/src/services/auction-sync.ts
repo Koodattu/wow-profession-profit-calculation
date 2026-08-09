@@ -215,20 +215,45 @@ export async function syncRealmAuctions(regionId: string, connectedRealmId: numb
 
 // ─── Sync All Realm Auctions ────────────────────────────────────────
 
-export async function syncAllRealmAuctions(regionId: string): Promise<void> {
+export interface RealmAuctionSyncSummary {
+  total: number;
+  succeeded: number;
+  failed: number;
+}
+
+export async function syncAllRealmAuctions(regionId: string): Promise<RealmAuctionSyncSummary> {
   const realmRows = await db.select({ id: connectedRealms.id }).from(connectedRealms).where(eq(connectedRealms.regionId, regionId));
 
   console.log(`[AuctionSync] Starting realm auction sync for ${realmRows.length} connected realms in ${regionId}`);
+  if (realmRows.length === 0) {
+    throw new Error(`No connected realms are available for ${regionId}`);
+  }
+
+  const failedRealmIds: number[] = [];
 
   for (let i = 0; i < realmRows.length; i++) {
     const row = realmRows[i]!;
     try {
       await syncRealmAuctions(regionId, row.id);
     } catch (err) {
+      failedRealmIds.push(row.id);
       console.error(`[AuctionSync] Failed to sync CR ${row.id}:`, err);
     }
     console.log(`[AuctionSync] Realm progress: ${i + 1}/${realmRows.length}`);
   }
 
+  const summary = {
+    total: realmRows.length,
+    succeeded: realmRows.length - failedRealmIds.length,
+    failed: failedRealmIds.length,
+  };
+
+  if (failedRealmIds.length > 0) {
+    throw new Error(
+      `Realm auction sync for ${regionId} was partial: ${summary.succeeded}/${summary.total} succeeded; failed realm IDs: ${failedRealmIds.join(", ")}`,
+    );
+  }
+
   console.log(`[AuctionSync] All realm auctions synced for ${regionId}`);
+  return summary;
 }

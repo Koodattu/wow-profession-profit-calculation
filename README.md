@@ -5,10 +5,10 @@ A World of Warcraft auction house data analysis platform focused on professions,
 ## Features
 
 - **Price Tracking** — Hourly snapshots of commodity (region-wide) and per-realm auction data with interactive charts (24h, 7d, 30d, 6m, 1y, all)
-- **Crafting Cost Calculator** — Calculate crafting costs and profit margins accounting for reagent ranks (R1/R2) and crafted item ranks (1–5)
+- **Crafting Cost Calculator** — Calculate reagent costs and gross profit estimates across supported reagent/output rank scenarios
 - **Realm Arbitrage** — Find the best realms to buy and sell non-commodity items
 - **Profession Browser** — Browse Midnight professions, recipes, and reagents
-- **Client-Side Simulation** — (Planned) Multicraft, resourcefulness, and ingenuity calculations
+- **Profession Stat Simulation** — Not yet enabled; authoritative multicraft, resourcefulness, and ingenuity inputs are not bundled
 
 ## Architecture
 
@@ -75,6 +75,8 @@ docker compose --profile app build
 ```
 
 The `app` profile keeps the default `docker compose up` behavior database-only.
+
+The backend automatically applies migrations, imports the bundled catalog when needed, and refreshes stale Blizzard auction data after startup and hourly thereafter. See [docs/deployment.md](docs/deployment.md) for production environment, readiness, reverse-proxy, and backup guidance.
 
 ## Documentation
 

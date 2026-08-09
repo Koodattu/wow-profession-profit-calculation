@@ -2,6 +2,7 @@ import { eq, and, desc, inArray, sql, gte } from "drizzle-orm";
 import { db } from "../db";
 import { professions, recipes, recipeOutputQualities, recipeReagentSlots, recipeReagentSlotOptions, recipeSalvageTargets, commoditySnapshots, realmSnapshots, items } from "../db/schema";
 import { getSalvagingRecipeConfigMap } from "./salvaging-config";
+import { calculateGrossProfit } from "./profit-policy";
 
 // ─── Types ───────────────────────────────────────────────────────────
 
@@ -466,7 +467,7 @@ export async function computeRecipeProfit(recipeId: number, regionId: string, co
         outputQuantity,
         outputUnitPrice,
         outputTotalPrice,
-        profit: outputTotalPrice !== null ? outputTotalPrice - cost.totalCost : null,
+        profit: calculateGrossProfit(outputTotalPrice, cost.totalCost, cost.hasPriceData),
         isSalvage: true,
         scenarioLabel: `${inputOption.itemName} ×${inputQuantity}`,
         inputItemId: inputOption.itemId,
@@ -493,7 +494,7 @@ export async function computeRecipeProfit(recipeId: number, regionId: string, co
     const price = outputItemId ? sourceMap.get(outputItemId) : null;
     const outputUnitPrice = price?.minPrice ?? null;
     const outputTotalPrice = outputUnitPrice !== null ? outputUnitPrice * outputQuantity : null;
-    const profit = outputTotalPrice !== null ? outputTotalPrice - cost.totalCost : null;
+    const profit = calculateGrossProfit(outputTotalPrice, cost.totalCost, cost.hasPriceData);
 
     return {
       reagentRank: rank,
@@ -791,7 +792,7 @@ export async function computeProfessionRecipeCosts(professionId: number, regionI
       const price = outputItemId ? sourceMap.get(outputItemId) : null;
       const outputUnitPrice = price?.minPrice ?? null;
       const outputTotalPrice = outputUnitPrice !== null ? outputUnitPrice * outputQuantity : null;
-      const profit = outputTotalPrice !== null ? outputTotalPrice - cost.totalCost : null;
+      const profit = calculateGrossProfit(outputTotalPrice, cost.totalCost, cost.hasPriceData);
 
       return {
         reagentRank: rank,
