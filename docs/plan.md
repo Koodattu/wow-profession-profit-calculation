@@ -342,9 +342,15 @@ backend/
 │   │   ├── schema.ts
 │   │   └── migrations/
 │   ├── services/
-│   │   ├── blizzard-auth.ts
-│   │   ├── blizzard-api.ts
+│   │   ├── blizzard.ts
+│   │   ├── blizzard-client.ts
+│   │   ├── blizzard-auction-source.ts
+│   │   ├── auction-refresh.ts
 │   │   ├── auction-sync.ts
+│   │   ├── current-market.ts
+│   │   ├── market-history.ts
+│   │   ├── recipe-valuation.ts
+│   │   ├── recipe-history.ts
 │   │   ├── realm-sync.ts
 │   │   └── game-data-import.ts
 │   ├── jobs/

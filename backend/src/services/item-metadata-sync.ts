@@ -2,7 +2,7 @@ import { and, desc, eq, lt, or } from "drizzle-orm";
 import { env } from "../config/env";
 import { db } from "../db";
 import { items } from "../db/schema";
-import { BlizzardApi } from "./blizzard-api";
+import { blizzardClient } from "./blizzard";
 
 interface BlizzardItemDetail {
   id: number;
@@ -41,7 +41,6 @@ export async function syncPendingItemMetadata(regionId: string): Promise<ItemMet
     .limit(env.ITEM_METADATA_BATCH_SIZE);
   if (pending.length === 0) return { attempted: 0, succeeded: 0, failed: 0 };
 
-  const api = BlizzardApi.getInstance();
   let nextIndex = 0;
   let succeeded = 0;
   let failed = 0;
@@ -50,7 +49,7 @@ export async function syncPendingItemMetadata(regionId: string): Promise<ItemMet
     while (nextIndex < pending.length) {
       const row = pending[nextIndex++]!;
       try {
-        const item = await api.get<BlizzardItemDetail>(regionId, `/data/wow/item/${row.id}`, "static");
+        const item = await blizzardClient.get<BlizzardItemDetail>(regionId, `/data/wow/item/${row.id}`, "static");
         await db
           .update(items)
           .set({

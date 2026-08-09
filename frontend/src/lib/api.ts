@@ -42,6 +42,7 @@ export interface RecipeCostResult {
 }
 
 export interface RankScenario {
+  scenarioKey: string;
   reagentRank: 1 | 2;
   outputRank: 1 | 2;
   cost: RecipeCostResult;
@@ -77,6 +78,20 @@ export interface RecipeProfitResult {
   professionId: number;
   professionName: string;
   scenarios: RankScenario[];
+}
+
+export interface RecipeHistoryPoint {
+  [key: string]: string | number | null;
+  time: string;
+  cost: number | null;
+  output: number | null;
+  outputQuantity: number | null;
+}
+
+export interface RecipeHistoryResponse {
+  recipeId: number;
+  range: HistoryRange;
+  scenarios: Array<{ scenarioKey: string; points: RecipeHistoryPoint[] }>;
 }
 
 export interface Item {
@@ -236,6 +251,21 @@ export function fetchProfessionCostsForRealm(id: number, region = "eu", connecte
 
 export function fetchRecipeCost(id: number, region = "eu", connectedRealmId?: number): Promise<RecipeProfitResult> {
   return apiFetch(`/api/crafting/recipes/${id}${qs({ region, connectedRealmId: connectedRealmId?.toString() })}`);
+}
+
+export function fetchRecipeHistory(
+  id: number,
+  range: HistoryRange,
+  connectedRealmId: number,
+  region = "eu",
+): Promise<RecipeHistoryResponse> {
+  return apiFetch(
+    `/api/crafting/recipes/${id}/history${qs({
+      region,
+      range,
+      connectedRealmId: connectedRealmId.toString(),
+    })}`,
+  );
 }
 
 export function fetchItem(id: number): Promise<Item> {
