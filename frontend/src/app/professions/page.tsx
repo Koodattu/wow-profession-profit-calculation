@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { fetchProfessions } from "@/lib/api";
 
+export const dynamic = "force-dynamic";
+
 export default async function ProfessionsPage() {
   const professions = await fetchProfessions();
 

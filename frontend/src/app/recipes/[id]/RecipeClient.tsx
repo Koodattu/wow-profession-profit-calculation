@@ -296,13 +296,15 @@ function ScenarioCard({
 
 function ScenarioHistoryChart({ scenario, connectedRealmId, range }: { scenario: RankScenario; connectedRealmId: number | null; range: HistoryRange }) {
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<Array<{ time: string; cost: number | null; output: number | null; outputQuantity: number | null }>>([]);
+  const [history, setHistory] = useState<{
+    scenario: RankScenario;
+    connectedRealmId: number;
+    range: HistoryRange;
+    data: Array<{ time: string; cost: number | null; output: number | null; outputQuantity: number | null }>;
+  } | null>(null);
 
   useEffect(() => {
-    if (!scenario.outputItemId || connectedRealmId === null) {
-      setData([]);
-      return;
-    }
+    if (!scenario.outputItemId || connectedRealmId === null) return;
 
     const realmId = connectedRealmId;
 
@@ -313,11 +315,11 @@ function ScenarioHistoryChart({ scenario, connectedRealmId, range }: { scenario:
       try {
         const nextData = await buildRecipeHistory(scenario, range, realmId);
         if (!cancelled) {
-          setData(nextData);
+          setHistory({ scenario, connectedRealmId: realmId, range, data: nextData });
         }
       } catch {
         if (!cancelled) {
-          setData([]);
+          setHistory({ scenario, connectedRealmId: realmId, range, data: [] });
         }
       } finally {
         if (!cancelled) {
@@ -333,8 +335,15 @@ function ScenarioHistoryChart({ scenario, connectedRealmId, range }: { scenario:
     };
   }, [connectedRealmId, range, scenario]);
 
+  const data =
+    history?.scenario === scenario && history.connectedRealmId === connectedRealmId && history.range === range ? history.data : [];
+
   if (connectedRealmId === null) {
     return <p className="text-xs text-muted">Select a realm to view scenario history.</p>;
+  }
+
+  if (!scenario.outputItemId) {
+    return <p className="text-xs text-muted">Not enough data points for this scenario.</p>;
   }
 
   if (loading) {

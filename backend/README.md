@@ -9,7 +9,13 @@ bun install
 To run:
 
 ```bash
-bun run index.ts
+bun run start
 ```
 
-This project was created using `bun init` in bun v1.3.9. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+To type-check:
+
+```bash
+bun run typecheck
+```
+
+The runtime and lockfile are maintained with Bun 1.3.14.

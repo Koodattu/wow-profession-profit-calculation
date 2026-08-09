@@ -12,9 +12,9 @@ A World of Warcraft auction house data analysis platform focused on professions,
 
 ## Architecture
 
-| Component | Technology            | Port |
-| --------- | --------------------- | ---- |
-| Frontend  | Next.js + React (Bun) | 3111 |
+| Component | Technology                 | Port |
+| --------- | -------------------------- | ---- |
+| Frontend  | Next.js + React (Node.js) | 3111 |
 | Backend   | Hono (Bun)            | 4111 |
 | Database  | PostgreSQL 16         | 5566 |
 
@@ -26,7 +26,7 @@ wow-tools/
 ├── backend/            # Hono API server
 ├── game-data-parsed/   # In-game addon data (items, recipes)
 ├── docs/               # Project documentation
-├── docker-compose.yml  # PostgreSQL
+├── docker-compose.yml  # PostgreSQL and optional production app stack
 └── .env                # Blizzard API credentials (not committed)
 ```
 
@@ -40,7 +40,8 @@ wow-tools/
 
 ### Prerequisites
 
-- [Bun](https://bun.sh) runtime
+- [Node.js 24](https://nodejs.org/) for the frontend
+- [Bun](https://bun.sh) for the backend
 - [Docker](https://www.docker.com/) for PostgreSQL
 - Blizzard API credentials in `.env`:
   ```
@@ -61,9 +62,19 @@ bun dev
 
 # Frontend
 cd frontend
-bun install
-bun dev
+npm ci
+npm run dev
 ```
+
+### Production containers
+
+Build the optimized frontend and backend images without starting them:
+
+```bash
+docker compose --profile app build
+```
+
+The `app` profile keeps the default `docker compose up` behavior database-only.
 
 ## Documentation
 

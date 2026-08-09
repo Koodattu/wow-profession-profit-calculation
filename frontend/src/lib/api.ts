@@ -1,6 +1,9 @@
 import type { HistoryRange } from "@/lib/time-ranges";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4111";
+const API_BASE =
+  typeof window === "undefined"
+    ? process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:4111"
+    : process.env.NEXT_PUBLIC_API_URL || "http://localhost:4111";
 
 // --- Types ---
 

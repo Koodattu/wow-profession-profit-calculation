@@ -15,27 +15,26 @@ export default function SearchBar() {
 
   // Debounced search
   useEffect(() => {
-    if (!query.trim()) {
-      setResults(null);
-      setOpen(false);
-      return;
-    }
+    const normalizedQuery = query.trim();
+    if (!normalizedQuery) return;
 
-    setLoading(true);
-    setOpen(true);
+    let cancelled = false;
 
     const timer = setTimeout(async () => {
       try {
-        const data = await fetchSearch(query.trim());
-        setResults(data);
+        const data = await fetchSearch(normalizedQuery);
+        if (!cancelled) setResults(data);
       } catch {
-        setResults({ items: [], recipes: [] });
+        if (!cancelled) setResults({ items: [], recipes: [] });
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }, 300);
 
-    return () => clearTimeout(timer);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
   }, [query]);
 
   // Close on outside click
@@ -52,7 +51,22 @@ export default function SearchBar() {
   function navigate(path: string) {
     setOpen(false);
     setQuery("");
+    setResults(null);
+    setLoading(false);
     router.push(path);
+  }
+
+  function updateQuery(value: string) {
+    setQuery(value);
+    if (!value.trim()) {
+      setResults(null);
+      setLoading(false);
+      setOpen(false);
+      return;
+    }
+
+    setLoading(true);
+    setOpen(true);
   }
 
   const hasResults = results && (results.items.length > 0 || results.recipes.length > 0);
@@ -62,7 +76,7 @@ export default function SearchBar() {
       <input
         type="text"
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={(e) => updateQuery(e.target.value)}
         onFocus={() => query.trim() && setOpen(true)}
         onKeyDown={(e) => e.key === "Escape" && setOpen(false)}
         placeholder="Search..."

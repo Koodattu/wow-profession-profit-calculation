@@ -1,7 +1,6 @@
 services:
   db:
-    image: postgres:16-alpine
-    container_name: wowtools-db
+    image: postgres:16.10-alpine3.22
     restart: unless-stopped
     environment:
       POSTGRES_USER: wowtools
@@ -12,10 +11,54 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U wowtools"]
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
       interval: 5s
       timeout: 3s
       retries: 5
+      start_period: 5s
+
+  backend:
+    profiles: ["app"]
+    image: wowtools-backend:local
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    init: true
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      BACKEND_PORT: 4111
+      DATABASE_URL: postgresql://wowtools:wowtools@db:5432/wowtools
+      BLIZZARD_CLIENT_ID: ${BLIZZARD_CLIENT_ID:-}
+      BLIZZARD_CLIENT_SECRET: ${BLIZZARD_CLIENT_SECRET:-}
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:4111:4111"
+    healthcheck:
+      test: ["CMD", "bun", "-e", "const response = await fetch('http://localhost:4111/api/health'); process.exit(response.ok ? 0 : 1)"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 15s
+
+  frontend:
+    profiles: ["app"]
+    image: wowtools-frontend:local
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:4111}
+    init: true
+    restart: unless-stopped
+    environment:
+      API_URL: http://backend:4111
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:3111:3111"
 
 volumes:
   pgdata:
