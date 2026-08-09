@@ -65,6 +65,9 @@ flippingRoutes.get("/opportunities", async (c) => {
           rl.connected_realm_id,
           min(rl.min_buyout)::bigint AS min_buyout
         FROM realm_latest rl
+        INNER JOIN items tracked_item
+          ON tracked_item.id = rl.item_id
+         AND tracked_item.is_crafted_output = true
         WHERE rl.region_id = ${region}
         GROUP BY rl.item_id, rl.connected_realm_id
       ),

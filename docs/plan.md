@@ -363,7 +363,7 @@ backend/
 1. **On startup**: Apply migrations and import the profession catalog only when it is missing
 2. **On startup**: Refresh stale connected-realm and current-price data in the background
 3. **Every hour**: Atomically replace current commodity and realm state after successful fetches
-4. **Every ten minutes**: Hydrate a bounded batch of newly discovered item metadata
+4. **Every five minutes**: Hydrate a bounded batch of newly discovered item metadata, prioritizing profession items and newer IDs
 5. **Daily**: Refresh realms, incrementally roll raw samples into daily history, and prune expired rows
 
 ### API Endpoints

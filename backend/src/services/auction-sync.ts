@@ -12,6 +12,7 @@ import {
 } from "../db/schema";
 import { normalizeRealmVariant, summarizePrices, type PriceEntry, type RealmAuctionIdentity } from "./auction-aggregation";
 import { BlizzardApi } from "./blizzard-api";
+import { toTimestampMs } from "./freshness-policy";
 import { ensureRegionExists } from "./region-sync";
 
 interface CommodityAuction {
@@ -155,11 +156,12 @@ export async function syncRealmAuctions(regionId: string, connectedRealmId: numb
     );
     const observedAt = new Date();
     const [latestHistory] = await db
-      .select({ snapshotTime: sql<Date | null>`max(${realmSnapshots.snapshotTime})` })
+      .select({ snapshotTime: sql<Date | string | null>`max(${realmSnapshots.snapshotTime})` })
       .from(realmSnapshots)
       .where(and(eq(realmSnapshots.regionId, regionId), eq(realmSnapshots.connectedRealmId, connectedRealmId)));
+    const latestHistoryMs = toTimestampMs(latestHistory?.snapshotTime);
     const historyDue =
-      !latestHistory?.snapshotTime || observedAt.getTime() - latestHistory.snapshotTime.getTime() >= env.REALM_HISTORY_INTERVAL_HOURS * 60 * 60 * 1_000;
+      latestHistoryMs === null || observedAt.getTime() - latestHistoryMs >= env.REALM_HISTORY_INTERVAL_HOURS * 60 * 60 * 1_000;
     const historyItemIds =
       trackedHistoryItemIds ??
       new Set(
@@ -234,7 +236,9 @@ export async function syncRealmAuctions(regionId: string, connectedRealmId: numb
       });
     }
 
-    const marketItemIds = [...new Set(latestRows.map((row) => row.itemId))];
+    // Every realm worker acquires shared item rows in the same order. This
+    // prevents overlapping catalog upserts from deadlocking under concurrency.
+    const marketItemIds = [...new Set(latestRows.map((row) => row.itemId))].sort((a, b) => a - b);
     await db.transaction(async (tx) => {
       for (const batch of batches(marketItemIds)) {
         await tx

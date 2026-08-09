@@ -57,6 +57,13 @@
       "when": 1786301392454,
       "tag": "0007_numerous_cammi",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1786301971108,
+      "tag": "0008_parched_longshot",
+      "breakpoints": true
     }
   ]
 }

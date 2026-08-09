@@ -137,21 +137,25 @@ export async function importGameData(): Promise<void> {
   console.log("[GameDataImport] Importing items...");
   const itemRows = reagentEntries
     .filter((r) => r.itemID != null && r.itemID !== 0)
-    .map((r) => ({
-      id: r.itemID,
-      name: r.itemName,
-      itemQuality: r.itemQuality,
-      qualityRank: r.qualityRank,
-      isReagent: r.entryTypes.includes("reagent"),
-      isCraftedOutput: r.entryTypes.includes("craftedOutput"),
-    }));
+    .map((r) => {
+      const itemName = r.itemName.trim();
+      return {
+        id: r.itemID,
+        name: itemName || `Item #${r.itemID}`,
+        itemQuality: r.itemQuality,
+        qualityRank: r.qualityRank,
+        isReagent: r.entryTypes.includes("reagent"),
+        isCraftedOutput: r.entryTypes.includes("craftedOutput"),
+        metadataStatus: itemName ? "complete" : "pending",
+      };
+    });
   if (itemRows.length > 0) {
     const BATCH = 500;
     for (let i = 0; i < itemRows.length; i += BATCH) {
       const batch = itemRows.slice(i, i + BATCH);
       await db
         .insert(items)
-        .values(batch.map((row) => ({ ...row, metadataStatus: "complete" })))
+        .values(batch)
         .onConflictDoUpdate({
           target: items.id,
           set: {
@@ -160,7 +164,7 @@ export async function importGameData(): Promise<void> {
             qualityRank: sql`excluded.quality_rank`,
             isReagent: sql`excluded.is_reagent`,
             isCraftedOutput: sql`excluded.is_crafted_output`,
-            metadataStatus: "complete",
+            metadataStatus: sql`excluded.metadata_status`,
           },
         });
     }

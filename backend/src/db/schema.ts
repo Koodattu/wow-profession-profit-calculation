@@ -306,7 +306,7 @@ export const commodityDaily = pgTable(
     maxPrice: bigint("max_price", { mode: "number" }),
     avgQuantity: bigint("avg_quantity", { mode: "number" }),
   },
-  (t) => [uniqueIndex("commodity_daily_region_item_date").on(t.regionId, t.itemId, t.date)],
+  (t) => [uniqueIndex("commodity_daily_region_item_date").on(t.regionId, t.itemId, t.date), index("idx_commodity_daily_date").on(t.date)],
 );
 
 export const realmDaily = pgTable(
@@ -324,5 +324,8 @@ export const realmDaily = pgTable(
     maxBuyout: bigint("max_buyout", { mode: "number" }),
     avgQuantity: bigint("avg_quantity", { mode: "number" }),
   },
-  (t) => [uniqueIndex("realm_daily_realm_region_item_date").on(t.connectedRealmId, t.regionId, t.itemId, t.date)],
+  (t) => [
+    uniqueIndex("realm_daily_realm_region_item_date").on(t.connectedRealmId, t.regionId, t.itemId, t.date),
+    index("idx_realm_daily_date").on(t.date),
+  ],
 );

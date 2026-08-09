@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, lt, or } from "drizzle-orm";
+import { and, desc, eq, lt, or } from "drizzle-orm";
 import { env } from "../config/env";
 import { db } from "../db";
 import { items } from "../db/schema";
@@ -37,7 +37,7 @@ export async function syncPendingItemMetadata(regionId: string): Promise<ItemMet
     .select({ id: items.id })
     .from(items)
     .where(or(eq(items.metadataStatus, "pending"), and(eq(items.metadataStatus, "failed"), lt(items.metadataUpdatedAt, retryBefore))))
-    .orderBy(desc(items.isReagent), desc(items.isCraftedOutput), asc(items.id))
+    .orderBy(desc(items.isReagent), desc(items.isCraftedOutput), desc(items.id))
     .limit(env.ITEM_METADATA_BATCH_SIZE);
   if (pending.length === 0) return { attempted: 0, succeeded: 0, failed: 0 };
 

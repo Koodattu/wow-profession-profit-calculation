@@ -13,5 +13,6 @@ describe("price freshness", () => {
   test("uses each feed timestamp against the configured maximum age", () => {
     expect(isFresh("2026-08-09T11:01:00Z", 60, now)).toBe(true);
     expect(isFresh("2026-08-09T11:00:00Z", 60, now)).toBe(false);
+    expect(toTimestampMs(new Date("2026-08-09T11:01:00Z"))).toBe(Date.parse("2026-08-09T11:01:00Z"));
   });
 });

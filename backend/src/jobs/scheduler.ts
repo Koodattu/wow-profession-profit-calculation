@@ -85,7 +85,7 @@ export function startScheduler(): void {
   );
 
   cron.schedule(
-    "*/10 * * * *",
+    "*/5 * * * *",
     () => runForEachRegion("Item metadata sync", (regionId) => runTrackedJob(`item-metadata:${regionId}`, () => syncPendingItemMetadata(regionId)).then(() => undefined)),
     { noOverlap: true, name: "item-metadata-sync" },
   );

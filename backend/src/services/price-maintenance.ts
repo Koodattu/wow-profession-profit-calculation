@@ -71,11 +71,11 @@ export async function pruneRawPrices(): Promise<void> {
   `);
   await db.execute(sql`
     DELETE FROM commodity_daily
-    WHERE date < (now() AT TIME ZONE 'UTC')::date - ${env.DAILY_HISTORY_RETENTION_DAYS}
+    WHERE date < (now() AT TIME ZONE 'UTC')::date - ${env.DAILY_HISTORY_RETENTION_DAYS}::integer
   `);
   await db.execute(sql`
     DELETE FROM realm_daily
-    WHERE date < (now() AT TIME ZONE 'UTC')::date - ${env.DAILY_HISTORY_RETENTION_DAYS}
+    WHERE date < (now() AT TIME ZONE 'UTC')::date - ${env.DAILY_HISTORY_RETENTION_DAYS}::integer
   `);
 }
 

@@ -78,7 +78,7 @@ docker compose --profile app build
 
 The `app` profile keeps the default `docker compose up` behavior database-only.
 
-The backend automatically applies migrations, imports the bundled profession catalog when needed, refreshes current Blizzard auction data hourly, and hydrates newly discovered item names in bounded batches. Current market tables are atomically replaced per scope; history is intentionally sampled and retained separately so normal reads stay small and fast. See [docs/deployment.md](docs/deployment.md) for production environment, readiness, reverse-proxy, and backup guidance.
+The backend automatically applies migrations, imports the bundled profession catalog when needed, refreshes current Blizzard auction data hourly, and hydrates newly discovered item names in bounded batches every five minutes. Current market tables are atomically replaced per scope; history is intentionally sampled and retained separately so normal reads stay small and fast. See [docs/deployment.md](docs/deployment.md) for production environment, readiness, reverse-proxy, and backup guidance.
 
 Auction data is provided by Blizzard on an as-is basis. Copper is not affiliated with or endorsed by Blizzard Entertainment.
 
