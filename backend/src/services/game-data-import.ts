@@ -1,4 +1,5 @@
 import { resolve } from "path";
+import { sql } from "drizzle-orm";
 import { db } from "../db";
 import {
   professions,
@@ -82,7 +83,8 @@ export async function importGameData(): Promise<void> {
   const reagentEntries = reagentsRaw as ReagentEntry[];
   const recipeEntries = recipesRaw as RecipeEntry[];
 
-  // Truncate all static tables in reverse FK order
+  // Replace profession-owned relationships in reverse FK order. The item
+  // catalog is shared with auction ingestion, so market-only items remain.
   console.log("[GameDataImport] Clearing existing static data...");
   await db.delete(recipeSalvageTargets);
   await db.delete(recipeReagentSlotOptions);
@@ -91,8 +93,8 @@ export async function importGameData(): Promise<void> {
   await db.delete(recipes);
   await db.delete(itemProfessions);
   await db.delete(recipeCategories);
-  await db.delete(items);
   await db.delete(professions);
+  await db.update(items).set({ isReagent: false, isCraftedOutput: false, qualityRank: null });
 
   // a. Professions — extract unique from recipes
   console.log("[GameDataImport] Importing professions...");
@@ -146,7 +148,21 @@ export async function importGameData(): Promise<void> {
   if (itemRows.length > 0) {
     const BATCH = 500;
     for (let i = 0; i < itemRows.length; i += BATCH) {
-      await db.insert(items).values(itemRows.slice(i, i + BATCH));
+      const batch = itemRows.slice(i, i + BATCH);
+      await db
+        .insert(items)
+        .values(batch.map((row) => ({ ...row, metadataStatus: "complete" })))
+        .onConflictDoUpdate({
+          target: items.id,
+          set: {
+            name: sql`excluded.name`,
+            itemQuality: sql`excluded.item_quality`,
+            qualityRank: sql`excluded.quality_rank`,
+            isReagent: sql`excluded.is_reagent`,
+            isCraftedOutput: sql`excluded.is_crafted_output`,
+            metadataStatus: "complete",
+          },
+        });
     }
   }
   console.log(`[GameDataImport]   ${itemRows.length} items`);
@@ -186,13 +202,23 @@ export async function importGameData(): Promise<void> {
   if (extraItems.length > 0) {
     const BATCH = 500;
     for (let i = 0; i < extraItems.length; i += BATCH) {
-      await db.insert(items).values(
-        extraItems.slice(i, i + BATCH).map((it) => ({
-          id: it.id,
-          name: it.name,
-          isCraftedOutput: true,
-        })),
-      );
+      const batch = extraItems.slice(i, i + BATCH).map((item) => ({
+        id: item.id,
+        name: item.name || `Item #${item.id}`,
+        isCraftedOutput: true,
+        metadataStatus: item.name ? "complete" : "pending",
+      }));
+      await db
+        .insert(items)
+        .values(batch)
+        .onConflictDoUpdate({
+          target: items.id,
+          set: {
+            name: sql`CASE WHEN excluded.metadata_status = 'complete' THEN excluded.name ELSE ${items.name} END`,
+            isCraftedOutput: true,
+            metadataStatus: sql`CASE WHEN excluded.metadata_status = 'complete' THEN 'complete' ELSE ${items.metadataStatus} END`,
+          },
+        });
     }
     console.log(`[GameDataImport]   ${extraItems.length} extra items from recipe outputs/reagents`);
   }

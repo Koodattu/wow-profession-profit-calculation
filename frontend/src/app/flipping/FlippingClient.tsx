@@ -89,8 +89,10 @@ export default function FlippingClient() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-1">Flipping Tool</h1>
-      <p className="text-muted mb-6">Find crafted items with large price differences across realms</p>
+      <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-accent">Europe · Current listings</p>
+      <h1 className="text-3xl font-semibold tracking-tight mb-2">Realm comparison</h1>
+      <p className="text-muted mb-2">Compare current crafted-item prices across connected realms.</p>
+      <p className="text-xs text-muted mb-6">Price gaps are not guaranteed profit and exclude auction fees.</p>
 
       {/* Controls */}
       <div className="flex flex-col sm:flex-row gap-4 mb-6">

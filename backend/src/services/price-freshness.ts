@@ -1,7 +1,7 @@
-import { desc, eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { env } from "../config/env";
 import { db } from "../db";
-import { commoditySnapshots, realmSnapshots } from "../db/schema";
+import { commodityLatest, realmLatest, syncJobs } from "../db/schema";
 import { isFresh } from "./freshness-policy";
 
 export interface FeedFreshness {
@@ -19,21 +19,20 @@ export async function getRegionPriceFreshness(
   maxAgeMinutes = env.PRICE_STALE_AFTER_MINUTES,
 ): Promise<RegionPriceFreshness> {
   const [latestCommodity] = await db
-    .select({ snapshotTime: commoditySnapshots.snapshotTime })
-    .from(commoditySnapshots)
-    .where(eq(commoditySnapshots.regionId, regionId))
-    .orderBy(desc(commoditySnapshots.snapshotTime))
-    .limit(1);
+    .select({ snapshotTime: sql<Date | null>`max(${commodityLatest.observedAt})` })
+    .from(commodityLatest)
+    .where(eq(commodityLatest.regionId, regionId));
 
   const [latestRealm] = await db
-    .select({ snapshotTime: realmSnapshots.snapshotTime })
-    .from(realmSnapshots)
-    .where(eq(realmSnapshots.regionId, regionId))
-    .orderBy(desc(realmSnapshots.snapshotTime))
-    .limit(1);
+    .select({ snapshotTime: sql<Date | null>`max(${realmLatest.observedAt})` })
+    .from(realmLatest)
+    .where(eq(realmLatest.regionId, regionId));
 
-  const commodityLatestAt = latestCommodity?.snapshotTime ?? null;
-  const realmLatestAt = latestRealm?.snapshotTime ?? null;
+  const [commodityJob] = await db.select({ lastSuccessAt: syncJobs.lastSuccessAt }).from(syncJobs).where(eq(syncJobs.name, `commodity-prices:${regionId}`)).limit(1);
+  const [realmJob] = await db.select({ lastSuccessAt: syncJobs.lastSuccessAt }).from(syncJobs).where(eq(syncJobs.name, `realm-prices:${regionId}`)).limit(1);
+
+  const commodityLatestAt = latestCommodity?.snapshotTime ? (commodityJob?.lastSuccessAt ?? latestCommodity.snapshotTime) : null;
+  const realmLatestAt = latestRealm?.snapshotTime ? (realmJob?.lastSuccessAt ?? null) : null;
 
   return {
     commodity: {

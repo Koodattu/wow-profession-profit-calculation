@@ -1,0 +1,2 @@
+CREATE INDEX "idx_items_market_name" ON "items" USING btree ("market_type","name");--> statement-breakpoint
+CREATE INDEX "idx_items_metadata_queue" ON "items" USING btree ("metadata_status","metadata_updated_at");

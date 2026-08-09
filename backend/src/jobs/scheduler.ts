@@ -7,6 +7,7 @@ import { syncAllRealmAuctions, syncCommodities } from "../services/auction-sync"
 import { getRegionPriceFreshness } from "../services/price-freshness";
 import { runPriceMaintenance } from "../services/price-maintenance";
 import { syncConnectedRealms } from "../services/realm-sync";
+import { syncPendingItemMetadata } from "../services/item-metadata-sync";
 import { runTrackedJob } from "./tracked-job";
 
 type SchedulerGlobalState = typeof globalThis & {
@@ -83,6 +84,12 @@ export function startScheduler(): void {
     { noOverlap: true, name: "daily-price-history-maintenance" },
   );
 
+  cron.schedule(
+    "*/10 * * * *",
+    () => runForEachRegion("Item metadata sync", (regionId) => runTrackedJob(`item-metadata:${regionId}`, () => syncPendingItemMetadata(regionId)).then(() => undefined)),
+    { noOverlap: true, name: "item-metadata-sync" },
+  );
+
   console.log(`[Scheduler] Cron jobs registered in pid ${process.pid}`);
 }
 
@@ -90,6 +97,7 @@ export async function runInitialSync(): Promise<void> {
   await runForEachRegion("Startup data sync", async (regionId) => {
     await ensureConnectedRealms(regionId);
     await syncPrices(regionId);
+    await runTrackedJob(`item-metadata:${regionId}`, () => syncPendingItemMetadata(regionId));
   });
   await runTrackedJob("price-history-maintenance", runPriceMaintenance);
 }

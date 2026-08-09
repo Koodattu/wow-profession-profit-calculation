@@ -1,4 +1,4 @@
-import { pgTable, text, integer, serial, bigserial, bigint, boolean, timestamp, date, index, uniqueIndex, primaryKey } from "drizzle-orm/pg-core";
+import { pgTable, text, integer, serial, bigserial, bigint, boolean, timestamp, date, jsonb, index, uniqueIndex, primaryKey } from "drizzle-orm/pg-core";
 
 // ─── Static Data (from game-data-parsed) ─────────────────────────────
 
@@ -18,14 +18,29 @@ export const recipeCategories = pgTable("recipe_categories", {
   topCategoryName: text("top_category_name"),
 });
 
-export const items = pgTable("items", {
-  id: integer("id").primaryKey(),
-  name: text("name").notNull(),
-  itemQuality: integer("item_quality"),
-  qualityRank: integer("quality_rank"),
-  isReagent: boolean("is_reagent").notNull().default(false),
-  isCraftedOutput: boolean("is_crafted_output").notNull().default(false),
-});
+export const items = pgTable(
+  "items",
+  {
+    id: integer("id").primaryKey(),
+    name: text("name").notNull(),
+    itemQuality: integer("item_quality"),
+    qualityRank: integer("quality_rank"),
+    isReagent: boolean("is_reagent").notNull().default(false),
+    isCraftedOutput: boolean("is_crafted_output").notNull().default(false),
+    marketType: text("market_type"),
+    metadataStatus: text("metadata_status").notNull().default("complete"),
+    itemClass: text("item_class"),
+    itemSubclass: text("item_subclass"),
+    inventoryType: text("inventory_type"),
+    metadataUpdatedAt: timestamp("metadata_updated_at", { withTimezone: true }),
+  },
+  (t) => [
+    index("idx_items_name").on(t.name),
+    index("idx_items_market_type").on(t.marketType),
+    index("idx_items_market_name").on(t.marketType, t.name),
+    index("idx_items_metadata_queue").on(t.metadataStatus, t.metadataUpdatedAt),
+  ],
+);
 
 export const itemProfessions = pgTable(
   "item_professions",
@@ -146,6 +161,84 @@ export const syncJobs = pgTable("sync_jobs", {
   lastError: text("last_error"),
 });
 
+export const auctionSyncRuns = pgTable(
+  "auction_sync_runs",
+  {
+    id: bigserial("id", { mode: "number" }).primaryKey(),
+    regionId: text("region_id")
+      .notNull()
+      .references(() => regions.id),
+    scope: text("scope").notNull(),
+    connectedRealmId: integer("connected_realm_id"),
+    status: text("status").notNull().default("running"),
+    startedAt: timestamp("started_at", { withTimezone: true }).notNull().defaultNow(),
+    observedAt: timestamp("observed_at", { withTimezone: true }),
+    finishedAt: timestamp("finished_at", { withTimezone: true }),
+    rowCount: integer("row_count"),
+    lastError: text("last_error"),
+  },
+  (t) => [index("idx_auction_sync_runs_scope_time").on(t.regionId, t.scope, t.finishedAt), index("idx_auction_sync_runs_status").on(t.status)],
+);
+
+// Current market state is kept separately from history so normal reads remain
+// small and an item disappearing from an auction payload is represented exactly.
+export const commodityLatest = pgTable(
+  "commodity_latest",
+  {
+    regionId: text("region_id")
+      .notNull()
+      .references(() => regions.id),
+    itemId: integer("item_id")
+      .notNull()
+      .references(() => items.id),
+    syncRunId: bigint("sync_run_id", { mode: "number" }).notNull(),
+    observedAt: timestamp("observed_at", { withTimezone: true }).notNull(),
+    minPrice: bigint("min_price", { mode: "number" }).notNull(),
+    avgPrice: bigint("avg_price", { mode: "number" }).notNull(),
+    medianPrice: bigint("median_price", { mode: "number" }).notNull(),
+    maxPrice: bigint("max_price", { mode: "number" }).notNull(),
+    totalQuantity: bigint("total_quantity", { mode: "number" }).notNull(),
+    numAuctions: integer("num_auctions").notNull(),
+    priceP10: bigint("price_p10", { mode: "number" }).notNull(),
+    priceP25: bigint("price_p25", { mode: "number" }).notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.regionId, t.itemId] }), index("idx_commodity_latest_observed").on(t.regionId, t.observedAt)],
+);
+
+export const realmLatest = pgTable(
+  "realm_latest",
+  {
+    regionId: text("region_id")
+      .notNull()
+      .references(() => regions.id),
+    connectedRealmId: integer("connected_realm_id").notNull(),
+    itemId: integer("item_id")
+      .notNull()
+      .references(() => items.id),
+    variantKey: text("variant_key").notNull(),
+    syncRunId: bigint("sync_run_id", { mode: "number" }).notNull(),
+    observedAt: timestamp("observed_at", { withTimezone: true }).notNull(),
+    context: integer("context"),
+    bonusLists: jsonb("bonus_lists").$type<number[]>().notNull().default([]),
+    modifiers: jsonb("modifiers").$type<{ type: number; value: number }[]>().notNull().default([]),
+    petBreedId: integer("pet_breed_id"),
+    petLevel: integer("pet_level"),
+    petQualityId: integer("pet_quality_id"),
+    petSpeciesId: integer("pet_species_id"),
+    minBuyout: bigint("min_buyout", { mode: "number" }).notNull(),
+    avgBuyout: bigint("avg_buyout", { mode: "number" }).notNull(),
+    medianBuyout: bigint("median_buyout", { mode: "number" }).notNull(),
+    maxBuyout: bigint("max_buyout", { mode: "number" }).notNull(),
+    totalQuantity: bigint("total_quantity", { mode: "number" }).notNull(),
+    numAuctions: integer("num_auctions").notNull(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.regionId, t.connectedRealmId, t.itemId, t.variantKey] }),
+    index("idx_realm_latest_item").on(t.regionId, t.itemId),
+    index("idx_realm_latest_realm").on(t.regionId, t.connectedRealmId, t.observedAt),
+  ],
+);
+
 // ─── Time-Series Price Tables ────────────────────────────────────────
 
 export const commoditySnapshots = pgTable(
@@ -168,7 +261,7 @@ export const commoditySnapshots = pgTable(
     priceP10: bigint("price_p10", { mode: "number" }),
     priceP25: bigint("price_p25", { mode: "number" }),
   },
-  (t) => [index("idx_commodity_item_time").on(t.itemId, t.snapshotTime), index("idx_commodity_region_time").on(t.regionId, t.snapshotTime)],
+  (t) => [index("idx_commodity_item_time").on(t.itemId, t.snapshotTime), index("idx_commodity_snapshot_time").on(t.snapshotTime)],
 );
 
 export const realmSnapshots = pgTable(
@@ -188,7 +281,11 @@ export const realmSnapshots = pgTable(
     totalQuantity: bigint("total_quantity", { mode: "number" }).notNull(),
     numAuctions: integer("num_auctions"),
   },
-  (t) => [index("idx_realm_snap_item_time").on(t.itemId, t.snapshotTime), index("idx_realm_snap_realm_time").on(t.connectedRealmId, t.regionId, t.snapshotTime)],
+  (t) => [
+    index("idx_realm_snap_item_time").on(t.itemId, t.snapshotTime),
+    index("idx_realm_snap_realm_time").on(t.connectedRealmId, t.regionId, t.snapshotTime),
+    index("idx_realm_snapshot_time").on(t.snapshotTime),
+  ],
 );
 
 // ─── Aggregated Tables ───────────────────────────────────────────────

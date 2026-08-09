@@ -10,9 +10,10 @@ craftingRoutes.get("/professions/:professionId", async (c) => {
   if (isNaN(professionId)) return c.json({ error: "Invalid profession ID" }, 400);
 
   const region = c.req.query("region") || "eu";
+  if (region !== "eu") return c.json({ error: "Only the EU region is available" }, 400);
   const connectedRealmIdQuery = c.req.query("connectedRealmId");
   const connectedRealmId = connectedRealmIdQuery ? Number(connectedRealmIdQuery) : undefined;
-  if (connectedRealmIdQuery && !Number.isFinite(connectedRealmId)) {
+  if (connectedRealmIdQuery && (!Number.isInteger(connectedRealmId) || connectedRealmId! <= 0)) {
     return c.json({ error: "Invalid connected realm ID" }, 400);
   }
 
@@ -32,9 +33,10 @@ craftingRoutes.get("/recipes/:recipeId", async (c) => {
   if (isNaN(recipeId)) return c.json({ error: "Invalid recipe ID" }, 400);
 
   const region = c.req.query("region") || "eu";
+  if (region !== "eu") return c.json({ error: "Only the EU region is available" }, 400);
   const connectedRealmIdQuery = c.req.query("connectedRealmId");
   const connectedRealmId = connectedRealmIdQuery ? Number(connectedRealmIdQuery) : undefined;
-  if (connectedRealmIdQuery && !Number.isFinite(connectedRealmId)) {
+  if (connectedRealmIdQuery && (!Number.isInteger(connectedRealmId) || connectedRealmId! <= 0)) {
     return c.json({ error: "Invalid connected realm ID" }, 400);
   }
 

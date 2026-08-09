@@ -59,18 +59,14 @@ flippingRoutes.get("/opportunities", async (c) => {
 
   try {
     const rows = await db.execute(sql`
-      WITH latest_time AS (
-        SELECT max(snapshot_time) AS max_time
-        FROM realm_snapshots
-        WHERE region_id = ${region}
-      ),
-      latest_per_realm AS (
-        SELECT DISTINCT ON (rs.connected_realm_id, rs.item_id)
-          rs.item_id, rs.connected_realm_id, rs.min_buyout
-        FROM realm_snapshots rs, latest_time lt
-        WHERE rs.region_id = ${region}
-          AND rs.snapshot_time >= lt.max_time - interval '4 hours'
-        ORDER BY rs.connected_realm_id, rs.item_id, rs.snapshot_time DESC
+      WITH latest_per_realm AS (
+        SELECT
+          rl.item_id,
+          rl.connected_realm_id,
+          min(rl.min_buyout)::bigint AS min_buyout
+        FROM realm_latest rl
+        WHERE rl.region_id = ${region}
+        GROUP BY rl.item_id, rl.connected_realm_id
       ),
       item_agg AS (
         SELECT

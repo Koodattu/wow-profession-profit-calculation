@@ -1,16 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0f0f13;
-  --foreground: #e4e4e7;
-  --card: #18181b;
-  --card-hover: #1f1f23;
-  --border: #27272a;
-  --accent: #a78bfa;
-  --accent-hover: #8b5cf6;
-  --positive: #4ade80;
-  --negative: #f87171;
-  --muted: #71717a;
+  --background: #0b0d10;
+  --foreground: #f0f2f5;
+  --card: #12151a;
+  --card-hover: #181c22;
+  --border: #282e37;
+  --accent: #e7c66b;
+  --accent-hover: #f0d686;
+  --positive: #66d38b;
+  --negative: #f07a7a;
+  --muted: #9299a6;
+  --shadow-surface: 0 0 0 1px rgba(255, 255, 255, 0.075), 0 16px 40px rgba(0, 0, 0, 0.14);
+  --shadow-surface-hover: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 18px 44px rgba(0, 0, 0, 0.18);
 }
 
 @theme inline {
@@ -31,4 +33,56 @@
 body {
   background: var(--background);
   color: var(--foreground);
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+table,
+input[type="number"] {
+  font-variant-numeric: tabular-nums;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+.surface {
+  background: var(--card);
+  border-radius: 12px;
+  box-shadow: var(--shadow-surface);
+}
+
+.interactive-surface {
+  transition-property: background-color, box-shadow, transform;
+  transition-duration: 160ms;
+  transition-timing-function: ease-out;
+}
+
+.interactive-surface:hover {
+  background: var(--card-hover);
+  box-shadow: var(--shadow-surface-hover);
+}
+
+.interactive-surface:active {
+  transform: scale(0.96);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

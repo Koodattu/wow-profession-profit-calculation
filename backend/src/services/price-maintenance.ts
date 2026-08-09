@@ -16,6 +16,10 @@ export async function aggregateDailyPrices(): Promise<void> {
       max(max_price),
       round(avg(total_quantity))::bigint
     FROM commodity_snapshots
+    WHERE snapshot_time >= coalesce(
+      (SELECT last_success_at - interval '1 day' FROM sync_jobs WHERE name = 'price-history-maintenance'),
+      '-infinity'::timestamptz
+    )
     GROUP BY region_id, item_id, (snapshot_time AT TIME ZONE 'UTC')::date
     ON CONFLICT (region_id, item_id, date) DO UPDATE SET
       min_price = excluded.min_price,
@@ -39,6 +43,10 @@ export async function aggregateDailyPrices(): Promise<void> {
       max(max_buyout),
       round(avg(total_quantity))::bigint
     FROM realm_snapshots
+    WHERE snapshot_time >= coalesce(
+      (SELECT last_success_at - interval '1 day' FROM sync_jobs WHERE name = 'price-history-maintenance'),
+      '-infinity'::timestamptz
+    )
     GROUP BY connected_realm_id, region_id, item_id, (snapshot_time AT TIME ZONE 'UTC')::date
     ON CONFLICT (connected_realm_id, region_id, item_id, date) DO UPDATE SET
       min_buyout = excluded.min_buyout,
@@ -56,6 +64,18 @@ export async function pruneRawPrices(): Promise<void> {
   await db.execute(sql`
     DELETE FROM realm_snapshots
     WHERE snapshot_time < now() - (${env.RAW_SNAPSHOT_RETENTION_DAYS} * interval '1 day')
+  `);
+  await db.execute(sql`
+    DELETE FROM auction_sync_runs
+    WHERE coalesce(finished_at, started_at) < now() - (${env.RAW_SNAPSHOT_RETENTION_DAYS} * interval '1 day')
+  `);
+  await db.execute(sql`
+    DELETE FROM commodity_daily
+    WHERE date < (now() AT TIME ZONE 'UTC')::date - ${env.DAILY_HISTORY_RETENTION_DAYS}
+  `);
+  await db.execute(sql`
+    DELETE FROM realm_daily
+    WHERE date < (now() AT TIME ZONE 'UTC')::date - ${env.DAILY_HISTORY_RETENTION_DAYS}
   `);
 }
 

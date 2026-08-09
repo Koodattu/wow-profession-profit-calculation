@@ -1,6 +1,6 @@
-import { eq, and, desc, inArray, sql, gte } from "drizzle-orm";
+import { eq, and, desc, inArray, sql } from "drizzle-orm";
 import { db } from "../db";
-import { professions, recipes, recipeOutputQualities, recipeReagentSlots, recipeReagentSlotOptions, recipeSalvageTargets, commoditySnapshots, realmSnapshots, items } from "../db/schema";
+import { professions, recipes, recipeOutputQualities, recipeReagentSlots, recipeReagentSlotOptions, recipeSalvageTargets, commodityLatest, realmLatest, items } from "../db/schema";
 import { getSalvagingRecipeConfigMap } from "./salvaging-config";
 import { calculateGrossProfit } from "./profit-policy";
 
@@ -10,6 +10,10 @@ export interface PriceData {
   minPrice: number;
   avgPrice: number;
   medianPrice: number;
+  totalQuantity?: number;
+  numAuctions?: number;
+  observedAt?: Date;
+  variantCount?: number;
 }
 
 interface ReagentCost {
@@ -37,6 +41,7 @@ interface RankScenario {
   outputItemQuality: number | null;
   outputQuantity: number;
   outputUnitPrice: number | null;
+  outputVariantCount?: number;
   outputTotalPrice: number | null;
   profit: number | null;
   isSalvage?: boolean;
@@ -69,17 +74,6 @@ interface ProfessionRecipeCost {
 
 export async function getLatestCommodityPrices(regionId: string, itemIds: number[]): Promise<Map<number, PriceData>> {
   if (itemIds.length === 0) return new Map();
-
-  // Get the most recent commodity snapshot time for this region
-  const [latest] = await db
-    .select({ maxTime: sql<string>`max(${commoditySnapshots.snapshotTime})::text` })
-    .from(commoditySnapshots)
-    .where(eq(commoditySnapshots.regionId, regionId));
-
-  if (!latest?.maxTime) return new Map();
-
-  const latestTime = new Date(latest.maxTime);
-
   const BATCH = 500;
   const priceMap = new Map<number, PriceData>();
 
@@ -87,19 +81,25 @@ export async function getLatestCommodityPrices(regionId: string, itemIds: number
     const batch = itemIds.slice(i, i + BATCH);
     const rows = await db
       .select({
-        itemId: commoditySnapshots.itemId,
-        minPrice: commoditySnapshots.minPrice,
-        avgPrice: commoditySnapshots.avgPrice,
-        medianPrice: commoditySnapshots.medianPrice,
+        itemId: commodityLatest.itemId,
+        minPrice: commodityLatest.minPrice,
+        avgPrice: commodityLatest.avgPrice,
+        medianPrice: commodityLatest.medianPrice,
+        totalQuantity: commodityLatest.totalQuantity,
+        numAuctions: commodityLatest.numAuctions,
+        observedAt: commodityLatest.observedAt,
       })
-      .from(commoditySnapshots)
-      .where(and(eq(commoditySnapshots.regionId, regionId), eq(commoditySnapshots.snapshotTime, latestTime), inArray(commoditySnapshots.itemId, batch)));
+      .from(commodityLatest)
+      .where(and(eq(commodityLatest.regionId, regionId), inArray(commodityLatest.itemId, batch)));
 
     for (const row of rows) {
       priceMap.set(row.itemId, {
         minPrice: Number(row.minPrice),
         avgPrice: Number(row.avgPrice ?? row.minPrice),
         medianPrice: Number(row.medianPrice ?? row.minPrice),
+        totalQuantity: Number(row.totalQuantity),
+        numAuctions: row.numAuctions,
+        observedAt: row.observedAt,
       });
     }
   }
@@ -115,47 +115,42 @@ export async function getLatestRealmPrices(regionId: string, itemIds: number[]):
 
 export async function getLatestRealmPricesForConnectedRealm(regionId: string, itemIds: number[], connectedRealmId?: number): Promise<Map<number, PriceData>> {
   if (itemIds.length === 0) return new Map();
-
-  // Get the most recent realm snapshot time for this region
-  const [latestRealm] = await db
-    .select({ maxTime: sql<string>`max(${realmSnapshots.snapshotTime})::text` })
-    .from(realmSnapshots)
-    .where(eq(realmSnapshots.regionId, regionId));
-
-  if (!latestRealm?.maxTime) return new Map();
-
-  // Use a 4-hour window to capture all realms from the same sync cycle
-  const latestTime = new Date(latestRealm.maxTime);
-  const windowStart = new Date(latestTime.getTime() - 4 * 60 * 60 * 1000);
-
   const BATCH = 500;
   const priceMap = new Map<number, PriceData>();
 
   for (let i = 0; i < itemIds.length; i += BATCH) {
     const batch = itemIds.slice(i, i + BATCH);
 
-    const whereConditions = [eq(realmSnapshots.regionId, regionId), inArray(realmSnapshots.itemId, batch), gte(realmSnapshots.snapshotTime, windowStart)];
+    const whereConditions = [eq(realmLatest.regionId, regionId), inArray(realmLatest.itemId, batch)];
     if (connectedRealmId !== undefined) {
-      whereConditions.push(eq(realmSnapshots.connectedRealmId, connectedRealmId));
+      whereConditions.push(eq(realmLatest.connectedRealmId, connectedRealmId));
     }
 
     if (connectedRealmId !== undefined) {
       const rows = await db
         .select({
-          itemId: realmSnapshots.itemId,
-          minPrice: sql<number>`(array_agg(${realmSnapshots.minBuyout} ORDER BY ${realmSnapshots.snapshotTime} DESC))[1]`,
-          avgPrice: sql<number>`(array_agg(coalesce(${realmSnapshots.avgBuyout}, ${realmSnapshots.minBuyout}) ORDER BY ${realmSnapshots.snapshotTime} DESC))[1]`,
-          medianPrice: sql<number>`(array_agg(coalesce(${realmSnapshots.medianBuyout}, ${realmSnapshots.minBuyout}) ORDER BY ${realmSnapshots.snapshotTime} DESC))[1]`,
+          itemId: realmLatest.itemId,
+          minPrice: sql<number>`min(${realmLatest.minBuyout})::bigint`,
+          avgPrice: sql<number>`(sum(${realmLatest.avgBuyout} * ${realmLatest.totalQuantity}) / nullif(sum(${realmLatest.totalQuantity}), 0))::bigint`,
+          medianPrice: sql<number>`(sum(${realmLatest.medianBuyout} * ${realmLatest.totalQuantity}) / nullif(sum(${realmLatest.totalQuantity}), 0))::bigint`,
+          totalQuantity: sql<number>`sum(${realmLatest.totalQuantity})::bigint`,
+          numAuctions: sql<number>`sum(${realmLatest.numAuctions})::int`,
+          observedAt: sql<Date>`max(${realmLatest.observedAt})`,
+          variantCount: sql<number>`count(*)::int`,
         })
-        .from(realmSnapshots)
+        .from(realmLatest)
         .where(and(...whereConditions))
-        .groupBy(realmSnapshots.itemId);
+        .groupBy(realmLatest.itemId);
 
       for (const row of rows) {
         priceMap.set(Number(row.itemId), {
           minPrice: Number(row.minPrice),
           avgPrice: Number(row.avgPrice),
           medianPrice: Number(row.medianPrice),
+          totalQuantity: Number(row.totalQuantity),
+          numAuctions: Number(row.numAuctions),
+          observedAt: row.observedAt,
+          variantCount: Number(row.variantCount),
         });
       }
       continue;
@@ -163,19 +158,19 @@ export async function getLatestRealmPricesForConnectedRealm(regionId: string, it
 
     const latestPerRealm = db
       .select({
-        itemId: realmSnapshots.itemId,
-        connectedRealmId: realmSnapshots.connectedRealmId,
-        minBuyout: sql<number>`(array_agg(${realmSnapshots.minBuyout} ORDER BY ${realmSnapshots.snapshotTime} DESC))[1]`.as("min_buyout_latest"),
-        avgBuyout: sql<number>`(array_agg(coalesce(${realmSnapshots.avgBuyout}, ${realmSnapshots.minBuyout}) ORDER BY ${realmSnapshots.snapshotTime} DESC))[1]`.as(
-          "avg_buyout_latest",
-        ),
-        medianBuyout: sql<number>`(array_agg(coalesce(${realmSnapshots.medianBuyout}, ${realmSnapshots.minBuyout}) ORDER BY ${realmSnapshots.snapshotTime} DESC))[1]`.as(
-          "median_buyout_latest",
-        ),
+        itemId: realmLatest.itemId,
+        connectedRealmId: realmLatest.connectedRealmId,
+        minBuyout: sql<number>`min(${realmLatest.minBuyout})::bigint`.as("min_buyout_latest"),
+        avgBuyout: sql<number>`(sum(${realmLatest.avgBuyout} * ${realmLatest.totalQuantity}) / nullif(sum(${realmLatest.totalQuantity}), 0))::bigint`.as("avg_buyout_latest"),
+        medianBuyout: sql<number>`(sum(${realmLatest.medianBuyout} * ${realmLatest.totalQuantity}) / nullif(sum(${realmLatest.totalQuantity}), 0))::bigint`.as("median_buyout_latest"),
+        totalQuantity: sql<number>`sum(${realmLatest.totalQuantity})::bigint`.as("total_quantity_latest"),
+        numAuctions: sql<number>`sum(${realmLatest.numAuctions})::int`.as("num_auctions_latest"),
+        observedAt: sql<Date>`max(${realmLatest.observedAt})`.as("observed_at_latest"),
+        variantCount: sql<number>`count(*)::int`.as("variant_count_latest"),
       })
-      .from(realmSnapshots)
+      .from(realmLatest)
       .where(and(...whereConditions))
-      .groupBy(realmSnapshots.itemId, realmSnapshots.connectedRealmId)
+      .groupBy(realmLatest.itemId, realmLatest.connectedRealmId)
       .as("latest_per_realm");
 
     const rows = await db
@@ -184,6 +179,10 @@ export async function getLatestRealmPricesForConnectedRealm(regionId: string, it
         minPrice: sql<number>`avg(${latestPerRealm.minBuyout})::bigint`,
         avgPrice: sql<number>`avg(${latestPerRealm.avgBuyout})::bigint`,
         medianPrice: sql<number>`avg(${latestPerRealm.medianBuyout})::bigint`,
+        totalQuantity: sql<number>`sum(${latestPerRealm.totalQuantity})::bigint`,
+        numAuctions: sql<number>`sum(${latestPerRealm.numAuctions})::int`,
+        observedAt: sql<Date>`max(${latestPerRealm.observedAt})`,
+        variantCount: sql<number>`sum(${latestPerRealm.variantCount})::int`,
       })
       .from(latestPerRealm)
       .groupBy(latestPerRealm.itemId);
@@ -193,6 +192,10 @@ export async function getLatestRealmPricesForConnectedRealm(regionId: string, it
         minPrice: Number(row.minPrice),
         avgPrice: Number(row.avgPrice),
         medianPrice: Number(row.medianPrice),
+        totalQuantity: Number(row.totalQuantity),
+        numAuctions: Number(row.numAuctions),
+        observedAt: row.observedAt,
+        variantCount: Number(row.variantCount),
       });
     }
   }
@@ -224,7 +227,12 @@ export async function getLatestPrices(regionId: string, itemIds: number[], conne
 
 // ─── Compute Recipe Cost ────────────────────────────────────────────
 
-export async function computeRecipeCost(recipeId: number, regionId: string, reagentRank: 1 | 2): Promise<RecipeCostResult> {
+export async function computeRecipeCost(
+  recipeId: number,
+  regionId: string,
+  reagentRank: 1 | 2,
+  connectedRealmId?: number,
+): Promise<RecipeCostResult> {
   // Load all reagent slots for this recipe
   const slots = await db.select().from(recipeReagentSlots).where(eq(recipeReagentSlots.recipeId, recipeId)).orderBy(recipeReagentSlots.slotIndex);
 
@@ -276,7 +284,7 @@ export async function computeRecipeCost(recipeId: number, regionId: string, reag
 
   // Fetch prices for all selected items
   const itemIds = [...new Set(selectedItems.map((s) => s.itemId))];
-  const prices = await getLatestPrices(regionId, itemIds);
+  const prices = await getLatestPrices(regionId, itemIds, connectedRealmId);
 
   // Look up item names
   const itemRows = itemIds.length > 0 ? await db.select({ id: items.id, name: items.name, itemQuality: items.itemQuality }).from(items).where(inArray(items.id, itemIds)) : [];
@@ -386,7 +394,12 @@ export async function computeRecipeProfit(recipeId: number, regionId: string, co
   const isSalvageMode = hasSalvageTargets && (reagentSlots.length === 0 || salvageConfig?.useSalvageInputs === true);
 
   // Compute cost for both ranks
-  const [costRank1, costRank2] = isSalvageMode ? [null, null] : await Promise.all([computeRecipeCost(recipeId, regionId, 1), computeRecipeCost(recipeId, regionId, 2)]);
+  const [costRank1, costRank2] = isSalvageMode
+    ? [null, null]
+    : await Promise.all([
+        computeRecipeCost(recipeId, regionId, 1, connectedRealmId),
+        computeRecipeCost(recipeId, regionId, 2, connectedRealmId),
+      ]);
 
   // Determine output items for each rank
   const outputQuantity = recipe.outputQuantityMin;
@@ -414,16 +427,13 @@ export async function computeRecipeProfit(recipeId: number, regionId: string, co
 
   // Collect output item IDs and fetch prices
   const outputItemIds = [outputRank1ItemId, outputRank2ItemId].filter((id): id is number => id !== null);
-  const [outputPricesDefault, outputPricesSelectedRealm] = await Promise.all([
-    getLatestPrices(regionId, outputItemIds),
-    connectedRealmId !== undefined ? getLatestPrices(regionId, outputItemIds, connectedRealmId) : Promise.resolve(null),
-  ]);
+  const outputPrices = await getLatestPrices(regionId, outputItemIds, connectedRealmId);
 
   // Look up output item names
   const outputItemRows =
     outputItemIds.length > 0
       ? await db
-          .select({ id: items.id, name: items.name, itemQuality: items.itemQuality, isReagent: items.isReagent, isCraftedOutput: items.isCraftedOutput })
+          .select({ id: items.id, name: items.name, itemQuality: items.itemQuality })
           .from(items)
           .where(inArray(items.id, outputItemIds))
       : [];
@@ -434,9 +444,7 @@ export async function computeRecipeProfit(recipeId: number, regionId: string, co
     const salvageInputOptions = await computeSalvageInputOptions(recipeId, regionId, inputQuantity, connectedRealmId);
     const outputItemId = outputRank1ItemId;
     const outputMeta = outputItemId ? outputMetaMap.get(outputItemId) : null;
-    const useSelectedRealmPrice = Boolean(connectedRealmId !== undefined && outputMeta && outputMeta.isCraftedOutput && !outputMeta.isReagent && outputPricesSelectedRealm);
-    const sourceMap = useSelectedRealmPrice ? outputPricesSelectedRealm! : outputPricesDefault;
-    const outputPrice = outputItemId ? sourceMap.get(outputItemId) : null;
+    const outputPrice = outputItemId ? outputPrices.get(outputItemId) : null;
     const outputUnitPrice = outputPrice?.minPrice ?? null;
     const outputTotalPrice = outputUnitPrice !== null ? outputUnitPrice * outputQuantity : null;
 
@@ -466,6 +474,7 @@ export async function computeRecipeProfit(recipeId: number, regionId: string, co
         outputItemQuality: outputMeta?.itemQuality ?? null,
         outputQuantity,
         outputUnitPrice,
+        outputVariantCount: outputPrice?.variantCount,
         outputTotalPrice,
         profit: calculateGrossProfit(outputTotalPrice, cost.totalCost, cost.hasPriceData),
         isSalvage: true,
@@ -489,9 +498,7 @@ export async function computeRecipeProfit(recipeId: number, regionId: string, co
   // Build scenarios
   function buildScenario(rank: 1 | 2, outputRank: 1 | 2, cost: RecipeCostResult, outputItemId: number | null): RankScenario {
     const outputMeta = outputItemId ? outputMetaMap.get(outputItemId) : null;
-    const useSelectedRealmPrice = Boolean(connectedRealmId !== undefined && outputMeta && outputMeta.isCraftedOutput && !outputMeta.isReagent && outputPricesSelectedRealm);
-    const sourceMap = useSelectedRealmPrice ? outputPricesSelectedRealm! : outputPricesDefault;
-    const price = outputItemId ? sourceMap.get(outputItemId) : null;
+    const price = outputItemId ? outputPrices.get(outputItemId) : null;
     const outputUnitPrice = price?.minPrice ?? null;
     const outputTotalPrice = outputUnitPrice !== null ? outputUnitPrice * outputQuantity : null;
     const profit = calculateGrossProfit(outputTotalPrice, cost.totalCost, cost.hasPriceData);
@@ -505,6 +512,7 @@ export async function computeRecipeProfit(recipeId: number, regionId: string, co
       outputItemQuality: outputMeta?.itemQuality ?? null,
       outputQuantity,
       outputUnitPrice,
+      outputVariantCount: price?.variantCount,
       outputTotalPrice,
       profit,
     };
@@ -637,7 +645,7 @@ export async function computeProfessionRecipeCosts(professionId: number, regionI
 
   // ── Single price fetch for everything ─────────────────────────────
 
-  const prices = await getLatestPrices(regionId, [...allItemIds]);
+  const prices = await getLatestPrices(regionId, [...allItemIds], connectedRealmId);
 
   // ── Look up all item names ────────────────────────────────────────
 
@@ -649,25 +657,11 @@ export async function computeProfessionRecipeCosts(professionId: number, regionI
             id: items.id,
             name: items.name,
             itemQuality: items.itemQuality,
-            isReagent: items.isReagent,
-            isCraftedOutput: items.isCraftedOutput,
           })
           .from(items)
           .where(inArray(items.id, allItemIdArray))
       : [];
   const itemMetaMap = new Map(itemRows.map((row) => [row.id, row]));
-
-  const outputItemIds = new Set<number>();
-  for (const recipe of profRecipes) {
-    if (recipe.outputItemId) outputItemIds.add(recipe.outputItemId);
-    const qualities = outputQualitiesByRecipe.get(recipe.id) ?? [];
-    for (const quality of qualities) {
-      outputItemIds.add(quality.itemId);
-    }
-  }
-
-  const outputItemIdArray = [...outputItemIds];
-  const selectedRealmOutputPrices = connectedRealmId !== undefined && outputItemIdArray.length > 0 ? await getLatestPrices(regionId, outputItemIdArray, connectedRealmId) : null;
 
   // ── Compute per-recipe ────────────────────────────────────────────
 
@@ -787,9 +781,7 @@ export async function computeProfessionRecipeCosts(professionId: number, regionI
 
     function buildScenario(rank: 1 | 2, outputRank: 1 | 2, cost: RecipeCostResult, outputItemId: number | null): RankScenario {
       const outputMeta = outputItemId ? itemMetaMap.get(outputItemId) : null;
-      const useSelectedRealmPrice = Boolean(connectedRealmId !== undefined && outputMeta && outputMeta.isCraftedOutput && !outputMeta.isReagent && selectedRealmOutputPrices);
-      const sourceMap = useSelectedRealmPrice ? selectedRealmOutputPrices! : prices;
-      const price = outputItemId ? sourceMap.get(outputItemId) : null;
+      const price = outputItemId ? prices.get(outputItemId) : null;
       const outputUnitPrice = price?.minPrice ?? null;
       const outputTotalPrice = outputUnitPrice !== null ? outputUnitPrice * outputQuantity : null;
       const profit = calculateGrossProfit(outputTotalPrice, cost.totalCost, cost.hasPriceData);
@@ -803,6 +795,7 @@ export async function computeProfessionRecipeCosts(professionId: number, regionI
         outputItemQuality: outputMeta?.itemQuality ?? null,
         outputQuantity,
         outputUnitPrice,
+        outputVariantCount: price?.variantCount,
         outputTotalPrice,
         profit,
       };

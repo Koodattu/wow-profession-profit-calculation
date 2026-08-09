@@ -1,10 +1,11 @@
-# WoW Tools — Auction House Data Analysis
+# Copper — EU Auction House
 
-A World of Warcraft auction house data analysis platform focused on professions, crafting cost calculations, and gold-making opportunities.
+A fast, compact EU Retail auction-house tracker with profession cost calculations as one focused feature.
 
 ## Features
 
-- **Price Tracking** — Hourly snapshots of commodity (region-wide) and per-realm auction data with interactive charts (24h, 7d, 30d, 6m, 1y, all)
+- **Market Browser** — Current commodity and connected-realm prices for every item discovered in Blizzard auction data
+- **Price Tracking** — Hourly commodity history and compact six-hour profession-item realm history with daily rollups
 - **Crafting Cost Calculator** — Calculate reagent costs and gross profit estimates across supported reagent/output rank scenarios
 - **Realm Arbitrage** — Find the best realms to buy and sell non-commodity items
 - **Profession Browser** — Browse Midnight professions, recipes, and reagents
@@ -32,8 +33,9 @@ wow-tools/
 
 ## Data Sources
 
-- **Items & Recipes**: Extracted from in-game addon, parsed to JSON in `game-data-parsed/`
-- **Prices**: Blizzard Game Data API (commodities + per-realm auctions), fetched hourly
+- **Professions & Recipes**: Extracted from an in-game addon and parsed to JSON in `game-data-parsed/`
+- **Market catalog**: Discovered from auction payloads and hydrated incrementally from Blizzard item metadata
+- **Prices**: Blizzard Game Data API (commodities + connected-realm auctions), fetched hourly
 - **Realms**: Blizzard API connected realm discovery
 
 ## Quick Start
@@ -76,7 +78,9 @@ docker compose --profile app build
 
 The `app` profile keeps the default `docker compose up` behavior database-only.
 
-The backend automatically applies migrations, imports the bundled catalog when needed, and refreshes stale Blizzard auction data after startup and hourly thereafter. See [docs/deployment.md](docs/deployment.md) for production environment, readiness, reverse-proxy, and backup guidance.
+The backend automatically applies migrations, imports the bundled profession catalog when needed, refreshes current Blizzard auction data hourly, and hydrates newly discovered item names in bounded batches. Current market tables are atomically replaced per scope; history is intentionally sampled and retained separately so normal reads stay small and fast. See [docs/deployment.md](docs/deployment.md) for production environment, readiness, reverse-proxy, and backup guidance.
+
+Auction data is provided by Blizzard on an as-is basis. Copper is not affiliated with or endorsed by Blizzard Entertainment.
 
 ## Documentation
 

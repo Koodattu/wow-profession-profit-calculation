@@ -1,17 +1,23 @@
-import { eq } from "drizzle-orm";
+import { and, eq, or, sql } from "drizzle-orm";
+import { env } from "../config/env";
 import { db } from "../db";
-import { commoditySnapshots, realmSnapshots, connectedRealms, items } from "../db/schema";
+import {
+  auctionSyncRuns,
+  commodityLatest,
+  commoditySnapshots,
+  connectedRealms,
+  items,
+  realmLatest,
+  realmSnapshots,
+} from "../db/schema";
+import { normalizeRealmVariant, summarizePrices, type PriceEntry, type RealmAuctionIdentity } from "./auction-aggregation";
 import { BlizzardApi } from "./blizzard-api";
 import { ensureRegionExists } from "./region-sync";
 
-// ─── API Response Types ──────────────────────────────────────────────
-
 interface CommodityAuction {
-  id: number;
   item: { id: number };
   quantity: number;
   unit_price: number;
-  time_left: string;
 }
 
 interface CommodityResponse {
@@ -19,201 +25,244 @@ interface CommodityResponse {
 }
 
 interface RealmAuction {
-  id: number;
-  item: { id: number; bonus_lists?: number[]; modifiers?: unknown[] };
+  item: RealmAuctionIdentity & { id: number };
   buyout?: number;
-  bid?: number;
   quantity: number;
-  time_left: string;
 }
 
 interface RealmAuctionResponse {
   auctions: RealmAuction[];
 }
 
-// ─── Percentile Helper ──────────────────────────────────────────────
+type MarketType = "commodity" | "realm";
 
-interface PriceEntry {
-  price: number;
-  quantity: number;
+function batches<T>(values: T[], size = 500): T[][] {
+  const result: T[][] = [];
+  for (let index = 0; index < values.length; index += size) result.push(values.slice(index, index + size));
+  return result;
 }
 
-/**
- * Compute a weighted percentile from sorted price entries.
- * Entries must be sorted ascending by price.
- * Walks through accumulated quantity to find the value at the target position.
- */
-function weightedPercentile(sorted: PriceEntry[], totalQuantity: number, percentile: number): number {
-  const targetPos = Math.ceil(totalQuantity * (percentile / 100));
-  let accumulated = 0;
-  for (const entry of sorted) {
-    accumulated += entry.quantity;
-    if (accumulated >= targetPos) {
-      return entry.price;
-    }
+async function startSyncRun(regionId: string, scope: MarketType, connectedRealmId?: number): Promise<number> {
+  const [run] = await db
+    .insert(auctionSyncRuns)
+    .values({ regionId, scope, connectedRealmId, status: "running" })
+    .returning({ id: auctionSyncRuns.id });
+  return run!.id;
+}
+
+async function failSyncRun(runId: number, error: unknown): Promise<void> {
+  const message = (error instanceof Error ? error.message : String(error)).slice(0, 2_000);
+  await db.update(auctionSyncRuns).set({ status: "failed", finishedAt: new Date(), lastError: message }).where(eq(auctionSyncRuns.id, runId));
+}
+
+function groupCommodityAuctions(auctions: CommodityAuction[]): Map<number, PriceEntry[]> {
+  const grouped = new Map<number, PriceEntry[]>();
+  for (const auction of auctions) {
+    if (!Number.isSafeInteger(auction.item.id) || auction.item.id <= 0) continue;
+    const entries = grouped.get(auction.item.id) ?? [];
+    entries.push({ price: auction.unit_price, quantity: auction.quantity });
+    grouped.set(auction.item.id, entries);
   }
-  return sorted[sorted.length - 1]!.price;
+  return grouped;
 }
-
-// ─── Commodity Sync ─────────────────────────────────────────────────
 
 export async function syncCommodities(regionId: string): Promise<void> {
   await ensureRegionExists(regionId);
+  const runId = await startSyncRun(regionId, "commodity");
 
-  const api = BlizzardApi.getInstance();
-  const snapshotTime = new Date();
+  try {
+    console.log(`[AuctionSync] Fetching commodities for ${regionId}...`);
+    const data = await BlizzardApi.getInstance().get<CommodityResponse>(regionId, "/data/wow/auctions/commodities", "dynamic");
+    const observedAt = new Date();
+    const grouped = groupCommodityAuctions(data.auctions);
+    const latestRows: (typeof commodityLatest.$inferInsert)[] = [];
 
-  console.log(`[AuctionSync] Fetching commodities for ${regionId}...`);
-  const data = await api.get<CommodityResponse>(regionId, "/data/wow/auctions/commodities", "dynamic");
-
-  const auctions = data.auctions;
-  console.log(`[AuctionSync] Received ${auctions.length} commodity auctions`);
-
-  // Load known item IDs from DB
-  const knownRows = await db.select({ id: items.id }).from(items);
-  const knownItemIds = new Set(knownRows.map((r) => r.id));
-
-  // Group auctions by item_id, filtering to known items only
-  const grouped = new Map<number, PriceEntry[]>();
-  for (const auction of auctions) {
-    const itemId = auction.item.id;
-    if (!knownItemIds.has(itemId)) continue;
-    let entries = grouped.get(itemId);
-    if (!entries) {
-      entries = [];
-      grouped.set(itemId, entries);
-    }
-    entries.push({ price: auction.unit_price, quantity: auction.quantity });
-  }
-
-  // Build snapshot rows
-  const rows: (typeof commoditySnapshots.$inferInsert)[] = [];
-
-  for (const [itemId, entries] of grouped) {
-    // Sort by price ascending for percentile calculations
-    entries.sort((a, b) => a.price - b.price);
-
-    let minPrice = Infinity;
-    let maxPrice = -Infinity;
-    let totalValue = 0;
-    let totalQuantity = 0;
-
-    for (const e of entries) {
-      if (e.price < minPrice) minPrice = e.price;
-      if (e.price > maxPrice) maxPrice = e.price;
-      totalValue += e.price * e.quantity;
-      totalQuantity += e.quantity;
+    for (const [itemId, entries] of grouped) {
+      const summary = summarizePrices(entries);
+      if (!summary) continue;
+      latestRows.push({
+        regionId,
+        itemId,
+        syncRunId: runId,
+        observedAt,
+        minPrice: summary.minPrice,
+        avgPrice: summary.avgPrice,
+        medianPrice: summary.medianPrice,
+        maxPrice: summary.maxPrice,
+        totalQuantity: summary.totalQuantity,
+        numAuctions: summary.numAuctions,
+        priceP10: summary.priceP10,
+        priceP25: summary.priceP25,
+      });
     }
 
-    const avgPrice = Math.round(totalValue / totalQuantity);
-    const medianPrice = weightedPercentile(entries, totalQuantity, 50);
-    const priceP10 = weightedPercentile(entries, totalQuantity, 10);
-    const priceP25 = weightedPercentile(entries, totalQuantity, 25);
+    await db.transaction(async (tx) => {
+      for (const batch of batches([...grouped.keys()])) {
+        await tx
+          .insert(items)
+          .values(batch.map((id) => ({ id, name: `Item #${id}`, marketType: "commodity", metadataStatus: "pending" })))
+          .onConflictDoUpdate({ target: items.id, set: { marketType: "commodity" } });
+      }
 
-    rows.push({
-      regionId,
-      itemId,
-      snapshotTime,
-      minPrice,
-      avgPrice,
-      medianPrice,
-      maxPrice,
-      totalQuantity,
-      numAuctions: entries.length,
-      priceP10,
-      priceP25,
+      await tx.delete(commodityLatest).where(eq(commodityLatest.regionId, regionId));
+      for (const batch of batches(latestRows)) await tx.insert(commodityLatest).values(batch);
+      for (const batch of batches(latestRows)) {
+        await tx.insert(commoditySnapshots).values(
+          batch.map((row) => ({
+            regionId: row.regionId,
+            itemId: row.itemId,
+            snapshotTime: observedAt,
+            minPrice: row.minPrice,
+            avgPrice: row.avgPrice,
+            medianPrice: row.medianPrice,
+            maxPrice: row.maxPrice,
+            totalQuantity: row.totalQuantity,
+            numAuctions: row.numAuctions,
+            priceP10: row.priceP10,
+            priceP25: row.priceP25,
+          })),
+        );
+      }
+
+      await tx
+        .update(auctionSyncRuns)
+        .set({ status: "succeeded", observedAt, finishedAt: new Date(), rowCount: latestRows.length, lastError: null })
+        .where(eq(auctionSyncRuns.id, runId));
     });
-  }
 
-  // Batch insert snapshots
-  const BATCH_SIZE = 500;
-  for (let i = 0; i < rows.length; i += BATCH_SIZE) {
-    const batch = rows.slice(i, i + BATCH_SIZE);
-    await db.insert(commoditySnapshots).values(batch);
+    console.log(`[AuctionSync] Commodity sync complete: ${latestRows.length} items from ${data.auctions.length} auctions`);
+  } catch (error) {
+    await failSyncRun(runId, error);
+    throw error;
   }
-
-  console.log(`[AuctionSync] Commodity sync complete: ${grouped.size} items (of ${auctions.length} auctions)`);
 }
 
-// ─── Realm Auction Sync ─────────────────────────────────────────────
+type RealmGroup = {
+  itemId: number;
+  variant: ReturnType<typeof normalizeRealmVariant>;
+  entries: PriceEntry[];
+};
 
-export async function syncRealmAuctions(regionId: string, connectedRealmId: number): Promise<void> {
-  const api = BlizzardApi.getInstance();
-  const snapshotTime = new Date();
+export async function syncRealmAuctions(regionId: string, connectedRealmId: number, trackedHistoryItemIds?: ReadonlySet<number>): Promise<void> {
+  const runId = await startSyncRun(regionId, "realm", connectedRealmId);
 
-  console.log(`[AuctionSync] Fetching realm auctions for connected realm ${connectedRealmId}...`);
-  const data = await api.get<RealmAuctionResponse>(regionId, `/data/wow/connected-realm/${connectedRealmId}/auctions`, "dynamic");
-
-  const auctions = data.auctions;
-  console.log(`[AuctionSync] Received ${auctions.length} realm auctions for CR ${connectedRealmId}`);
-
-  // Only process auctions with a buyout
-  const buyoutAuctions = auctions.filter((a) => a.buyout != null && a.buyout > 0);
-
-  // Load known item IDs from DB
-  const knownRows = await db.select({ id: items.id }).from(items);
-  const knownItemIds = new Set(knownRows.map((r) => r.id));
-
-  // Group by item_id — buyout is total price, so per-unit = buyout / quantity
-  const grouped = new Map<number, PriceEntry[]>();
-  for (const auction of buyoutAuctions) {
-    const itemId = auction.item.id;
-    if (!knownItemIds.has(itemId)) continue;
-    const perUnit = Math.round(auction.buyout! / auction.quantity);
-    let entries = grouped.get(itemId);
-    if (!entries) {
-      entries = [];
-      grouped.set(itemId, entries);
-    }
-    entries.push({ price: perUnit, quantity: auction.quantity });
-  }
-
-  // Build snapshot rows
-  const rows: (typeof realmSnapshots.$inferInsert)[] = [];
-
-  for (const [itemId, entries] of grouped) {
-    entries.sort((a, b) => a.price - b.price);
-
-    let minBuyout = Infinity;
-    let maxBuyout = -Infinity;
-    let totalValue = 0;
-    let totalQuantity = 0;
-
-    for (const e of entries) {
-      if (e.price < minBuyout) minBuyout = e.price;
-      if (e.price > maxBuyout) maxBuyout = e.price;
-      totalValue += e.price * e.quantity;
-      totalQuantity += e.quantity;
-    }
-
-    const avgBuyout = Math.round(totalValue / totalQuantity);
-    const medianBuyout = weightedPercentile(entries, totalQuantity, 50);
-
-    rows.push({
-      connectedRealmId,
+  try {
+    console.log(`[AuctionSync] Fetching realm auctions for connected realm ${connectedRealmId}...`);
+    const data = await BlizzardApi.getInstance().get<RealmAuctionResponse>(
       regionId,
-      itemId,
-      snapshotTime,
-      minBuyout,
-      avgBuyout,
-      medianBuyout,
-      maxBuyout,
-      totalQuantity,
-      numAuctions: entries.length,
+      `/data/wow/connected-realm/${connectedRealmId}/auctions`,
+      "dynamic",
+    );
+    const observedAt = new Date();
+    const [latestHistory] = await db
+      .select({ snapshotTime: sql<Date | null>`max(${realmSnapshots.snapshotTime})` })
+      .from(realmSnapshots)
+      .where(and(eq(realmSnapshots.regionId, regionId), eq(realmSnapshots.connectedRealmId, connectedRealmId)));
+    const historyDue =
+      !latestHistory?.snapshotTime || observedAt.getTime() - latestHistory.snapshotTime.getTime() >= env.REALM_HISTORY_INTERVAL_HOURS * 60 * 60 * 1_000;
+    const historyItemIds =
+      trackedHistoryItemIds ??
+      new Set(
+        (
+          await db
+            .select({ id: items.id })
+            .from(items)
+            .where(or(eq(items.isReagent, true), eq(items.isCraftedOutput, true)))
+        ).map((row) => row.id),
+      );
+    const variantGroups = new Map<string, RealmGroup>();
+    const historyGroups = new Map<number, PriceEntry[]>();
+
+    for (const auction of data.auctions) {
+      if (!auction.buyout || auction.buyout <= 0 || auction.quantity <= 0 || !Number.isSafeInteger(auction.item.id) || auction.item.id <= 0) continue;
+      const perUnit = Math.round(auction.buyout / auction.quantity);
+      const variant = normalizeRealmVariant(auction.item);
+      const groupKey = `${auction.item.id}:${variant.key}`;
+      const group = variantGroups.get(groupKey) ?? { itemId: auction.item.id, variant, entries: [] };
+      group.entries.push({ price: perUnit, quantity: auction.quantity });
+      variantGroups.set(groupKey, group);
+
+      if (historyDue && historyItemIds.has(auction.item.id)) {
+        const entries = historyGroups.get(auction.item.id) ?? [];
+        entries.push({ price: perUnit, quantity: auction.quantity });
+        historyGroups.set(auction.item.id, entries);
+      }
+    }
+
+    const latestRows: (typeof realmLatest.$inferInsert)[] = [];
+    for (const group of variantGroups.values()) {
+      const summary = summarizePrices(group.entries);
+      if (!summary) continue;
+      latestRows.push({
+        regionId,
+        connectedRealmId,
+        itemId: group.itemId,
+        variantKey: group.variant.key,
+        syncRunId: runId,
+        observedAt,
+        context: group.variant.context,
+        bonusLists: group.variant.bonusLists,
+        modifiers: group.variant.modifiers,
+        petBreedId: group.variant.petBreedId,
+        petLevel: group.variant.petLevel,
+        petQualityId: group.variant.petQualityId,
+        petSpeciesId: group.variant.petSpeciesId,
+        minBuyout: summary.minPrice,
+        avgBuyout: summary.avgPrice,
+        medianBuyout: summary.medianPrice,
+        maxBuyout: summary.maxPrice,
+        totalQuantity: summary.totalQuantity,
+        numAuctions: summary.numAuctions,
+      });
+    }
+
+    const historyRows: (typeof realmSnapshots.$inferInsert)[] = [];
+    for (const [itemId, entries] of historyGroups) {
+      const summary = summarizePrices(entries);
+      if (!summary) continue;
+      historyRows.push({
+        connectedRealmId,
+        regionId,
+        itemId,
+        snapshotTime: observedAt,
+        minBuyout: summary.minPrice,
+        avgBuyout: summary.avgPrice,
+        medianBuyout: summary.medianPrice,
+        maxBuyout: summary.maxPrice,
+        totalQuantity: summary.totalQuantity,
+        numAuctions: summary.numAuctions,
+      });
+    }
+
+    const marketItemIds = [...new Set(latestRows.map((row) => row.itemId))];
+    await db.transaction(async (tx) => {
+      for (const batch of batches(marketItemIds)) {
+        await tx
+          .insert(items)
+          .values(batch.map((id) => ({ id, name: `Item #${id}`, marketType: "realm", metadataStatus: "pending" })))
+          .onConflictDoUpdate({
+            target: items.id,
+            set: { marketType: sql`CASE WHEN ${items.marketType} = 'commodity' THEN 'commodity' ELSE 'realm' END` },
+          });
+      }
+
+      await tx.delete(realmLatest).where(and(eq(realmLatest.regionId, regionId), eq(realmLatest.connectedRealmId, connectedRealmId)));
+      for (const batch of batches(latestRows)) await tx.insert(realmLatest).values(batch);
+      for (const batch of batches(historyRows)) await tx.insert(realmSnapshots).values(batch);
+      await tx
+        .update(auctionSyncRuns)
+        .set({ status: "succeeded", observedAt, finishedAt: new Date(), rowCount: latestRows.length, lastError: null })
+        .where(eq(auctionSyncRuns.id, runId));
     });
-  }
 
-  // Batch insert snapshots
-  const BATCH_SIZE = 500;
-  for (let i = 0; i < rows.length; i += BATCH_SIZE) {
-    const batch = rows.slice(i, i + BATCH_SIZE);
-    await db.insert(realmSnapshots).values(batch);
+    console.log(
+      `[AuctionSync] Realm sync complete for CR ${connectedRealmId}: ${latestRows.length} variants, ${historyRows.length} tracked history rows`,
+    );
+  } catch (error) {
+    await failSyncRun(runId, error);
+    throw error;
   }
-
-  console.log(`[AuctionSync] Realm auction sync complete for CR ${connectedRealmId}: ${grouped.size} items (of ${buyoutAuctions.length} auctions)`);
 }
-
-// ─── Sync All Realm Auctions ────────────────────────────────────────
 
 export interface RealmAuctionSyncSummary {
   total: number;
@@ -222,32 +271,42 @@ export interface RealmAuctionSyncSummary {
 }
 
 export async function syncAllRealmAuctions(regionId: string): Promise<RealmAuctionSyncSummary> {
+  await ensureRegionExists(regionId);
   const realmRows = await db.select({ id: connectedRealms.id }).from(connectedRealms).where(eq(connectedRealms.regionId, regionId));
+  if (realmRows.length === 0) throw new Error(`No connected realms are available for ${regionId}`);
 
-  console.log(`[AuctionSync] Starting realm auction sync for ${realmRows.length} connected realms in ${regionId}`);
-  if (realmRows.length === 0) {
-    throw new Error(`No connected realms are available for ${regionId}`);
-  }
-
+  console.log(
+    `[AuctionSync] Starting realm auction sync for ${realmRows.length} connected realms in ${regionId} with concurrency ${env.REALM_SYNC_CONCURRENCY}`,
+  );
   const failedRealmIds: number[] = [];
+  const trackedRows = await db
+    .select({ id: items.id })
+    .from(items)
+    .where(or(eq(items.isReagent, true), eq(items.isCraftedOutput, true)));
+  const trackedHistoryItemIds = new Set(trackedRows.map((row) => row.id));
+  let nextIndex = 0;
+  let completed = 0;
 
-  for (let i = 0; i < realmRows.length; i++) {
-    const row = realmRows[i]!;
-    try {
-      await syncRealmAuctions(regionId, row.id);
-    } catch (err) {
-      failedRealmIds.push(row.id);
-      console.error(`[AuctionSync] Failed to sync CR ${row.id}:`, err);
+  async function worker(): Promise<void> {
+    while (nextIndex < realmRows.length) {
+      const index = nextIndex++;
+      const row = realmRows[index]!;
+      try {
+        await syncRealmAuctions(regionId, row.id, trackedHistoryItemIds);
+      } catch (error) {
+        failedRealmIds.push(row.id);
+        console.error(`[AuctionSync] Failed to sync CR ${row.id}:`, error);
+      } finally {
+        completed++;
+        console.log(`[AuctionSync] Realm progress: ${completed}/${realmRows.length}`);
+      }
     }
-    console.log(`[AuctionSync] Realm progress: ${i + 1}/${realmRows.length}`);
   }
 
-  const summary = {
-    total: realmRows.length,
-    succeeded: realmRows.length - failedRealmIds.length,
-    failed: failedRealmIds.length,
-  };
+  const workerCount = Math.min(env.REALM_SYNC_CONCURRENCY, realmRows.length);
+  await Promise.all(Array.from({ length: workerCount }, () => worker()));
 
+  const summary = { total: realmRows.length, succeeded: realmRows.length - failedRealmIds.length, failed: failedRealmIds.length };
   if (failedRealmIds.length > 0) {
     throw new Error(
       `Realm auction sync for ${regionId} was partial: ${summary.succeeded}/${summary.total} succeeded; failed realm IDs: ${failedRealmIds.join(", ")}`,

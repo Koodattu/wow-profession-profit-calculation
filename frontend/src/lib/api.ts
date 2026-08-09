@@ -50,6 +50,7 @@ export interface RankScenario {
   outputItemQuality: number | null;
   outputQuantity: number;
   outputUnitPrice: number | null;
+  outputVariantCount?: number;
   outputTotalPrice: number | null;
   profit: number | null;
   isSalvage?: boolean;
@@ -85,6 +86,10 @@ export interface Item {
   qualityRank: number | null;
   isReagent: boolean;
   isCraftedOutput: boolean;
+  marketType: "commodity" | "realm" | null;
+  itemClass: string | null;
+  itemSubclass: string | null;
+  inventoryType: string | null;
 }
 
 export interface PricePoint {
@@ -103,10 +108,21 @@ export interface ItemWithPrice {
   qualityRank: number | null;
   isReagent: boolean;
   isCraftedOutput: boolean;
+  marketType: "commodity" | "realm" | null;
   priceSource: "commodity" | "realm" | null;
-  latestPrice: { minPrice: number; avgPrice: number; medianPrice: number } | null;
-  regionLatestPrice: { minPrice: number; avgPrice: number; medianPrice: number } | null;
-  realmLatestPrice: { minPrice: number; avgPrice: number; medianPrice: number } | null;
+  latestPrice: MarketPrice | null;
+  regionLatestPrice: MarketPrice | null;
+  realmLatestPrice: MarketPrice | null;
+}
+
+export interface MarketPrice {
+  minPrice: number;
+  avgPrice: number;
+  medianPrice: number;
+  totalQuantity?: number;
+  numAuctions?: number;
+  observedAt?: string;
+  variantCount?: number;
 }
 
 export interface ItemListResponse {
@@ -155,6 +171,8 @@ export interface RealmPrice {
   min_buyout: number;
   avg_buyout: number;
   total_quantity: number;
+  variant_count: number;
+  observed_at: string;
 }
 
 export interface Realm {
@@ -167,6 +185,19 @@ export interface Realm {
 export interface ConnectedRealmGroup {
   connected_realm_id: number;
   realms: Realm[];
+}
+
+export interface MarketSummary {
+  region: "eu";
+  itemCount: number;
+  commodityCount: number;
+  realmItemCount: number;
+  pendingMetadataCount: number;
+  commodityObservedAt: string | null;
+  realmOldestObservedAt: string | null;
+  realmNewestObservedAt: string | null;
+  connectedRealmCount: number;
+  selectedRealm: { id: number; name: string } | null;
 }
 
 // --- Fetch helpers ---
@@ -274,6 +305,10 @@ export function fetchItemRealmPrices(itemId: number, region = "eu", range = "24h
 
 export function fetchRealms(region = "eu"): Promise<ConnectedRealmGroup[]> {
   return apiFetch(`/api/realms${qs({ region })}`);
+}
+
+export function fetchMarketSummary(region = "eu", connectedRealmId?: number): Promise<MarketSummary> {
+  return apiFetch(`/api/market/summary${qs({ region, connectedRealmId: connectedRealmId?.toString() })}`);
 }
 
 // --- Utilities ---

@@ -22,7 +22,7 @@ export default function ItemDetailClient({ item }: Props) {
   const hasLoadedDataRef = useRef(false);
   const [, startTransition] = useTransition();
 
-  const usesRealmByDefault = item.isCraftedOutput && !item.isReagent;
+  const usesRealmByDefault = item.marketType === "realm";
 
   useEffect(() => {
     if (usesRealmByDefault && connectedRealmId === null) return;
@@ -85,8 +85,8 @@ export default function ItemDetailClient({ item }: Props) {
   return (
     <div className="w-full">
       <div className="mb-6">
-        <Link href="/" className="text-sm text-muted hover:text-accent transition-colors">
-          &larr; Back
+        <Link href="/items" className="inline-flex h-10 items-center text-sm text-muted transition-colors hover:text-accent">
+          &larr; Market
         </Link>
         <h1 className="text-2xl font-bold mt-2">
           <a href={`https://www.wowhead.com/item=${item.id}`} data-wowhead={`item=${item.id}`} target="_blank" rel="noopener noreferrer" className="hover:underline">
@@ -97,15 +97,16 @@ export default function ItemDetailClient({ item }: Props) {
           {item.qualityRank && <span>Rank {item.qualityRank}</span>}
           {item.isReagent && <span>Reagent</span>}
           {item.isCraftedOutput && <span>Crafted</span>}
+          {item.itemClass && <span>{item.itemClass}</span>}
           <span>ID: {item.id}</span>
         </div>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="lg:col-span-1">
-          <div className="border border-border rounded-lg bg-card p-4 mb-6">
+          <div className="surface p-4 mb-6">
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-sm text-muted">Current Price (EU)</h2>
+              <h2 className="text-sm text-muted">Current price · {usesRealmByDefault ? "selected realm" : "EU"}</h2>
               <span className="text-sm text-muted" />
             </div>
             {initialLoad ? (
@@ -120,10 +121,14 @@ export default function ItemDetailClient({ item }: Props) {
             ) : (
               <p className="text-muted">No price data available</p>
             )}
-            {latestPrice?.total_quantity != null && <p className="text-sm text-muted mt-3">Total quantity on AH: {latestPrice.total_quantity.toLocaleString()}</p>}
+            {latestPrice?.total_quantity != null && (
+              <p className="text-sm text-muted mt-3 tabular-nums">
+                {usesRealmByDefault ? "Listings" : "Units available"}: {latestPrice.total_quantity.toLocaleString()}
+              </p>
+            )}
           </div>
 
-          <div className="border border-border rounded-lg bg-card p-4">
+          <div className="surface p-4">
             <div className="mb-3 flex items-center justify-between gap-3">
               <h2 className="text-sm text-muted">Price History</h2>
               <TimeRangeTabs value={range} onChange={setRange} />
@@ -153,8 +158,8 @@ export default function ItemDetailClient({ item }: Props) {
 
         <div className="lg:col-span-1">
           {prices.length > 1 && range === "24h" && (
-            <div className="border border-border rounded-lg bg-card p-4">
-              <h2 className="text-sm text-muted mb-3">Price History (last 24h)</h2>
+            <div className="surface p-4">
+              <h2 className="text-sm text-muted mb-3">History · 24h</h2>
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border text-left text-muted">
@@ -179,8 +184,9 @@ export default function ItemDetailClient({ item }: Props) {
           )}
 
           {usesRealmByDefault && (
-            <div className="border border-border rounded-lg bg-card p-4 mt-6">
-              <h2 className="text-sm text-muted mb-3">All Realm Current Prices (EU)</h2>
+            <div className="surface p-4 mt-6">
+              <h2 className="text-sm text-muted mb-1">Connected realms</h2>
+              <p className="mb-3 text-xs text-muted">Variants are kept separate when Blizzard provides bonus or modifier data.</p>
               {realmPricesLoading ? (
                 <p className="text-muted">Loading realm prices...</p>
               ) : realmPrices.length === 0 ? (
@@ -193,7 +199,8 @@ export default function ItemDetailClient({ item }: Props) {
                         <th className="py-2 pr-4 font-medium">Realm</th>
                         <th className="py-2 pr-4 font-medium text-right">Min</th>
                         <th className="py-2 pr-4 font-medium text-right">Average</th>
-                        <th className="py-2 pr-4 font-medium text-right">Quantity</th>
+                        <th className="py-2 pr-4 font-medium text-right">Listings</th>
+                        <th className="py-2 font-medium text-right">Variants</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -209,7 +216,8 @@ export default function ItemDetailClient({ item }: Props) {
                               </td>
                               <td className="py-1 text-right">{formatPrice(realm.min_buyout)}</td>
                               <td className="py-1 text-right">{formatPrice(realm.avg_buyout)}</td>
-                              <td className="py-1 text-right text-muted">{realm.total_quantity.toLocaleString()}</td>
+                               <td className="py-1 text-right text-muted">{realm.total_quantity.toLocaleString()}</td>
+                               <td className="py-1 text-right text-muted">{realm.variant_count.toLocaleString()}</td>
                             </tr>
                           );
                         })}
@@ -229,7 +237,7 @@ function PriceStat({ label, value }: { label: string; value: number | null }) {
   return (
     <div>
       <p className="text-xs text-muted">{label}</p>
-      <p className="text-lg font-semibold">{value != null ? formatPrice(value) : "—"}</p>
+      <p className="text-lg font-semibold tabular-nums">{value != null ? formatPrice(value) : "—"}</p>
     </div>
   );
 }

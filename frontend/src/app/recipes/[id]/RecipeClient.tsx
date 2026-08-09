@@ -224,6 +224,9 @@ function ScenarioCard({
           </tfoot>
         </table>
         {!scenario.cost.hasPriceData && <p className="text-xs text-negative mt-1">Some reagent prices unavailable</p>}
+        {(scenario.outputVariantCount ?? 0) > 1 && (
+          <p className="text-xs text-muted mt-1">Output price is the lowest listing across {scenario.outputVariantCount} auction variants.</p>
+        )}
       </div>
 
       {/* Output */}

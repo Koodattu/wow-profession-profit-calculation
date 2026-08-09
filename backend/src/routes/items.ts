@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { eq, and, gte, desc, sql, ilike, inArray } from "drizzle-orm";
 import { db } from "../db";
-import { items, commoditySnapshots, realmSnapshots, commodityDaily, realmDaily, realms, connectedRealms } from "../db/schema";
+import { items, commodityLatest, commoditySnapshots, realmLatest, realmSnapshots, commodityDaily, realmDaily, realms } from "../db/schema";
 import { getLatestCommodityPrices, getLatestRealmPrices, getLatestRealmPricesForConnectedRealm, type PriceData } from "../services/crafting-cost";
 
 const itemRoutes = new Hono();
@@ -11,14 +11,17 @@ const itemRoutes = new Hono();
 itemRoutes.get("/", async (c) => {
   const region = c.req.query("region") || "eu";
   const type = c.req.query("type") || "all";
-  const search = c.req.query("search") || "";
+  const search = (c.req.query("search") || "").trim();
+  if (region !== "eu") return c.json({ error: "Only the EU region is available" }, 400);
+  if (!["all", "reagent", "crafted", "commodity", "gear", "realm"].includes(type)) return c.json({ error: "Invalid item type" }, 400);
+  if (search.length > 100) return c.json({ error: "Search must be 100 characters or fewer" }, 400);
   const connectedRealmIdQuery = c.req.query("connectedRealmId");
   const connectedRealmId = connectedRealmIdQuery ? Number(connectedRealmIdQuery) : undefined;
-  if (connectedRealmIdQuery && !Number.isFinite(connectedRealmId)) {
+  if (connectedRealmIdQuery && (!Number.isInteger(connectedRealmId) || connectedRealmId! <= 0)) {
     return c.json({ error: "Invalid connected realm ID" }, 400);
   }
-  const page = Math.max(1, Number(c.req.query("page")) || 1);
-  const limit = Math.min(2000, Math.max(1, Number(c.req.query("limit")) || 50));
+  const page = Math.min(5_000, Math.max(1, Number(c.req.query("page")) || 1));
+  const limit = Math.min(200, Math.max(1, Number(c.req.query("limit")) || 50));
   const offset = (page - 1) * limit;
 
   try {
@@ -27,19 +30,9 @@ itemRoutes.get("/", async (c) => {
     if (type === "reagent") conditions.push(eq(items.isReagent, true));
     else if (type === "crafted") conditions.push(eq(items.isCraftedOutput, true));
     else if (type === "commodity") {
-      conditions.push(sql`exists (
-        select 1
-        from commodity_snapshots cs
-        where cs.item_id = ${items.id}
-          and cs.region_id = ${region}
-      )`);
-    } else if (type === "gear") {
-      conditions.push(sql`not exists (
-        select 1
-        from commodity_snapshots cs
-        where cs.item_id = ${items.id}
-          and cs.region_id = ${region}
-      )`);
+      conditions.push(eq(items.marketType, "commodity"));
+    } else if (type === "gear" || type === "realm") {
+      conditions.push(eq(items.marketType, "realm"));
     }
     if (search) {
       const safeSearch = search.replace(/[%_\\]/g, "\\$&");
@@ -74,7 +67,7 @@ itemRoutes.get("/", async (c) => {
       const comPrice = commodityPrices.get(item.id);
       const regionRealmPrice = regionRealmPrices.get(item.id);
       const selectedRealmPrice = selectedRealmPrices.get(item.id);
-      const effectiveRealmPrice = selectedRealmPrice ?? regionRealmPrice;
+      const effectiveRealmPrice = connectedRealmId !== undefined ? selectedRealmPrice : regionRealmPrice;
 
       return {
         id: item.id,
@@ -83,6 +76,7 @@ itemRoutes.get("/", async (c) => {
         qualityRank: item.qualityRank,
         isReagent: item.isReagent,
         isCraftedOutput: item.isCraftedOutput,
+        marketType: item.marketType,
         priceSource: comPrice ? ("commodity" as const) : effectiveRealmPrice ? ("realm" as const) : null,
         latestPrice: comPrice ?? effectiveRealmPrice ?? null,
         regionLatestPrice: comPrice ?? regionRealmPrice ?? null,
@@ -90,6 +84,7 @@ itemRoutes.get("/", async (c) => {
       };
     });
 
+    c.header("Cache-Control", search ? "public, max-age=15" : "public, max-age=30, stale-while-revalidate=120");
     return c.json({
       items: enrichedItems,
       total,
@@ -139,7 +134,7 @@ function getTimeRangeCutoff(range: string): Date | null {
 }
 
 function useDailyTable(range: string): boolean {
-  return range === "6m" || range === "1y" || range === "all";
+  return range === "30d" || range === "6m" || range === "1y" || range === "all";
 }
 
 itemRoutes.get("/:itemId/prices", async (c) => {
@@ -148,6 +143,7 @@ itemRoutes.get("/:itemId/prices", async (c) => {
 
   const range = c.req.query("range") || "24h";
   const region = c.req.query("region") || "eu";
+  if (region !== "eu") return c.json({ error: "Only the EU region is available" }, 400);
   const type = c.req.query("type") || "auto";
   const connectedRealmIdQuery = c.req.query("connectedRealmId");
   const connectedRealmId = connectedRealmIdQuery ? Number(connectedRealmIdQuery) : undefined;
@@ -161,14 +157,14 @@ itemRoutes.get("/:itemId/prices", async (c) => {
       const data = useDailyTable(range) ? await getCommodityDaily(itemId, region, range) : await getCommoditySnapshots(itemId, region, range);
 
       if (data.length > 0 || type === "commodity") {
-        return c.json(data);
+        return c.json(data.length > 0 ? data : await getCommodityCurrent(itemId, region));
       }
     }
 
     // Realm data (or auto fallback)
     const data = useDailyTable(range) ? await getRealmDaily(itemId, region, range, connectedRealmId) : await getRealmSnapshots(itemId, region, range, connectedRealmId);
 
-    return c.json(data);
+    return c.json(data.length > 0 ? data : await getRealmCurrent(itemId, region, connectedRealmId));
   } catch (err) {
     console.error(`[Items] Error fetching prices for item ${itemId}:`, err);
     return c.json({ error: "Failed to fetch price data" }, 500);
@@ -217,6 +213,21 @@ async function getCommodityDaily(itemId: number, regionId: string, range: string
     .orderBy(desc(commodityDaily.date));
 }
 
+async function getCommodityCurrent(itemId: number, regionId: string) {
+  return db
+    .select({
+      time: commodityLatest.observedAt,
+      min_price: commodityLatest.minPrice,
+      avg_price: commodityLatest.avgPrice,
+      median_price: commodityLatest.medianPrice,
+      max_price: commodityLatest.maxPrice,
+      total_quantity: commodityLatest.totalQuantity,
+    })
+    .from(commodityLatest)
+    .where(and(eq(commodityLatest.itemId, itemId), eq(commodityLatest.regionId, regionId)))
+    .limit(1);
+}
+
 async function getRealmSnapshots(itemId: number, regionId: string, range: string, connectedRealmId?: number) {
   const cutoff = getTimeRangeCutoff(range);
   const conditions = [eq(realmSnapshots.itemId, itemId), eq(realmSnapshots.regionId, regionId)];
@@ -263,6 +274,24 @@ async function getRealmDaily(itemId: number, regionId: string, range: string, co
     .orderBy(desc(realmDaily.date));
 }
 
+async function getRealmCurrent(itemId: number, regionId: string, connectedRealmId?: number) {
+  const conditions = [eq(realmLatest.itemId, itemId), eq(realmLatest.regionId, regionId)];
+  if (connectedRealmId !== undefined) conditions.push(eq(realmLatest.connectedRealmId, connectedRealmId));
+
+  const rows = await db
+    .select({
+      time: sql<Date>`max(${realmLatest.observedAt})`,
+      min_price: sql<number>`min(${realmLatest.minBuyout})::bigint`,
+      avg_price: sql<number>`(sum(${realmLatest.avgBuyout} * ${realmLatest.totalQuantity}) / nullif(sum(${realmLatest.totalQuantity}), 0))::bigint`,
+      median_price: sql<number>`(sum(${realmLatest.medianBuyout} * ${realmLatest.totalQuantity}) / nullif(sum(${realmLatest.totalQuantity}), 0))::bigint`,
+      max_price: sql<number>`max(${realmLatest.maxBuyout})::bigint`,
+      total_quantity: sql<number>`sum(${realmLatest.totalQuantity})::bigint`,
+    })
+    .from(realmLatest)
+    .where(and(...conditions));
+  return rows[0]?.time ? rows : [];
+}
+
 // ─── GET /:itemId/realm-prices — Per-realm current snapshot ─────────
 
 itemRoutes.get("/:itemId/realm-prices", async (c) => {
@@ -270,20 +299,23 @@ itemRoutes.get("/:itemId/realm-prices", async (c) => {
   if (isNaN(itemId)) return c.json({ error: "Invalid item ID" }, 400);
 
   const region = c.req.query("region") || "eu";
+  if (region !== "eu") return c.json({ error: "Only the EU region is available" }, 400);
 
   try {
-    const conditions = [eq(realmSnapshots.itemId, itemId), eq(realmSnapshots.regionId, region)];
+    const conditions = [eq(realmLatest.itemId, itemId), eq(realmLatest.regionId, region)];
 
     const latestPrices = await db
       .select({
-        realm_id: realmSnapshots.connectedRealmId,
-        min_buyout: sql<number>`(array_agg(${realmSnapshots.minBuyout} ORDER BY ${realmSnapshots.snapshotTime} DESC))[1]`,
-        avg_buyout: sql<number>`(array_agg(coalesce(${realmSnapshots.avgBuyout}, ${realmSnapshots.minBuyout}) ORDER BY ${realmSnapshots.snapshotTime} DESC))[1]`,
-        total_quantity: sql<number>`(array_agg(${realmSnapshots.totalQuantity} ORDER BY ${realmSnapshots.snapshotTime} DESC))[1]`,
+        realm_id: realmLatest.connectedRealmId,
+        min_buyout: sql<number>`min(${realmLatest.minBuyout})::bigint`,
+        avg_buyout: sql<number>`(sum(${realmLatest.avgBuyout} * ${realmLatest.totalQuantity}) / nullif(sum(${realmLatest.totalQuantity}), 0))::bigint`,
+        total_quantity: sql<number>`sum(${realmLatest.totalQuantity})::bigint`,
+        variant_count: sql<number>`count(*)::int`,
+        observed_at: sql<Date>`max(${realmLatest.observedAt})`,
       })
-      .from(realmSnapshots)
+      .from(realmLatest)
       .where(and(...conditions))
-      .groupBy(realmSnapshots.connectedRealmId, realmSnapshots.regionId);
+      .groupBy(realmLatest.connectedRealmId, realmLatest.regionId);
 
     if (latestPrices.length === 0) {
       return c.json([]);
@@ -296,20 +328,22 @@ itemRoutes.get("/:itemId/realm-prices", async (c) => {
       .where(and(eq(realms.regionId, region), inArray(realms.connectedRealmId, connectedRealmIds)))
       .orderBy(realms.name);
 
-    const realmNameByConnectedRealm = new Map<number, string>();
+    const realmNamesByConnectedRealm = new Map<number, string[]>();
     for (const row of realmRows) {
-      if (!realmNameByConnectedRealm.has(row.connectedRealmId)) {
-        realmNameByConnectedRealm.set(row.connectedRealmId, row.name);
-      }
+      const names = realmNamesByConnectedRealm.get(row.connectedRealmId) ?? [];
+      names.push(row.name);
+      realmNamesByConnectedRealm.set(row.connectedRealmId, names);
     }
 
     const data = latestPrices
       .map((row) => ({
         realm_id: row.realm_id,
-        realm_name: realmNameByConnectedRealm.get(row.realm_id) ?? null,
+        realm_name: realmNamesByConnectedRealm.get(row.realm_id)?.join(" / ") ?? null,
         min_buyout: row.min_buyout,
         avg_buyout: row.avg_buyout,
         total_quantity: row.total_quantity,
+        variant_count: row.variant_count,
+        observed_at: row.observed_at,
       }))
       .sort((a, b) => b.min_buyout - a.min_buyout);
 
