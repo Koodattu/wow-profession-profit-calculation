@@ -161,10 +161,32 @@ export const syncJobs = pgTable("sync_jobs", {
   lastError: text("last_error"),
 });
 
+export const marketRefreshCycles = pgTable(
+  "market_refresh_cycles",
+  {
+    id: bigserial("id", { mode: "number" }).primaryKey(),
+    regionId: text("region_id")
+      .notNull()
+      .references(() => regions.id),
+    trigger: text("trigger").notNull(),
+    status: text("status").notNull().default("running"),
+    startedAt: timestamp("started_at", { withTimezone: true }).notNull().defaultNow(),
+    finishedAt: timestamp("finished_at", { withTimezone: true }),
+    totalScopes: integer("total_scopes").notNull().default(0),
+    succeededScopes: integer("succeeded_scopes").notNull().default(0),
+    failedScopes: integer("failed_scopes").notNull().default(0),
+    skippedScopes: integer("skipped_scopes").notNull().default(0),
+    statusReason: text("status_reason"),
+    lastError: text("last_error"),
+  },
+  (t) => [index("idx_market_refresh_cycles_region_time").on(t.regionId, t.startedAt)],
+);
+
 export const auctionSyncRuns = pgTable(
   "auction_sync_runs",
   {
     id: bigserial("id", { mode: "number" }).primaryKey(),
+    cycleId: bigint("cycle_id", { mode: "number" }).references(() => marketRefreshCycles.id, { onDelete: "set null" }),
     regionId: text("region_id")
       .notNull()
       .references(() => regions.id),

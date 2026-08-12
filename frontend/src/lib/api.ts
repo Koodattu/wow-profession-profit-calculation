@@ -31,14 +31,13 @@ export interface ReagentCost {
   itemName: string;
   itemQuality: number | null;
   quantity: number;
-  unitPrice: number;
-  totalPrice: number;
+  unitPrice: number | null;
+  totalPrice: number | null;
 }
 
 export interface RecipeCostResult {
   reagents: ReagentCost[];
-  totalCost: number;
-  hasPriceData: boolean;
+  totalCost: number | null;
 }
 
 export interface RankScenario {
@@ -55,7 +54,6 @@ export interface RankScenario {
   outputTotalPrice: number | null;
   profit: number | null;
   isSalvage?: boolean;
-  scenarioLabel?: string;
   inputItemId?: number;
 }
 

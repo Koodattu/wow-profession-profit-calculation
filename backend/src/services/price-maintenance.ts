@@ -70,6 +70,10 @@ export async function pruneRawPrices(): Promise<void> {
     WHERE coalesce(finished_at, started_at) < now() - (${env.RAW_SNAPSHOT_RETENTION_DAYS} * interval '1 day')
   `);
   await db.execute(sql`
+    DELETE FROM market_refresh_cycles
+    WHERE coalesce(finished_at, started_at) < now() - (${env.RAW_SNAPSHOT_RETENTION_DAYS} * interval '1 day')
+  `);
+  await db.execute(sql`
     DELETE FROM commodity_daily
     WHERE date < (now() AT TIME ZONE 'UTC')::date - ${env.DAILY_HISTORY_RETENTION_DAYS}::integer
   `);

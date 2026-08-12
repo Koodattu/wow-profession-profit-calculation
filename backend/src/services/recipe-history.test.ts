@@ -41,7 +41,6 @@ function scenario(overrides: Partial<RecipeScenario> = {}): RecipeScenario {
         },
       ],
       totalCost: 0,
-      hasPriceData: true,
     },
     outputItemId: 30,
     outputItemName: "Output",
@@ -128,7 +127,6 @@ describe("recipe history interface", () => {
             },
           ],
           totalCost: 0,
-          hasPriceData: true,
         },
       }),
     ];

@@ -1,10 +1,6 @@
 import cron from "node-cron";
-import { eq, sql } from "drizzle-orm";
 import { ACTIVE_REGIONS } from "../config/regions";
-import { db } from "../db";
-import { connectedRealms } from "../db/schema";
-import { syncAllRealmAuctions, syncCommodities } from "../services/auction-sync";
-import { getRegionPriceFreshness } from "../services/price-freshness";
+import { runMarketRefreshCycle } from "../services/market-refresh-cycle";
 import { runPriceMaintenance } from "../services/price-maintenance";
 import { syncConnectedRealms } from "../services/realm-sync";
 import { syncPendingItemMetadata } from "../services/item-metadata-sync";
@@ -16,34 +12,8 @@ type SchedulerGlobalState = typeof globalThis & {
 
 const schedulerGlobalState = globalThis as SchedulerGlobalState;
 
-async function ensureConnectedRealms(regionId: string, force = false): Promise<void> {
-  const [row] = await db
-    .select({ count: sql<number>`count(*)::int` })
-    .from(connectedRealms)
-    .where(eq(connectedRealms.regionId, regionId));
-
-  if (!force && (row?.count ?? 0) > 0) {
-    return;
-  }
-
+async function refreshConnectedRealms(regionId: string): Promise<void> {
   await runTrackedJob(`realm-catalog:${regionId}`, () => syncConnectedRealms(regionId));
-}
-
-async function syncPrices(regionId: string, force = false): Promise<void> {
-  const freshness = await getRegionPriceFreshness(regionId);
-
-  if (!force && freshness.commodity.fresh) {
-    console.log(`[Scheduler] Commodity sync skipped for ${regionId}; data is fresh`);
-  } else {
-    await runTrackedJob(`commodity-prices:${regionId}`, () => syncCommodities(regionId));
-  }
-
-  if (!force && freshness.realm.fresh) {
-    console.log(`[Scheduler] Realm auction sync skipped for ${regionId}; data is fresh`);
-  } else {
-    await ensureConnectedRealms(regionId);
-    await runTrackedJob(`realm-prices:${regionId}`, () => syncAllRealmAuctions(regionId));
-  }
 }
 
 async function runForEachRegion(label: string, task: (regionId: string) => Promise<void>): Promise<void> {
@@ -68,13 +38,13 @@ export function startScheduler(): void {
 
   cron.schedule(
     "5 * * * *",
-    () => runForEachRegion("Hourly price sync", (regionId) => syncPrices(regionId, true)),
+    () => runForEachRegion("Hourly market refresh", (regionId) => runMarketRefreshCycle(regionId, "scheduled").then(() => undefined)),
     { noOverlap: true, name: "hourly-price-sync" },
   );
 
   cron.schedule(
     "0 4 * * *",
-    () => runForEachRegion("Daily realm refresh", (regionId) => ensureConnectedRealms(regionId, true)),
+    () => runForEachRegion("Daily realm refresh", refreshConnectedRealms),
     { noOverlap: true, name: "daily-realm-refresh" },
   );
 
@@ -95,8 +65,7 @@ export function startScheduler(): void {
 
 export async function runInitialSync(): Promise<void> {
   await runForEachRegion("Startup data sync", async (regionId) => {
-    await ensureConnectedRealms(regionId);
-    await syncPrices(regionId);
+    await runMarketRefreshCycle(regionId, "startup");
     await runTrackedJob(`item-metadata:${regionId}`, () => syncPendingItemMetadata(regionId));
   });
   await runTrackedJob("price-history-maintenance", runPriceMaintenance);

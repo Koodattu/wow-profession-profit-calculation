@@ -2,9 +2,8 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useSyncExternalStore, type FormEvent } from "react";
-import { fetchMarketSummary, type MarketSummary } from "@/lib/api";
-import { getSelectedConnectedRealmId, subscribeToConnectedRealm } from "@/lib/realm-state";
+import { useState, type FormEvent } from "react";
+import { useMarketDashboard } from "@/features/market-dashboard";
 
 function formatAge(value: string | null): string {
   if (!value) return "Waiting for first sync";
@@ -16,25 +15,8 @@ function formatAge(value: string | null): string {
 
 export default function MarketDashboard() {
   const router = useRouter();
-  const connectedRealmId = useSyncExternalStore(subscribeToConnectedRealm, getSelectedConnectedRealmId, () => null);
-  const [summary, setSummary] = useState<MarketSummary | null>(null);
-  const [failed, setFailed] = useState(false);
+  const { summary, failed } = useMarketDashboard();
   const [query, setQuery] = useState("");
-
-  useEffect(() => {
-    let active = true;
-    fetchMarketSummary("eu", connectedRealmId ?? undefined)
-      .then((data) => {
-        if (active) {
-          setSummary(data);
-          setFailed(false);
-        }
-      })
-      .catch(() => active && setFailed(true));
-    return () => {
-      active = false;
-    };
-  }, [connectedRealmId]);
 
   function search(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

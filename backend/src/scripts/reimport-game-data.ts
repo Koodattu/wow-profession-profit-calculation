@@ -9,13 +9,13 @@
  */
 
 import "../config/env"; // loads .env
-import { importGameData } from "../services/game-data-import";
+import { replaceProfessionCatalog } from "../services/profession-catalog";
 import { sql } from "../db";
 
 console.log("[Reimport] Starting game data reimport...");
 
 try {
-  await importGameData();
+  await replaceProfessionCatalog();
   console.log("[Reimport] Done. Existing market catalog and price history were preserved.");
 } catch (err) {
   console.error("[Reimport] Failed:", err);

@@ -209,9 +209,9 @@ describe("recipe valuation interface", () => {
 
     expect(single.scenarios.length).toBeGreaterThan(0);
     expect(single.scenarios.every((scenario) => scenario.isSalvage)).toBe(true);
-    expect(summary.scenarios).toEqual(single.scenarios.slice(0, 1));
+    expect(summary.scenarios).toEqual(single.scenarios);
 
-    const pricedCosts = single.scenarios.filter((scenario) => scenario.cost.hasPriceData).map((scenario) => scenario.cost.totalCost);
+    const pricedCosts = single.scenarios.flatMap((scenario) => (scenario.cost.totalCost === null ? [] : [scenario.cost.totalCost]));
     expect(pricedCosts).toEqual([...pricedCosts].sort((left, right) => left - right));
   });
 });

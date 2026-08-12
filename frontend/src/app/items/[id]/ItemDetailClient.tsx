@@ -1,78 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState, useSyncExternalStore, useTransition } from "react";
-import { fetchItemPrices, fetchItemRealmPrices, formatPrice, type Item, type PricePoint, type RealmPrice } from "@/lib/api";
-import { getSelectedConnectedRealmId, subscribeToConnectedRealm } from "@/lib/realm-state";
+import { useState } from "react";
+import { formatPrice, type Item } from "@/lib/api";
 import TimeRangeTabs from "@/app/TimeRangeTabs";
 import HistoryLineChart from "@/app/HistoryLineChart";
 import type { HistoryRange } from "@/lib/time-ranges";
+import { useItemDetail } from "@/features/item-detail";
 
 interface Props {
   item: Item;
 }
 
 export default function ItemDetailClient({ item }: Props) {
-  const connectedRealmId = useSyncExternalStore(subscribeToConnectedRealm, getSelectedConnectedRealmId, () => null);
-  const [prices, setPrices] = useState<PricePoint[]>([]);
-  const [realmPrices, setRealmPrices] = useState<RealmPrice[]>([]);
   const [range, setRange] = useState<HistoryRange>("24h");
-  const [initialLoad, setInitialLoad] = useState(true);
-  const [realmPricesLoading, setRealmPricesLoading] = useState(true);
-  const hasLoadedDataRef = useRef(false);
-  const [, startTransition] = useTransition();
-
   const usesRealmByDefault = item.marketType === "realm";
-
-  useEffect(() => {
-    if (usesRealmByDefault && connectedRealmId === null) return;
-
-    let cancelled = false;
-
-    startTransition(async () => {
-      try {
-        const nextPrices = await fetchItemPrices(item.id, "eu", range, usesRealmByDefault ? { type: "realm", connectedRealmId: connectedRealmId ?? undefined } : { type: "auto" });
-        if (!cancelled) {
-          setPrices(nextPrices);
-          hasLoadedDataRef.current = true;
-        }
-      } catch {
-        if (!cancelled && !hasLoadedDataRef.current) setPrices([]);
-      } finally {
-        if (!cancelled) setInitialLoad(false);
-      }
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [connectedRealmId, item.id, range, usesRealmByDefault]);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    startTransition(async () => {
-      setRealmPricesLoading(true);
-      try {
-        const nextRealmPrices = await fetchItemRealmPrices(item.id, "eu");
-        if (!cancelled) {
-          setRealmPrices(nextRealmPrices);
-        }
-      } catch {
-        if (!cancelled) {
-          setRealmPrices([]);
-        }
-      } finally {
-        if (!cancelled) {
-          setRealmPricesLoading(false);
-        }
-      }
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [item.id]);
+  const detail = useItemDetail(item, range);
+  const { connectedRealmId, prices, realmPrices, realmPricesLoading } = detail;
 
   const latestPrice = prices.length > 0 ? prices[0] : null;
   const chartData = [...prices].reverse().map((point) => ({
@@ -109,7 +53,11 @@ export default function ItemDetailClient({ item }: Props) {
               <h2 className="text-sm text-muted">Current price · {usesRealmByDefault ? "selected realm" : "EU"}</h2>
               <span className="text-sm text-muted" />
             </div>
-            {initialLoad ? (
+            {detail.status === "selection-required" ? (
+              <p className="text-muted">Select a realm to view this item.</p>
+            ) : detail.status === "error" ? (
+              <p className="text-muted">Couldn’t load price data. Try again in a moment.</p>
+            ) : detail.status === "loading" ? (
               <p className="text-muted">Loading price data...</p>
             ) : latestPrice ? (
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">

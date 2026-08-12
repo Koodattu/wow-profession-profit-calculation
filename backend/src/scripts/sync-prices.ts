@@ -9,21 +9,14 @@
 import "../config/env";
 import { sql } from "../db";
 import { ACTIVE_REGIONS } from "../config/regions";
-import { syncCommodities, syncAllRealmAuctions } from "../services/auction-sync";
-import { syncConnectedRealms } from "../services/realm-sync";
+import { runMarketRefreshCycle } from "../services/market-refresh-cycle";
 
 console.log("[SyncPrices] Starting auction data sync...");
 
 try {
   for (const regionId of ACTIVE_REGIONS) {
-    console.log(`[SyncPrices] Syncing connected realms for ${regionId}...`);
-    await syncConnectedRealms(regionId);
-
-    console.log(`[SyncPrices] Syncing commodities for ${regionId}...`);
-    await syncCommodities(regionId);
-
-    console.log(`[SyncPrices] Syncing realm auctions for ${regionId}...`);
-    await syncAllRealmAuctions(regionId);
+    const result = await runMarketRefreshCycle(regionId, "manual");
+    console.log(`[SyncPrices] ${regionId} cycle ${result.id}: ${result.status}`);
   }
   console.log("[SyncPrices] Done.");
 } catch (err) {

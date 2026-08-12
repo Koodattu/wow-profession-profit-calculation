@@ -9,7 +9,6 @@ A fast, compact EU Retail auction-house tracker with profession cost calculation
 - **Crafting Cost Calculator** — Calculate reagent costs and gross profit estimates across supported reagent/output rank scenarios
 - **Realm Arbitrage** — Find the best realms to buy and sell non-commodity items
 - **Profession Browser** — Browse Midnight professions, recipes, and reagents
-- **Profession Stat Simulation** — Not yet enabled; authoritative multicraft, resourcefulness, and ingenuity inputs are not bundled
 
 ## Architecture
 

@@ -1,49 +1,18 @@
 "use client";
 
-import { useSyncExternalStore, useCallback, useEffect, useState, useTransition } from "react";
 import Link from "next/link";
-import { fetchProfessionCostsForRealm, formatPrice, type ProfessionRecipeCost, type ProfessionDetail, type RecipeCategory } from "@/lib/api";
+import { formatPrice, type ProfessionRecipeCost, type ProfessionDetail, type RecipeCategory } from "@/lib/api";
 import WowheadLink from "@/app/WowheadLink";
-import { getSelectedTier, subscribeToTier } from "@/lib/profession-stats";
-import { getTierStats, isTierConfigured, type ToolTier } from "@/lib/tool-tiers";
-import { calculateAdjustedProfit } from "@/lib/profit-calc";
-import { getSelectedConnectedRealmId, subscribeToConnectedRealm } from "@/lib/realm-state";
+import { projectRecipeSummary } from "@/lib/recipe-scenario-projection";
+import { useProfessionValuation } from "@/features/profession-valuation";
 
 interface Props {
   profession: ProfessionDetail;
 }
 
 export default function ProfessionClient({ profession }: Props) {
-  const getSnapshot = useCallback(() => getSelectedTier(), []);
-  const getServerSnapshot = useCallback((): ToolTier => "none", []);
-  const tier = useSyncExternalStore(subscribeToTier, getSnapshot, getServerSnapshot);
-  const connectedRealmId = useSyncExternalStore(subscribeToConnectedRealm, getSelectedConnectedRealmId, () => null);
-  const [recipeCosts, setRecipeCosts] = useState<ProfessionRecipeCost[]>([]);
-  const [initialLoad, setInitialLoad] = useState(true);
-  const [, startTransition] = useTransition();
-
-  const tierStats = getTierStats(profession.name, tier);
-  const hasTier = tier !== "none" && isTierConfigured(profession.name, tier);
-
-  useEffect(() => {
-    if (connectedRealmId === null) return;
-
-    let cancelled = false;
-
-    startTransition(async () => {
-      try {
-        const nextRecipeCosts = await fetchProfessionCostsForRealm(profession.id, "eu", connectedRealmId);
-        if (!cancelled) setRecipeCosts(nextRecipeCosts);
-      } catch {
-      } finally {
-        if (!cancelled) setInitialLoad(false);
-      }
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [connectedRealmId, profession.id]);
+  const valuation = useProfessionValuation(profession.id);
+  const recipeCosts = valuation.data ?? [];
 
   // Group recipes by category
   const categoryMap = new Map<number, RecipeCategory>();
@@ -76,16 +45,14 @@ export default function ProfessionClient({ profession }: Props) {
             <p className="text-sm text-muted">{recipeCosts.length} recipes</p>
             <p className="text-xs text-muted mt-1">Gross estimates exclude auction fees and profession-stat procs.</p>
           </div>
-          {hasTier && (
-            <div className="mt-1 flex items-center gap-3 text-sm">
-              {tierStats.multicraftRating > 0 && <span className="text-muted text-xs">MC: {tierStats.multicraftRating}</span>}
-              {tierStats.resourcefulnessRating > 0 && <span className="text-muted text-xs">Res: {tierStats.resourcefulnessRating}</span>}
-            </div>
-          )}
         </div>
       </div>
 
-      <div className="h-5 mb-4 text-sm text-muted">{initialLoad ? "Loading recipe prices..." : null}</div>
+      <div className="h-5 mb-4 text-sm text-muted">
+        {valuation.status === "selection-required" ? "Select a realm to value recipes." : null}
+        {valuation.status === "loading" ? "Loading recipe prices..." : null}
+        {valuation.status === "error" ? "Failed to load recipe prices." : null}
+      </div>
 
       {sortedCategories.map(([categoryId, recipes]) => {
         const category = categoryId ? categoryMap.get(categoryId) : null;
@@ -93,7 +60,7 @@ export default function ProfessionClient({ profession }: Props) {
           <section key={categoryId ?? "uncategorized"} className="mb-8">
             <h2 className="text-lg font-semibold text-muted">{category?.name ?? "Other"}</h2>
             <div className="overflow-x-auto">
-              <RecipeTable recipes={recipes} professionName={profession.name} tier={tier} />
+              <RecipeTable recipes={recipes} />
             </div>
           </section>
         );
@@ -102,11 +69,9 @@ export default function ProfessionClient({ profession }: Props) {
   );
 }
 
-function RecipeTable({ recipes, professionName, tier }: { recipes: ProfessionRecipeCost[]; professionName: string; tier: ToolTier }) {
-  const hasTier = tier !== "none" && isTierConfigured(professionName, tier);
-  const tierStats = getTierStats(professionName, tier);
-  const scenarioColSpan = hasTier ? 4 : 3;
-  const metricColumnCount = hasTier ? 12 : 9;
+function RecipeTable({ recipes }: { recipes: ProfessionRecipeCost[] }) {
+  const scenarioColSpan = 3;
+  const metricColumnCount = 9;
   const recipeColumnWidth = "22%";
   const metricColumnWidth = `${(100 - 22) / metricColumnCount}%`;
 
@@ -137,58 +102,39 @@ function RecipeTable({ recipes, professionName, tier }: { recipes: ProfessionRec
           <th className="py-2 pr-4 pl-4 font-medium text-right border-l border-border/60">Cost</th>
           <th className="py-2 pr-4 font-medium text-right">Output</th>
           <th className="py-2 pr-4 font-medium text-right">Gross Profit</th>
-          {hasTier && <th className="py-2 pr-4 font-medium text-right">Adj. Profit</th>}
           <th className="py-2 pr-4 pl-4 font-medium text-right border-l border-border/60">Cost</th>
           <th className="py-2 pr-4 font-medium text-right">Output</th>
           <th className="py-2 pr-4 font-medium text-right">Gross Profit</th>
-          {hasTier && <th className="py-2 pr-4 font-medium text-right">Adj. Profit</th>}
           <th className="py-2 pr-4 pl-4 font-medium text-right border-l border-border/60">Cost</th>
           <th className="py-2 pr-4 font-medium text-right">Output</th>
           <th className="py-2 pr-4 font-medium text-right">Gross Profit</th>
-          {hasTier && <th className="py-2 pr-4 font-medium text-right">Adj. Profit</th>}
         </tr>
       </thead>
       <tbody>
         {recipes.map((recipe) => {
-          const s1 = recipe.scenarios.find((scenario) => scenario.reagentRank === 1 && scenario.outputRank === 1) ?? recipe.scenarios[0];
-          const s2 = recipe.scenarios.find((scenario) => scenario.reagentRank === 2 && scenario.outputRank === 2) ?? recipe.scenarios[1];
-          const s3 = recipe.scenarios.find((scenario) => scenario.reagentRank === 1 && scenario.outputRank === 2) ?? recipe.scenarios[2];
-
-          const adj1 =
-            hasTier && s1
-              ? calculateAdjustedProfit({
-                  tierStats,
-                  baseYield: s1.outputQuantity,
-                  outputUnitPrice: s1.outputUnitPrice,
-                  totalCost: s1.cost.totalCost,
-                  affectedByMulticraft: recipe.affectedByMulticraft,
-                  affectedByResourcefulness: recipe.affectedByResourcefulness,
-                })
-              : null;
-
-          const adj2 =
-            hasTier && s2
-              ? calculateAdjustedProfit({
-                  tierStats,
-                  baseYield: s2.outputQuantity,
-                  outputUnitPrice: s2.outputUnitPrice,
-                  totalCost: s2.cost.totalCost,
-                  affectedByMulticraft: recipe.affectedByMulticraft,
-                  affectedByResourcefulness: recipe.affectedByResourcefulness,
-                })
-              : null;
-
-          const adj3 =
-            hasTier && s3
-              ? calculateAdjustedProfit({
-                  tierStats,
-                  baseYield: s3.outputQuantity,
-                  outputUnitPrice: s3.outputUnitPrice,
-                  totalCost: s3.cost.totalCost,
-                  affectedByMulticraft: recipe.affectedByMulticraft,
-                  affectedByResourcefulness: recipe.affectedByResourcefulness,
-                })
-              : null;
+          const projection = projectRecipeSummary(recipe);
+          if (projection.kind === "salvage") {
+            return (
+              <tr key={recipe.recipeId} className="border-b border-border/50 align-top">
+                <td className="py-3 pr-4">
+                  <WowheadLink href={`/recipes/${recipe.recipeId}`} type="spell" id={recipe.recipeId} className="text-accent hover:underline">
+                    {recipe.recipeName}
+                  </WowheadLink>
+                </td>
+                <td colSpan={9} className="py-3 pl-4 border-l border-border/60">
+                  <div className="grid gap-2 md:grid-cols-2">
+                    {projection.scenarios.map(({ scenarioKey, label, scenario }) => (
+                      <div key={scenarioKey} className="flex justify-between gap-4">
+                        <span className="text-muted">{label}</span>
+                        <span>{scenario ? formatMaybePrice(scenario.profit) : "—"}</span>
+                      </div>
+                    ))}
+                  </div>
+                </td>
+              </tr>
+            );
+          }
+          const [s1, s2, s3] = projection.scenarios.map((entry) => entry.scenario);
 
           return (
             <tr key={recipe.recipeId} className="border-b border-border/50 hover:bg-card-hover transition-colors">
@@ -198,42 +144,31 @@ function RecipeTable({ recipes, professionName, tier }: { recipes: ProfessionRec
                 </WowheadLink>
                 {s1 && s1.outputQuantity > 1 && <span className="text-muted ml-1">×{s1.outputQuantity}</span>}
               </td>
-              <td className="py-2 pr-4 pl-4 text-right border-l border-border/60">{s1 ? formatPrice(s1.cost.totalCost) : "—"}</td>
+              <td className="py-2 pr-4 pl-4 text-right border-l border-border/60">{s1 ? formatMaybePrice(s1.cost.totalCost) : "—"}</td>
               <td className="py-2 pr-4 text-right">{s1?.outputTotalPrice != null ? formatPrice(s1.outputTotalPrice) : "—"}</td>
               <td className="py-2 pr-4 text-right">
                 <ProfitCell value={s1?.profit ?? null} />
               </td>
-              {hasTier && (
-                <td className="py-2 pr-4 text-right">
-                  <ProfitCell value={adj1?.expectedProfit ?? null} />
-                </td>
-              )}
-              <td className="py-2 pr-4 pl-4 text-right border-l border-border/60">{s2 ? formatPrice(s2.cost.totalCost) : "—"}</td>
+              <td className="py-2 pr-4 pl-4 text-right border-l border-border/60">{s2 ? formatMaybePrice(s2.cost.totalCost) : "—"}</td>
               <td className="py-2 pr-4 text-right">{s2?.outputTotalPrice != null ? formatPrice(s2.outputTotalPrice) : "—"}</td>
               <td className="py-2 pr-4 text-right">
                 <ProfitCell value={s2?.profit ?? null} />
               </td>
-              {hasTier && (
-                <td className="py-2 pr-4 text-right">
-                  <ProfitCell value={adj2?.expectedProfit ?? null} />
-                </td>
-              )}
-              <td className="py-2 pr-4 pl-4 text-right border-l border-border/60">{s3 ? formatPrice(s3.cost.totalCost) : "—"}</td>
+              <td className="py-2 pr-4 pl-4 text-right border-l border-border/60">{s3 ? formatMaybePrice(s3.cost.totalCost) : "—"}</td>
               <td className="py-2 pr-4 text-right">{s3?.outputTotalPrice != null ? formatPrice(s3.outputTotalPrice) : "—"}</td>
               <td className="py-2 pr-4 text-right">
                 <ProfitCell value={s3?.profit ?? null} />
               </td>
-              {hasTier && (
-                <td className="py-2 pr-4 text-right">
-                  <ProfitCell value={adj3?.expectedProfit ?? null} />
-                </td>
-              )}
             </tr>
           );
         })}
       </tbody>
     </table>
   );
+}
+
+function formatMaybePrice(value: number | null): string {
+  return value === null ? "—" : formatPrice(value);
 }
 
 function ProfitCell({ value }: { value: number | null }) {

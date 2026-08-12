@@ -1,66 +1,29 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import {
-  fetchRecipeHistory,
   formatPrice,
   type RecipeHistoryPoint,
   type RecipeProfitResult,
   type RankScenario,
 } from "@/lib/api";
 import WowheadLink from "@/app/WowheadLink";
-import { getTierStats, isTierConfigured, TOOL_TIERS, TOOL_TIER_LABELS, type ToolTier } from "@/lib/tool-tiers";
-import { calculateAdjustedProfit, type AdjustedProfit } from "@/lib/profit-calc";
 import { getItemQualityClass } from "@/lib/item-quality";
 import TimeRangeTabs from "@/app/TimeRangeTabs";
 import HistoryLineChart from "@/app/HistoryLineChart";
 import type { HistoryRange } from "@/lib/time-ranges";
-import { getSelectedConnectedRealmId, subscribeToConnectedRealm } from "@/lib/realm-state";
+import { projectRecipeDetail } from "@/lib/recipe-scenario-projection";
 
 interface Props {
   recipe: RecipeProfitResult;
+  historyRange: HistoryRange;
+  onHistoryRangeChange(range: HistoryRange): void;
+  history: Record<string, RecipeHistoryPoint[]>;
+  historyLoading: boolean;
 }
 
-export default function RecipeClient({ recipe }: Props) {
-  const connectedRealmId = useSyncExternalStore(subscribeToConnectedRealm, getSelectedConnectedRealmId, () => null);
-  const [historyRange, setHistoryRange] = useState<HistoryRange>("24h");
-  const [history, setHistory] = useState<{
-    connectedRealmId: number;
-    range: HistoryRange;
-    scenarios: Record<string, RecipeHistoryPoint[]>;
-  } | null>(null);
-
-  useEffect(() => {
-    if (connectedRealmId === null) return;
-
-    const realmId = connectedRealmId;
-    let cancelled = false;
-
-    void fetchRecipeHistory(recipe.recipeId, historyRange, realmId)
-      .then((response) => {
-        if (cancelled) return;
-        setHistory({
-          connectedRealmId: realmId,
-          range: historyRange,
-          scenarios: Object.fromEntries(response.scenarios.map((scenario) => [scenario.scenarioKey, scenario.points])),
-        });
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setHistory({ connectedRealmId: realmId, range: historyRange, scenarios: {} });
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [connectedRealmId, historyRange, recipe.recipeId]);
-
-  const historyMatches =
-    history?.connectedRealmId === connectedRealmId && history.range === historyRange;
-
-  // Compute adjusted profits for all tiers with stats
-  const activeTiers = TOOL_TIERS.filter((tier) => tier !== "none" && isTierConfigured(recipe.professionName, tier));
+export default function RecipeClient({ recipe, historyRange, onHistoryRangeChange, history, historyLoading }: Props) {
+  const projectedScenarios = projectRecipeDetail(recipe, history);
 
   return (
     <div>
@@ -88,34 +51,19 @@ export default function RecipeClient({ recipe }: Props) {
       <div className="border border-border rounded-lg bg-card p-4 mb-6">
         <div className="flex items-center justify-between gap-3">
           <h2 className="text-sm text-muted">Scenario Chart Range</h2>
-          <TimeRangeTabs value={historyRange} onChange={setHistoryRange} />
+          <TimeRangeTabs value={historyRange} onChange={onHistoryRangeChange} />
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {recipe.scenarios.map((scenario) => {
-          const tierResults: { tier: ToolTier; adj: AdjustedProfit }[] = [];
-          for (const tier of activeTiers) {
-            const tierStats = getTierStats(recipe.professionName, tier);
-            const adj = calculateAdjustedProfit({
-              tierStats,
-              baseYield: scenario.outputQuantity,
-              outputUnitPrice: scenario.outputUnitPrice,
-              totalCost: scenario.cost.totalCost,
-              affectedByMulticraft: recipe.affectedByMulticraft,
-              affectedByResourcefulness: recipe.affectedByResourcefulness,
-            });
-            if (adj && scenario.cost.hasPriceData) tierResults.push({ tier, adj });
-          }
-
+        {projectedScenarios.map(({ scenario, scenarioKey, label, history: scenarioHistory }) => {
           return (
             <ScenarioCard
-              key={scenario.scenarioKey}
+              key={scenarioKey}
               scenario={scenario}
-              tierResults={tierResults}
-              connectedRealmId={connectedRealmId}
-              historyData={historyMatches ? (history.scenarios[scenario.scenarioKey] ?? []) : []}
-              historyLoading={connectedRealmId !== null && !historyMatches}
+              title={label}
+              historyData={scenarioHistory}
+              historyLoading={historyLoading}
             />
           );
         })}
@@ -126,20 +74,16 @@ export default function RecipeClient({ recipe }: Props) {
 
 function ScenarioCard({
   scenario,
-  tierResults,
-  connectedRealmId,
+  title,
   historyData,
   historyLoading,
 }: {
   scenario: RankScenario;
-  tierResults: { tier: ToolTier; adj: AdjustedProfit }[];
-  connectedRealmId: number | null;
+  title: string;
   historyData: RecipeHistoryPoint[];
   historyLoading: boolean;
 }) {
   const profitColor = scenario.profit !== null ? (scenario.profit >= 0 ? "text-positive" : "text-negative") : "text-muted";
-  const title = scenario.scenarioLabel ?? (scenario.reagentRank === 1 && scenario.outputRank === 2 ? "Conc R1→R2" : `Rank ${scenario.reagentRank} Reagents`);
-
   return (
     <div className="border border-border rounded-lg bg-card p-4">
       <h2 className="font-semibold mb-4">{title}</h2>
@@ -157,8 +101,8 @@ function ScenarioCard({
                   </WowheadLink>
                 </td>
                 <td className="py-1 text-right text-muted">×{r.quantity}</td>
-                <td className="py-1 text-right">{formatPrice(r.unitPrice)}</td>
-                <td className="py-1 text-right font-medium">{formatPrice(r.totalPrice)}</td>
+                <td className="py-1 text-right">{formatMaybePrice(r.unitPrice)}</td>
+                <td className="py-1 text-right font-medium">{formatMaybePrice(r.totalPrice)}</td>
               </tr>
             ))}
           </tbody>
@@ -167,11 +111,11 @@ function ScenarioCard({
               <td colSpan={3} className="py-2 font-medium">
                 Total Cost
               </td>
-              <td className="py-2 text-right font-bold">{formatPrice(scenario.cost.totalCost)}</td>
+              <td className="py-2 text-right font-bold">{formatMaybePrice(scenario.cost.totalCost)}</td>
             </tr>
           </tfoot>
         </table>
-        {!scenario.cost.hasPriceData && <p className="text-xs text-negative mt-1">Some reagent prices unavailable</p>}
+        {scenario.cost.totalCost === null && <p className="text-xs text-negative mt-1">Some reagent prices unavailable</p>}
         {(scenario.outputVariantCount ?? 0) > 1 && (
           <p className="text-xs text-muted mt-1">Output price is the lowest listing across {scenario.outputVariantCount} auction variants.</p>
         )}
@@ -209,63 +153,28 @@ function ScenarioCard({
       <div className="border-t border-border pt-4 mt-4">
         <ScenarioHistoryChart
           scenario={scenario}
-          connectedRealmId={connectedRealmId}
           data={historyData}
           loading={historyLoading}
         />
       </div>
 
-      {/* Tier comparison */}
-      {tierResults.length > 0 && (
-        <div className="border-t border-border pt-4 mt-4">
-          <div className="space-y-3">
-            {tierResults.map(({ tier, adj }) => {
-              const hasEffect = adj.multicraftChance > 0 || adj.resourcefulnessChance > 0;
-              if (!hasEffect) return null;
-
-              return (
-                <div key={tier} className="text-sm">
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="font-medium">{TOOL_TIER_LABELS[tier]}</span>
-                    <span className={`font-bold ${adj.expectedProfit >= 0 ? "text-positive" : "text-negative"}`}>{formatPrice(Math.round(adj.expectedProfit))}</span>
-                  </div>
-                  <div className="flex gap-4 text-xs text-muted">
-                    {adj.multicraftChance > 0 && (
-                      <span>
-                        MC {(adj.multicraftChance * 100).toFixed(1)}% (+{adj.multicraftExtraPerCraft.toFixed(2)}/craft)
-                      </span>
-                    )}
-                    {adj.resourcefulnessChance > 0 && (
-                      <span>
-                        Res {(adj.resourcefulnessChance * 100).toFixed(1)}% (−{formatPrice(Math.round(adj.resourcefulnessSavingPerCraft))})
-                      </span>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
 
+function formatMaybePrice(value: number | null): string {
+  return value === null ? "—" : formatPrice(value);
+}
+
 function ScenarioHistoryChart({
   scenario,
-  connectedRealmId,
   data,
   loading,
 }: {
   scenario: RankScenario;
-  connectedRealmId: number | null;
   data: RecipeHistoryPoint[];
   loading: boolean;
 }) {
-
-  if (connectedRealmId === null) {
-    return <p className="text-xs text-muted">Select a realm to view scenario history.</p>;
-  }
 
   if (!scenario.outputItemId) {
     return <p className="text-xs text-muted">Not enough data points for this scenario.</p>;

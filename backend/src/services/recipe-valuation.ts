@@ -19,14 +19,13 @@ export interface ReagentValuation {
   itemName: string;
   itemQuality: number | null;
   quantity: number;
-  unitPrice: number;
-  totalPrice: number;
+  unitPrice: number | null;
+  totalPrice: number | null;
 }
 
 export interface RecipeCostValuation {
   reagents: ReagentValuation[];
-  totalCost: number;
-  hasPriceData: boolean;
+  totalCost: number | null;
 }
 
 export interface RecipeScenario {
@@ -43,7 +42,6 @@ export interface RecipeScenario {
   outputTotalPrice: number | null;
   profit: number | null;
   isSalvage?: boolean;
-  scenarioLabel?: string;
   inputItemId?: number;
 }
 
@@ -161,8 +159,7 @@ async function valueRecipes(selection: RecipeSelection, regionId: string, connec
   function valueReagents(recipeId: number, reagentRank: 1 | 2): RecipeCostValuation {
     const requiredSlots = (slotsByRecipe.get(recipeId) ?? []).filter((slot) => slot.reagentType !== 3 || slot.required);
     const reagents: ReagentValuation[] = [];
-    let totalCost = 0;
-    let hasPriceData = requiredSlots.length > 0;
+    let totalCost: number | null = requiredSlots.length > 0 ? 0 : null;
 
     for (const slot of requiredSlots) {
       const options = optionsBySlot.get(slot.id) ?? [];
@@ -172,14 +169,14 @@ async function valueRecipes(selection: RecipeSelection, regionId: string, connec
       }
 
       if (!selected?.itemId) {
-        hasPriceData = false;
+        totalCost = null;
         continue;
       }
 
       const quote = quotes.get(selected.itemId);
-      const unitPrice = quote?.minPrice ?? 0;
-      const totalPrice = unitPrice * slot.quantity;
-      if (!quote) hasPriceData = false;
+      const unitPrice = quote?.minPrice ?? null;
+      const totalPrice = unitPrice === null ? null : unitPrice * slot.quantity;
+      if (totalPrice === null) totalCost = null;
 
       reagents.push({
         slotIndex: slot.slotIndex,
@@ -190,10 +187,10 @@ async function valueRecipes(selection: RecipeSelection, regionId: string, connec
         unitPrice,
         totalPrice,
       });
-      totalCost += totalPrice;
+      if (totalCost !== null && totalPrice !== null) totalCost += totalPrice;
     }
 
-    return { reagents, totalCost, hasPriceData };
+    return { reagents, totalCost };
   }
 
   function outputItems(recipe: (typeof selectedRecipes)[number]): { rank1: number | null; rank2: number | null } {
@@ -232,7 +229,7 @@ async function valueRecipes(selection: RecipeSelection, regionId: string, connec
       outputUnitPrice,
       outputVariantCount: outputQuote?.variantCount,
       outputTotalPrice,
-      profit: calculateGrossProfit(outputTotalPrice, cost.totalCost, cost.hasPriceData),
+      profit: calculateGrossProfit(outputTotalPrice, cost.totalCost),
     };
   }
 
@@ -245,7 +242,7 @@ async function valueRecipes(selection: RecipeSelection, regionId: string, connec
     return (salvageTargetsByRecipe.get(recipe.id) ?? [])
       .map((target) => {
         const inputQuote = quotes.get(target.itemId);
-        const unitPrice = inputQuote?.minPrice ?? 0;
+        const unitPrice = inputQuote?.minPrice ?? null;
         const reagent: ReagentValuation = {
           slotIndex: 1,
           itemId: target.itemId,
@@ -253,12 +250,11 @@ async function valueRecipes(selection: RecipeSelection, regionId: string, connec
           itemQuality: itemMetadata.get(target.itemId)?.itemQuality ?? null,
           quantity: inputQuantity,
           unitPrice,
-          totalPrice: unitPrice * inputQuantity,
+          totalPrice: unitPrice === null ? null : unitPrice * inputQuantity,
         };
         const cost: RecipeCostValuation = {
           reagents: [reagent],
           totalCost: reagent.totalPrice,
-          hasPriceData: Boolean(inputQuote),
         };
 
         return {
@@ -273,14 +269,16 @@ async function valueRecipes(selection: RecipeSelection, regionId: string, connec
           outputUnitPrice,
           outputVariantCount: outputQuote?.variantCount,
           outputTotalPrice,
-          profit: calculateGrossProfit(outputTotalPrice, cost.totalCost, cost.hasPriceData),
+          profit: calculateGrossProfit(outputTotalPrice, cost.totalCost),
           isSalvage: true,
-          scenarioLabel: `${reagent.itemName} ×${inputQuantity}`,
           inputItemId: target.itemId,
         };
       })
       .sort((a, b) => {
-        if (a.cost.hasPriceData !== b.cost.hasPriceData) return a.cost.hasPriceData ? -1 : 1;
+        if (a.cost.totalCost === null || b.cost.totalCost === null) {
+          if (a.cost.totalCost === b.cost.totalCost) return 0;
+          return a.cost.totalCost === null ? 1 : -1;
+        }
         return a.cost.totalCost - b.cost.totalCost;
       });
   }
@@ -338,6 +336,6 @@ export async function getProfessionRecipeValuations(
     qualityTierType: valuation.qualityTierType,
     affectedByMulticraft: valuation.affectedByMulticraft,
     affectedByResourcefulness: valuation.affectedByResourcefulness,
-    scenarios: valuation.scenarios[0]?.isSalvage ? valuation.scenarios.slice(0, 1) : valuation.scenarios,
+    scenarios: valuation.scenarios,
   }));
 }

@@ -8,7 +8,7 @@
     "dev": "bun run --hot src/index.ts",
     "start": "bun run src/index.ts",
     "test": "bun test",
-    "test:integration": "bun test ./test/current-market.integration.ts && bun test ./test/auction-refresh.integration.ts",
+    "test:integration": "bun test ./test/market-refresh-cycle.integration.ts && bun test ./test/auction-refresh.integration.ts && bun test ./test/profession-catalog.integration.ts && bun test ./test/current-market.integration.ts",
     "migrate": "bun run src/scripts/migrate.ts",
     "typecheck": "tsc --noEmit",
     "reimport": "bun run src/scripts/reimport-game-data.ts",

@@ -36,11 +36,12 @@ export interface AuctionRefreshResult {
 }
 
 export interface AuctionRefreshModule {
-  refreshCommodities(regionId: string): Promise<AuctionRefreshResult>;
+  refreshCommodities(regionId: string, cycleId?: number): Promise<AuctionRefreshResult>;
   refreshRealm(
     regionId: string,
     connectedRealmId: number,
     trackedHistoryItemIds?: ReadonlySet<number>,
+    cycleId?: number,
   ): Promise<AuctionRefreshResult>;
 }
 
@@ -64,10 +65,10 @@ function batches<T>(values: T[], size = 500): T[][] {
   return result;
 }
 
-async function startRefresh(regionId: string, scope: MarketType, connectedRealmId?: number): Promise<number> {
+async function startRefresh(regionId: string, scope: MarketType, connectedRealmId?: number, cycleId?: number): Promise<number> {
   const [run] = await db
     .insert(auctionSyncRuns)
-    .values({ regionId, scope, connectedRealmId, status: "running" })
+    .values({ cycleId, regionId, scope, connectedRealmId, status: "running" })
     .returning({ id: auctionSyncRuns.id });
   return run!.id;
 }
@@ -134,8 +135,8 @@ export function createAuctionRefreshModule(dependencies: AuctionRefreshDependenc
     throw new Error("realmHistoryIntervalHours must be positive");
   }
 
-  async function refreshCommodities(regionId: string): Promise<AuctionRefreshResult> {
-    const runId = await startRefresh(regionId, "commodity");
+  async function refreshCommodities(regionId: string, cycleId?: number): Promise<AuctionRefreshResult> {
+    const runId = await startRefresh(regionId, "commodity", undefined, cycleId);
 
     try {
       const auctions = await source.fetchCommodityAuctions(regionId);
@@ -208,8 +209,9 @@ export function createAuctionRefreshModule(dependencies: AuctionRefreshDependenc
     regionId: string,
     connectedRealmId: number,
     trackedHistoryItemIds?: ReadonlySet<number>,
+    cycleId?: number,
   ): Promise<AuctionRefreshResult> {
-    const runId = await startRefresh(regionId, "realm", connectedRealmId);
+    const runId = await startRefresh(regionId, "realm", connectedRealmId, cycleId);
 
     try {
       const auctions = await source.fetchRealmAuctions(regionId, connectedRealmId);

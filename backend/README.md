@@ -24,7 +24,9 @@ Recipe rank, salvage-input, output-quality, and gross-profit rules are owned by 
 
 Raw and daily item history reads are owned by `src/services/market-history.ts`. `src/services/recipe-history.ts` batch-loads those item series once, aligns sparse timelines, and returns every canonical Recipe Scenario through one HTTP request.
 
-One commodity or connected-realm Auction Refresh is owned by `src/services/auction-refresh.ts`. It records the attempt, fetches through an injected auction source, normalizes the payload, and atomically replaces current state while applying the realm-history cadence. `src/services/auction-sync.ts` only schedules refreshes across configured realms.
+One commodity or connected-realm Auction Refresh is owned by `src/services/auction-refresh.ts`. It records the attempt, fetches through an injected auction source, normalizes the payload, and atomically replaces current state while applying the realm-history cadence. `src/services/market-refresh-cycle.ts` owns regional orchestration, per-scope freshness, partial outcomes, and the status consumed by readiness and the dashboard.
+
+The bundled Profession Catalog is validated and published through `src/services/profession-catalog.ts`. Startup ensures it exists; the reimport command replaces it. Publication is locked and transactional while auction-owned item fields and market history remain intact.
 
 OAuth caching, concurrent token refresh, bounded retries, one-time 401 replay, and paging are owned by `src/services/blizzard-client.ts`. The production credentials adapter is `src/services/blizzard.ts`; callers consume one authenticated client interface.
 
@@ -34,7 +36,7 @@ The normal test suite is database-independent:
 bun test
 ```
 
-The database-backed characterization suite requires a populated local database. Auction Refresh cases create and clean an isolated `archtest` region and reserved item-ID range:
+The database-backed characterization suite requires a migrated, disposable local database. Auction Refresh cases use isolated test regions and reserved item-ID ranges. Profession Catalog cases temporarily replace the catalog and restore the bundled catalog during teardown, so never point this suite at a shared or production database:
 
 ```bash
 docker compose up -d db

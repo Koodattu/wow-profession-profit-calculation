@@ -1,10 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import WowheadLink from "@/app/WowheadLink";
-import { fetchItems, formatPrice, type ItemWithPrice, type ItemListResponse } from "@/lib/api";
+import { formatPrice, type ItemWithPrice } from "@/lib/api";
 import { getItemQualityClass } from "@/lib/item-quality";
-import { getSelectedConnectedRealmId, subscribeToConnectedRealm } from "@/lib/realm-state";
+import { useItemBrowser } from "@/features/item-browser";
 
 const FILTERS = ["all", "commodity", "realm"] as const;
 type Filter = (typeof FILTERS)[number];
@@ -12,16 +12,10 @@ const FILTER_LABELS: Record<Filter, string> = { all: "All", commodity: "Commodit
 const PAGE_SIZE = 50;
 
 export default function ItemsClient({ initialSearch = "" }: { initialSearch?: string }) {
-  const getRealmSnapshot = useCallback(() => getSelectedConnectedRealmId(), []);
-  const connectedRealmId = useSyncExternalStore(subscribeToConnectedRealm, getRealmSnapshot, () => null);
   const [search, setSearch] = useState(initialSearch);
   const [debouncedSearch, setDebouncedSearch] = useState(initialSearch);
   const [filter, setFilter] = useState<Filter>("all");
   const [page, setPage] = useState(1);
-  const [data, setData] = useState<ItemListResponse | null>(null);
-  const [error, setError] = useState(false);
-  const [initialLoad, setInitialLoad] = useState(true);
-  const [isPending, startTransition] = useTransition();
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -35,34 +29,18 @@ export default function ItemsClient({ initialSearch = "" }: { initialSearch?: st
     };
   }, [search]);
 
-  useEffect(() => {
-    let active = true;
-    startTransition(async () => {
-      try {
-        const result = await fetchItems({
-          region: "eu",
-          type: filter === "all" ? undefined : filter,
-          search: debouncedSearch || undefined,
-          page,
-          limit: PAGE_SIZE,
-          connectedRealmId: connectedRealmId ?? undefined,
-        });
-        if (active) {
-          setData(result);
-          setError(false);
-        }
-      } catch {
-        if (active) setError(true);
-      } finally {
-        if (active) setInitialLoad(false);
-      }
-    });
-    return () => {
-      active = false;
-    };
-  }, [connectedRealmId, debouncedSearch, filter, page]);
-
-  const loading = initialLoad || isPending;
+  const request = useMemo(
+    () => ({
+      type: filter === "all" ? undefined : filter,
+      search: debouncedSearch || undefined,
+      page,
+      limit: PAGE_SIZE,
+    }),
+    [debouncedSearch, filter, page],
+  );
+  const market = useItemBrowser(request);
+  const data = market.data;
+  const loading = market.status === "loading";
 
   return (
     <div>
@@ -102,7 +80,9 @@ export default function ItemsClient({ initialSearch = "" }: { initialSearch?: st
         </div>
       </div>
 
-      {error ? (
+      {market.status === "selection-required" ? (
+        <StateMessage>Select a realm to browse current market prices.</StateMessage>
+      ) : market.status === "error" ? (
         <StateMessage>Couldn’t load the market. Try again in a moment.</StateMessage>
       ) : loading && !data ? (
         <StateMessage>Loading market…</StateMessage>

@@ -25,16 +25,24 @@ The set of Recipe Scenarios for one profession recipe in a market scope. It excl
 _Avoid_: Recipe cost, profit calculation
 
 **Recipe Scenario**:
-A cost, output value, and gross-profit estimate for one reagent/output-rank combination or one salvage input.
+A cost, output value, and gross-profit estimate for one reagent/output-rank combination or one salvage input. Values that depend on unavailable Market Quotes remain missing rather than using zero or partial inputs.
 _Avoid_: Rank result, calculation row
 
 **Recipe Scenario Key**:
 The stable identity of a Recipe Scenario: its reagent/output-rank pair for normal crafting, or its salvage input item for salvage recipes.
 _Avoid_: Scenario index, card key
 
+**Profession Catalog**:
+The bundled profession, recipe, reagent, output, and salvage relationships used to construct Recipe Valuations. It shares item identities with Current Market State but does not own auction-only metadata.
+_Avoid_: Static game data, game data import
+
 **Auction Refresh**:
 One complete attempt to fetch and atomically replace Current Market State for either EU commodities or one connected realm. A failed Auction Refresh preserves the previous Current Market State and records the failure.
 _Avoid_: Auction sync, price update
+
+**Market Refresh Cycle**:
+One orchestration of Auction Refreshes for EU commodities and the connected realms currently known to Copper. It may succeed completely, succeed partially, fail, or be skipped.
+_Avoid_: Full refresh, auction sync cycle
 
 **Market Observation**:
 The normalized, timestamped auction summaries produced by a successful Auction Refresh. One observation may replace Current Market State and may also be retained as history according to the history cadence.

@@ -1,7 +1,8 @@
 import { Hono } from "hono";
 import { and, eq, sql } from "drizzle-orm";
 import { db } from "../db";
-import { auctionSyncRuns, items, realms } from "../db/schema";
+import { items, realms } from "../db/schema";
+import { getMarketStatus } from "../services/market-refresh-cycle";
 
 const marketRoutes = new Hono();
 
@@ -25,26 +26,8 @@ marketRoutes.get("/summary", async (c) => {
       })
       .from(items);
 
-    const [commodity] = await db
-      .select({ observedAt: sql<Date | null>`max(${auctionSyncRuns.observedAt})` })
-      .from(auctionSyncRuns)
-      .where(and(eq(auctionSyncRuns.regionId, region), eq(auctionSyncRuns.scope, "commodity"), eq(auctionSyncRuns.status, "succeeded")));
-
-    const realmFreshness = await db.execute(sql`
-      SELECT
-        min(observed_at) AS oldest_observed_at,
-        max(observed_at) AS newest_observed_at,
-        count(*)::int AS realm_count
-      FROM (
-        SELECT connected_realm_id, max(observed_at) AS observed_at
-        FROM auction_sync_runs
-        WHERE region_id = ${region}
-          AND scope = 'realm'
-          AND status = 'succeeded'
-        GROUP BY connected_realm_id
-      ) latest_realm_runs
-    `);
-    const freshnessRow = Array.from(realmFreshness as Iterable<Record<string, unknown>>)[0];
+    const marketStatus = await getMarketStatus(region);
+    const realmDates = marketStatus.realms.flatMap((scope) => (scope.latestAt ? [scope.latestAt] : []));
 
     let selectedRealm: { id: number; name: string } | null = null;
     if (connectedRealmId !== undefined) {
@@ -63,10 +46,11 @@ marketRoutes.get("/summary", async (c) => {
       commodityCount: counts?.commodities ?? 0,
       realmItemCount: counts?.realmItems ?? 0,
       pendingMetadataCount: counts?.pendingMetadata ?? 0,
-      commodityObservedAt: commodity?.observedAt ?? null,
-      realmOldestObservedAt: (freshnessRow?.oldest_observed_at as Date | null) ?? null,
-      realmNewestObservedAt: (freshnessRow?.newest_observed_at as Date | null) ?? null,
-      connectedRealmCount: Number(freshnessRow?.realm_count ?? 0),
+      commodityObservedAt: marketStatus.commodity.latestAt,
+      realmOldestObservedAt: realmDates.length > 0 ? new Date(Math.min(...realmDates.map((date) => date.getTime()))) : null,
+      realmNewestObservedAt: realmDates.length > 0 ? new Date(Math.max(...realmDates.map((date) => date.getTime()))) : null,
+      connectedRealmCount: marketStatus.realms.length,
+      marketStatus,
       selectedRealm,
     });
   } catch (error) {
