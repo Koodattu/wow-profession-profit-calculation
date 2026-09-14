@@ -1,4 +1,19 @@
 import { pgTable, text, integer, serial, bigserial, bigint, numeric, boolean, timestamp, date, jsonb, index, uniqueIndex, primaryKey } from "drizzle-orm/pg-core";
+import type { GearData } from "../services/gear-data";
+
+export const gearReference = pgTable("gear_reference", {
+  id: text("id").primaryKey(),
+  data: jsonb("data").$type<GearData>().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export interface RealmListing {
+  id: string;
+  buyout: number;
+  quantity: number;
+  bid: number | null;
+  timeLeft: string | null;
+}
 
 // ─── Static Data (from game-data-parsed) ─────────────────────────────
 
@@ -239,6 +254,7 @@ export const realmLatest = pgTable(
       .notNull()
       .references(() => items.id),
     variantKey: text("variant_key").notNull(),
+    listings: jsonb("listings").$type<RealmListing[]>(),
     syncRunId: bigint("sync_run_id", { mode: "number" }).notNull(),
     observedAt: timestamp("observed_at", { withTimezone: true }).notNull(),
     context: integer("context"),

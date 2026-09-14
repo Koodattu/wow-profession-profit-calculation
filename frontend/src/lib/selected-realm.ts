@@ -1,11 +1,13 @@
 import { useEffect, useSyncExternalStore } from "react";
 import { fetchRealms, type ConnectedRealmGroup } from "./api";
+import { realmLabel } from "./realm-label";
 
 const STORAGE_KEY = "wow-selected-connected-realm";
 
 export interface RealmOption {
   id: number;
   label: string;
+  fullLabel: string;
 }
 
 export type SelectedRealmState =
@@ -31,7 +33,8 @@ function catalogOptions(groups: ConnectedRealmGroup[]): RealmOption[] {
   return groups
     .map((group) => ({
       id: group.connected_realm_id,
-      label: group.realms.map((realm) => realm.name).sort().join(" / "),
+      label: realmLabel(group.realms.map((realm) => realm.name).sort().join(" / ")),
+      fullLabel: group.realms.map((realm) => realm.name).sort().join(" / "),
     }))
     .filter((option) => option.label.length > 0)
     .sort((left, right) => left.label.localeCompare(right.label));

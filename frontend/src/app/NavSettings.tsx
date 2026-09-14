@@ -11,6 +11,7 @@ export default function NavSettings() {
       <span className="sr-only">Connected realm</span>
       <select
         value={selectedRealmId ?? ""}
+        title={realm.options.find((option) => option.id === selectedRealmId)?.fullLabel}
         onChange={(event) => selectedRealm.select(Number(event.target.value))}
         disabled={realm.status === "loading" || realm.status === "error" || realm.options.length === 0}
         className="h-10 w-40 rounded-lg border border-border bg-card px-3 text-sm text-foreground outline-none transition-[border-color,background-color] duration-150 ease-out hover:bg-card-hover focus:border-accent disabled:opacity-60 sm:w-56"
@@ -19,7 +20,7 @@ export default function NavSettings() {
         {realm.status === "error" && <option value="">Realms unavailable</option>}
         {realm.status === "selection-required" && <option value="">Select a realm…</option>}
         {realm.options.map((option) => (
-          <option key={option.id} value={option.id}>
+          <option key={option.id} value={option.id} title={option.fullLabel}>
             {option.label}
           </option>
         ))}

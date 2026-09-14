@@ -85,6 +85,13 @@
       "when": 1789391323143,
       "tag": "0011_realm_daily_item_lookup",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1789395308413,
+      "tag": "0012_gear_listings",
+      "breakpoints": true
     }
   ]
 }

@@ -3,7 +3,7 @@ import { describe, expect, test, vi } from "vitest";
 import type { SelectedRealmState } from "@/lib/selected-realm";
 
 const realmState = vi.hoisted<{ current: SelectedRealmState }>(() => ({
-  current: { status: "selection-required", options: [{ id: 1, label: "One" }], selectedId: null },
+  current: { status: "selection-required", options: [{ id: 1, label: "One", fullLabel: "One" }], selectedId: null },
 }));
 
 vi.mock("@/lib/selected-realm", () => ({

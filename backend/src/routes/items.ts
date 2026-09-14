@@ -4,8 +4,42 @@ import { db } from "../db";
 import { items } from "../db/schema";
 import { getCurrentItemMarkets, getCurrentRealmComparison } from "../services/current-market";
 import { getItemMarketHistory, isHistoryRange, type MarketHistoryType } from "../services/market-history";
+import { getGearListings, getGearVariants } from "../services/gear-market";
 
 const itemRoutes = new Hono();
+
+itemRoutes.get("/:itemId/variants", async (c) => {
+  const itemId = Number(c.req.param("itemId"));
+  if (!Number.isSafeInteger(itemId) || itemId <= 0 || itemId > 2_147_483_647) return c.json({ error: "Invalid item ID" }, 400);
+  try {
+    const result = await getGearVariants(itemId);
+    c.header("Cache-Control", "public, max-age=30");
+    return c.json(result);
+  } catch (error) {
+    console.error("[Items] Error loading gear versions:", error);
+    return c.json({ error: "Could not load item versions" }, 500);
+  }
+});
+
+itemRoutes.get("/:itemId/listings", async (c) => {
+  const itemId = Number(c.req.param("itemId"));
+  const realmId = Number(c.req.query("connectedRealmId"));
+  const variantKey = c.req.query("variant") ?? "";
+  const page = Number(c.req.query("page") ?? 1);
+  if (!Number.isSafeInteger(itemId) || itemId <= 0 || itemId > 2_147_483_647
+    || !Number.isSafeInteger(realmId) || realmId <= 0 || realmId > 2_147_483_647
+    || !/^(base|[a-f0-9]{32})$/.test(variantKey) || !Number.isInteger(page) || page < 1 || page > 5_000) {
+    return c.json({ error: "Invalid listing filters" }, 400);
+  }
+  try {
+    const result = await getGearListings(itemId, realmId, variantKey, page);
+    c.header("Cache-Control", "public, max-age=15");
+    return c.json(result);
+  } catch (error) {
+    console.error("[Items] Error loading gear listings:", error);
+    return c.json({ error: "Could not load auction listings" }, 500);
+  }
+});
 
 // ─── GET / — List all items with latest prices ─────────────────────
 

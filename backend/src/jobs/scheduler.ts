@@ -5,6 +5,7 @@ import { runPriceMaintenance } from "../services/price-maintenance";
 import { syncConnectedRealms } from "../services/realm-sync";
 import { syncPendingItemMetadata } from "../services/item-metadata-sync";
 import { runTrackedJob } from "./tracked-job";
+import { syncGearData } from "../services/gear-data-sync";
 
 type SchedulerGlobalState = typeof globalThis & {
   __wowSchedulerStarted?: boolean;
@@ -36,6 +37,8 @@ export function startScheduler(): void {
 
   schedulerGlobalState.__wowSchedulerStarted = true;
 
+  cron.schedule("30 4 * * *", () => runTrackedJob("gear-reference", syncGearData), { noOverlap: true, name: "daily-gear-reference" });
+
   cron.schedule(
     "5 * * * *",
     () => runForEachRegion("Hourly market refresh", (regionId) => runMarketRefreshCycle(regionId, "scheduled").then(() => undefined)),
@@ -64,6 +67,7 @@ export function startScheduler(): void {
 }
 
 export async function runInitialSync(): Promise<void> {
+  await runTrackedJob("gear-reference", syncGearData).catch((error) => console.error("[GearData] Keeping cached reference:", error));
   await runForEachRegion("Startup data sync", async (regionId) => {
     await runMarketRefreshCycle(regionId, "startup");
     await runTrackedJob(`item-metadata:${regionId}`, () => syncPendingItemMetadata(regionId));

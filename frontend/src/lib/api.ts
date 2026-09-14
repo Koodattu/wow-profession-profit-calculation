@@ -188,6 +188,45 @@ export interface RealmPrice {
   observed_at: string;
 }
 
+export interface GearVariant {
+  key: string;
+  context: number | null;
+  bonusLists: number[];
+  modifiers: { type: number; value: number }[];
+  itemLevel: number | null;
+  upgrade: { group: number; level: number; max: number; name?: string; fullName?: string; seasonId?: number } | null;
+  tags: string[];
+  stats: { id: number; name: string }[];
+  sockets: number;
+  craftedStats: number[];
+  detailsIncomplete: boolean;
+  unknownBonusIds: number[];
+  wowhead: { url: string; tooltip: string };
+  realms: { connectedRealmId: number; minBuyout: number; totalQuantity: number; numAuctions: number; observedAt: string }[];
+}
+
+export interface GearVariantsResponse {
+  dataVersion: { wowBuild: string; contentHash: string; generatedAt: string };
+  variants: GearVariant[];
+}
+
+export interface GearListingsResponse {
+  listings: { id: string; buyout: number; quantity: number; bid: number | null; timeLeft: string | null }[];
+  total: number;
+  page: number;
+  totalPages: number;
+  observedAt: string | null;
+  detailsAvailable: boolean;
+}
+
+export function fetchGearVariants(itemId: number): Promise<GearVariantsResponse> {
+  return apiFetch(`/api/items/${itemId}/variants`);
+}
+
+export function fetchGearListings(itemId: number, realmId: number, variant: string, page: number): Promise<GearListingsResponse> {
+  return apiFetch(`/api/items/${itemId}/listings?${new URLSearchParams({ connectedRealmId: String(realmId), variant, page: String(page) })}`);
+}
+
 export interface Realm {
   id: number;
   connectedRealmId: number;
