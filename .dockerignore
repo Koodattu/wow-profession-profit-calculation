@@ -12,6 +12,7 @@
 **/*.log
 **/*.tsbuildinfo
 api_responses
+backups
 backend/.gitignore
 backend/README.md
 backend/drizzle.config.ts

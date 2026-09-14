@@ -15,11 +15,15 @@ realmRoutes.get("/", async (c) => {
 
     const realmRows = await db.select().from(realms).where(eq(realms.regionId, region));
 
-    const grouped = crRows.map((cr) => ({
-      connected_realm_id: cr.id,
-      realms: realmRows.filter((r) => r.connectedRealmId === cr.id),
-    }));
+    const realmsByGroup = new Map<number, typeof realmRows>();
+    for (const realm of realmRows) {
+      const group = realmsByGroup.get(realm.connectedRealmId) ?? [];
+      group.push(realm);
+      realmsByGroup.set(realm.connectedRealmId, group);
+    }
+    const grouped = crRows.map((cr) => ({ connected_realm_id: cr.id, realms: realmsByGroup.get(cr.id) ?? [] }));
 
+    c.header("Cache-Control", "public, max-age=3600, stale-while-revalidate=86400");
     return c.json(grouped);
   } catch (err) {
     console.error("[Realms] Error listing realms:", err);

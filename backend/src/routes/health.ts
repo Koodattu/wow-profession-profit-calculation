@@ -4,7 +4,7 @@ import { ACTIVE_REGIONS } from "../config/regions";
 import { env } from "../config/env";
 import { db } from "../db";
 import { professions, syncJobs } from "../db/schema";
-import { getRegionPriceFreshness } from "../services/price-freshness";
+import { getMarketStatus } from "../services/market-refresh-cycle";
 
 const health = new Hono();
 
@@ -19,7 +19,7 @@ health.get("/ready", async (c) => {
       await Promise.all(
         ACTIVE_REGIONS.map(async (regionId) => [
           regionId,
-          await getRegionPriceFreshness(regionId, env.PRICE_READINESS_MAX_AGE_MINUTES),
+          await getMarketStatus(regionId, env.PRICE_READINESS_MAX_AGE_MINUTES),
         ] as const),
       ),
     );

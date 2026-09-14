@@ -31,17 +31,17 @@ export interface ReagentCost {
   itemName: string;
   itemQuality: number | null;
   quantity: number;
-  unitPrice: number;
-  totalPrice: number;
+  unitPrice: number | null;
+  totalPrice: number | null;
 }
 
 export interface RecipeCostResult {
   reagents: ReagentCost[];
-  totalCost: number;
-  hasPriceData: boolean;
+  totalCost: number | null;
 }
 
 export interface RankScenario {
+  scenarioKey: string;
   reagentRank: 1 | 2;
   outputRank: 1 | 2;
   cost: RecipeCostResult;
@@ -50,10 +50,10 @@ export interface RankScenario {
   outputItemQuality: number | null;
   outputQuantity: number;
   outputUnitPrice: number | null;
+  outputVariantCount?: number;
   outputTotalPrice: number | null;
   profit: number | null;
   isSalvage?: boolean;
-  scenarioLabel?: string;
   inputItemId?: number;
 }
 
@@ -78,6 +78,20 @@ export interface RecipeProfitResult {
   scenarios: RankScenario[];
 }
 
+export interface RecipeHistoryPoint {
+  [key: string]: string | number | null;
+  time: string;
+  cost: number | null;
+  output: number | null;
+  outputQuantity: number | null;
+}
+
+export interface RecipeHistoryResponse {
+  recipeId: number;
+  range: HistoryRange;
+  scenarios: Array<{ scenarioKey: string; points: RecipeHistoryPoint[] }>;
+}
+
 export interface Item {
   id: number;
   name: string;
@@ -85,6 +99,10 @@ export interface Item {
   qualityRank: number | null;
   isReagent: boolean;
   isCraftedOutput: boolean;
+  marketType: "commodity" | "realm" | null;
+  itemClass: string | null;
+  itemSubclass: string | null;
+  inventoryType: string | null;
 }
 
 export interface PricePoint {
@@ -103,10 +121,21 @@ export interface ItemWithPrice {
   qualityRank: number | null;
   isReagent: boolean;
   isCraftedOutput: boolean;
+  marketType: "commodity" | "realm" | null;
   priceSource: "commodity" | "realm" | null;
-  latestPrice: { minPrice: number; avgPrice: number; medianPrice: number } | null;
-  regionLatestPrice: { minPrice: number; avgPrice: number; medianPrice: number } | null;
-  realmLatestPrice: { minPrice: number; avgPrice: number; medianPrice: number } | null;
+  latestPrice: MarketPrice | null;
+  regionLatestPrice: MarketPrice | null;
+  realmLatestPrice: MarketPrice | null;
+}
+
+export interface MarketPrice {
+  minPrice: number;
+  avgPrice: number;
+  medianPrice: number | null;
+  totalQuantity?: number;
+  numAuctions?: number;
+  observedAt?: string;
+  variantCount?: number;
 }
 
 export interface ItemListResponse {
@@ -155,6 +184,8 @@ export interface RealmPrice {
   min_buyout: number;
   avg_buyout: number;
   total_quantity: number;
+  variant_count: number;
+  observed_at: string;
 }
 
 export interface Realm {
@@ -167,6 +198,19 @@ export interface Realm {
 export interface ConnectedRealmGroup {
   connected_realm_id: number;
   realms: Realm[];
+}
+
+export interface MarketSummary {
+  region: "eu";
+  itemCount: number;
+  commodityCount: number;
+  realmItemCount: number;
+  pendingMetadataCount: number;
+  commodityObservedAt: string | null;
+  realmOldestObservedAt: string | null;
+  realmNewestObservedAt: string | null;
+  connectedRealmCount: number;
+  selectedRealm: { id: number; name: string } | null;
 }
 
 // --- Fetch helpers ---
@@ -205,6 +249,21 @@ export function fetchProfessionCostsForRealm(id: number, region = "eu", connecte
 
 export function fetchRecipeCost(id: number, region = "eu", connectedRealmId?: number): Promise<RecipeProfitResult> {
   return apiFetch(`/api/crafting/recipes/${id}${qs({ region, connectedRealmId: connectedRealmId?.toString() })}`);
+}
+
+export function fetchRecipeHistory(
+  id: number,
+  range: HistoryRange,
+  connectedRealmId: number,
+  region = "eu",
+): Promise<RecipeHistoryResponse> {
+  return apiFetch(
+    `/api/crafting/recipes/${id}/history${qs({
+      region,
+      range,
+      connectedRealmId: connectedRealmId.toString(),
+    })}`,
+  );
 }
 
 export function fetchItem(id: number): Promise<Item> {
@@ -274,6 +333,10 @@ export function fetchItemRealmPrices(itemId: number, region = "eu", range = "24h
 
 export function fetchRealms(region = "eu"): Promise<ConnectedRealmGroup[]> {
   return apiFetch(`/api/realms${qs({ region })}`);
+}
+
+export function fetchMarketSummary(region = "eu", connectedRealmId?: number): Promise<MarketSummary> {
+  return apiFetch(`/api/market/summary${qs({ region, connectedRealmId: connectedRealmId?.toString() })}`);
 }
 
 // --- Utilities ---

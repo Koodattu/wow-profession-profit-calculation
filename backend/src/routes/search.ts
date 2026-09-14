@@ -14,6 +14,7 @@ function escapeLike(s: string): string {
 searchRoutes.get("/", async (c) => {
   const q = c.req.query("q");
   if (!q) return c.json({ error: "Search query 'q' is required" }, 400);
+  if (q.length > 100) return c.json({ error: "Search must be 100 characters or fewer" }, 400);
 
   const region = c.req.query("region") || "eu";
   const safeQ = escapeLike(q);

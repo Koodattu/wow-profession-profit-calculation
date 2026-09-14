@@ -1,7 +1,7 @@
 import { eq, and } from "drizzle-orm";
 import { db } from "../db";
 import { connectedRealms, realms } from "../db/schema";
-import { BlizzardApi } from "./blizzard-api";
+import { blizzardClient } from "./blizzard";
 import { ensureRegionExists } from "./region-sync";
 
 interface ConnectedRealmIndex {
@@ -30,10 +30,8 @@ interface ConnectedRealmDetail {
 export async function syncConnectedRealms(regionId: string): Promise<void> {
   await ensureRegionExists(regionId);
 
-  const api = BlizzardApi.getInstance();
-
   console.log(`[RealmSync] Fetching connected realms index for ${regionId}...`);
-  const index = await api.get<ConnectedRealmIndex>(regionId, "/data/wow/connected-realm/index", "dynamic");
+  const index = await blizzardClient.get<ConnectedRealmIndex>(regionId, "/data/wow/connected-realm/index", "dynamic");
 
   const realmHrefs = index.connected_realms;
   console.log(`[RealmSync] Found ${realmHrefs.length} connected realms, fetching details...`);
@@ -47,7 +45,7 @@ export async function syncConnectedRealms(regionId: string): Promise<void> {
     if (!idMatch) continue;
     const crId = Number(idMatch[1]);
 
-    const detail = await api.get<ConnectedRealmDetail>(regionId, `/data/wow/connected-realm/${crId}`, "dynamic");
+    const detail = await blizzardClient.get<ConnectedRealmDetail>(regionId, `/data/wow/connected-realm/${crId}`, "dynamic");
 
     // Upsert connected realm
     await db

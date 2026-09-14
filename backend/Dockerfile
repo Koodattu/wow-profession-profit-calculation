@@ -20,6 +20,8 @@ COPY --chown=bun:bun backend/package.json ./backend/package.json
 COPY --chown=bun:bun backend/src ./backend/src
 COPY --chown=bun:bun game-data-parsed ./game-data-parsed
 
+RUN mkdir -p /archives && chown bun:bun /archives
+
 USER bun
 WORKDIR /app/backend
 

@@ -12,6 +12,7 @@ import realmRoutes from "./routes/realms";
 import craftingRoutes from "./routes/crafting";
 import searchRoutes from "./routes/search";
 import flippingRoutes from "./routes/flipping";
+import marketRoutes from "./routes/market";
 
 const app = new Hono();
 
@@ -27,6 +28,7 @@ app.route("/api/realms", realmRoutes);
 app.route("/api/crafting", craftingRoutes);
 app.route("/api/search", searchRoutes);
 app.route("/api/flipping", flippingRoutes);
+app.route("/api/market", marketRoutes);
 
 // Migrations and the bundled catalog are required for the API to be usable.
 await initializeDatabase();
@@ -35,7 +37,7 @@ await initializeDatabase();
 startScheduler();
 runInitialSync().catch((err) => console.error("[Startup] Initial sync error:", err));
 
-console.log(`WoW Tools Backend running on port ${env.BACKEND_PORT}`);
+console.log(`Copper backend running on port ${env.BACKEND_PORT}`);
 
 export default {
   port: env.BACKEND_PORT,

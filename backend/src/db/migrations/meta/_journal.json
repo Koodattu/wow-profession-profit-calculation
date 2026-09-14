@@ -36,6 +36,55 @@
       "when": 1786295694620,
       "tag": "0004_cooing_zemo",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1786299625499,
+      "tag": "0005_youthful_jetstream",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1786301238200,
+      "tag": "0006_flashy_sally_floyd",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1786301392454,
+      "tag": "0007_numerous_cammi",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1786301971108,
+      "tag": "0008_parched_longshot",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1786520793227,
+      "tag": "0009_nice_princess_powerful",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1789390348627,
+      "tag": "0010_quantity_weighted_history",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1789391323143,
+      "tag": "0011_realm_daily_item_lookup",
+      "breakpoints": true
     }
   ]
 }

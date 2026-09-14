@@ -1,8 +1,8 @@
-# WoW Tools — Project Plan
+# Copper — Project Plan
 
 ## 1. Overview
 
-WoW Tools is an auction house data analysis platform for World of Warcraft focused on:
+Copper is a compact EU Retail auction-house tracker focused on:
 
 - Tracking commodity and realm-specific item prices over time
 - Calculating crafting costs and profit margins for profession recipes
@@ -33,13 +33,14 @@ All profession, recipe, and item metadata comes from **in-game addon exports** p
 
 ### Auction House Prices (Blizzard API)
 
-Only two Blizzard API endpoints are used — for price data:
+Blizzard endpoints are used for current market data, realm discovery, and incremental item metadata:
 
 | Endpoint                                      | Namespace        | Frequency | Purpose                              |
 | --------------------------------------------- | ---------------- | --------- | ------------------------------------ |
 | `GET /data/wow/auctions/commodities`          | dynamic-{region} | Hourly    | Region-wide reagent/commodity prices |
 | `GET /data/wow/connected-realm/{id}/auctions` | dynamic-{region} | Hourly    | Per-realm non-commodity prices       |
 | `GET /data/wow/connected-realm/index`         | dynamic-{region} | Daily     | Discover connected realm IDs         |
+| `GET /data/wow/item/{id}`                     | static-{region}  | Bounded batches | Hydrate discovered item names and metadata |
 | `POST /token` (oauth.battle.net)              | —                | On expiry | OAuth token refresh                  |
 
 ### Price Data Format
@@ -142,13 +143,20 @@ CREATE TABLE recipe_categories (
   top_category_name TEXT
 );
 
--- Items (all reagents + crafted outputs)
+-- Shared profession + auction item catalog
 CREATE TABLE items (
   id INTEGER PRIMARY KEY,
   name TEXT NOT NULL,
+  item_quality INTEGER,
   quality_rank INTEGER,
   is_reagent BOOLEAN NOT NULL DEFAULT false,
-  is_crafted_output BOOLEAN NOT NULL DEFAULT false
+  is_crafted_output BOOLEAN NOT NULL DEFAULT false,
+  market_type TEXT,
+  metadata_status TEXT NOT NULL DEFAULT 'complete',
+  item_class TEXT,
+  item_subclass TEXT,
+  inventory_type TEXT,
+  metadata_updated_at TIMESTAMPTZ
 );
 
 -- Many-to-many: which professions reference this item
@@ -241,6 +249,16 @@ CREATE TABLE realms (
 );
 ```
 
+### Current Market Tables
+
+Normal price reads never scan history:
+
+- `commodity_latest` has one row per EU commodity item and is atomically replaced after each successful regional fetch.
+- `realm_latest` has one row per connected realm, item, and auction variant. Its stable variant key covers context, bonus lists, modifiers, and battle-pet attributes.
+- `auction_sync_runs` records bounded sync diagnostics and freshness; it is pruned with raw history.
+
+Failed fetches leave the previous current-state rows intact. `sync_run_id` links current rows to their successful fetch without a foreign key, allowing old run diagnostics to be pruned independently.
+
 ### Time-Series Price Tables
 
 ```sql
@@ -260,7 +278,7 @@ CREATE TABLE commodity_snapshots (
 );
 
 CREATE INDEX idx_commodity_item_time ON commodity_snapshots(item_id, snapshot_time DESC);
-CREATE INDEX idx_commodity_region_time ON commodity_snapshots(region_id, snapshot_time DESC);
+CREATE INDEX idx_commodity_snapshot_time ON commodity_snapshots(snapshot_time DESC);
 
 CREATE TABLE realm_snapshots (
   id BIGSERIAL PRIMARY KEY,
@@ -278,6 +296,7 @@ CREATE TABLE realm_snapshots (
 
 CREATE INDEX idx_realm_snap_item_time ON realm_snapshots(item_id, snapshot_time DESC);
 CREATE INDEX idx_realm_snap_realm_time ON realm_snapshots(connected_realm_id, region_id, snapshot_time DESC);
+CREATE INDEX idx_realm_snapshot_time ON realm_snapshots(snapshot_time DESC);
 
 CREATE TABLE commodity_daily (
   id BIGSERIAL PRIMARY KEY,
@@ -323,9 +342,15 @@ backend/
 │   │   ├── schema.ts
 │   │   └── migrations/
 │   ├── services/
-│   │   ├── blizzard-auth.ts
-│   │   ├── blizzard-api.ts
+│   │   ├── blizzard.ts
+│   │   ├── blizzard-client.ts
+│   │   ├── blizzard-auction-source.ts
+│   │   ├── auction-refresh.ts
 │   │   ├── auction-sync.ts
+│   │   ├── current-market.ts
+│   │   ├── market-history.ts
+│   │   ├── recipe-valuation.ts
+│   │   ├── recipe-history.ts
 │   │   ├── realm-sync.ts
 │   │   └── game-data-import.ts
 │   ├── jobs/
@@ -341,24 +366,28 @@ backend/
 
 ### Data Loading Strategy
 
-1. **On startup**: Import game data from `game-data-parsed/*.json` into DB
-2. **On startup**: Sync connected realms from Blizzard API
-3. **Every hour**: Fetch commodities + realm auctions, compute price snapshots
-4. **Daily**: Refresh connected realms, aggregate old snapshots
+1. **On startup**: Apply migrations and import the profession catalog only when it is missing
+2. **On startup**: Refresh stale connected-realm and current-price data in the background
+3. **Every hour**: Atomically replace current commodity and realm state after successful fetches
+4. **Every five minutes**: Hydrate a bounded batch of newly discovered item metadata, prioritizing profession items and newer IDs
+5. **Daily**: Refresh realms, incrementally roll raw samples into daily history, and prune expired rows
 
 ### API Endpoints
 
 ```
 GET  /api/health
+GET  /api/market/summary?region=eu&connectedRealmId=:id
 GET  /api/realms?region=eu
+GET  /api/items?region=eu&type=all|commodity|realm&search=:query&page=:page
 GET  /api/items/:itemId
-GET  /api/items/:itemId/prices?range=24h|7d|30d|6m|1y|all&region=eu
-GET  /api/items/:itemId/realm-prices?range=24h&region=eu
+GET  /api/items/:itemId/prices?range=24h|7d|14d|30d|6m|1y|all&region=eu
+GET  /api/items/:itemId/realm-prices?region=eu
 GET  /api/professions
 GET  /api/professions/:id
 GET  /api/professions/:id/recipes
-GET  /api/recipes/:id
-GET  /api/recipes/:id/cost?region=eu
+GET  /api/professions/recipes/:id
+GET  /api/crafting/professions/:id?region=eu&connectedRealmId=:id
+GET  /api/crafting/recipes/:id?region=eu&connectedRealmId=:id
 ```
 
 ---
@@ -369,48 +398,55 @@ GET  /api/recipes/:id/cost?region=eu
 
 ```
 /                           # Dashboard
+/items                      # Searchable current market
 /professions                # List professions
 /professions/:id            # Profession recipes
 /recipes/:id                # Recipe detail with crafting cost
 /items/:id                  # Item price charts
-/arbitrage                  # Cross-realm price comparison
+/flipping                   # Cross-realm price comparison
+/privacy                    # Concise data and logging policy
 ```
 
 ---
 
 ## 7. Implementation Roadmap
 
-### Phase 1: Foundation ✦ CURRENT
+### Phase 1: Foundation ✓
 
 - [x] Explore Blizzard API structure
 - [x] Design database schema
 - [x] Write project documentation
 - [x] Scaffold frontend + backend projects
 - [x] Set up Docker Compose (PostgreSQL)
-- [ ] Implement Drizzle schema (new structure)
-- [ ] Implement game data import service
-- [ ] Implement Blizzard OAuth + API client
-- [ ] Implement realm sync
-- [ ] Implement commodity + realm auction sync
+- [x] Implement Drizzle schema and migrations
+- [x] Implement non-destructive profession data import
+- [x] Implement Blizzard OAuth + resilient API client
+- [x] Implement connected-realm discovery
+- [x] Implement commodity + connected-realm auction sync
 
-### Phase 2: Price Data Collection
+### Phase 2: Price Data Collection ✓
 
-- [ ] Hourly commodity ingestion
-- [ ] Hourly realm auction ingestion
-- [ ] Data aggregation jobs
-- [ ] Price history API endpoints
+- [x] Atomic current-market tables for fast reads
+- [x] Hourly commodity and connected-realm ingestion
+- [x] Variant-aware current realm data
+- [x] Compact realm-history sampling and daily aggregation
+- [x] Price history API endpoints
+- [x] Bounded item metadata hydration
 
-### Phase 3: Frontend MVP
+### Phase 3: Frontend MVP ✓
 
-- [ ] Profession browser
-- [ ] Item price charts
-- [ ] Recipe detail with crafting cost
+- [x] Market-first dashboard and complete item browser
+- [x] Item price and quantity charts
+- [x] Profession browser and recipe cost detail
+- [x] Connected-realm selector and comparison
 
-### Phase 4: Advanced Features
+### Phase 4: Deferred Features
 
-- [ ] Cross-realm arbitrage finder
-- [ ] Crafting profit calculator
+- [x] Connected-realm price comparison
+- [x] Gross crafting profit calculator
 - [ ] Client-side multicraft/resourcefulness simulation
+- [ ] User accounts, personal watchlists, and alerts
+- [ ] Additional regions
 
 ---
 
@@ -420,10 +456,14 @@ GET  /api/recipes/:id/cost?region=eu
 
 2. **Blizzard API only for prices** — Only auction house data and connected realm discovery.
 
-3. **Store aggregated snapshots, not raw auctions** — Compute min/avg/median/max/quantity per item at ingestion.
+3. **Store current state separately from history** — Atomically replace compact current-market tables and keep sampled aggregate history; never retain raw auctions.
 
 4. **EU-only initially** — Region support architected in from the start.
 
 5. **Copper as base unit** — Integers only, no floats for money.
 
 6. **Separate commodity vs realm tables** — Different pricing models (unit_price vs buyout).
+
+7. **Preserve realm variants** — Bonus lists, modifiers, context, and battle-pet attributes form a stable variant identity in current realm data.
+
+8. **Bound growth deliberately** — Commodity history is hourly, profession-related realm history is sampled every six hours, raw history defaults to 14 days, 30-day and longer charts use daily rollups, and daily history defaults to one year.
