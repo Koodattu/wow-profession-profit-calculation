@@ -1,4 +1,4 @@
-import { pgTable, text, integer, serial, bigserial, bigint, boolean, timestamp, date, jsonb, index, uniqueIndex, primaryKey } from "drizzle-orm/pg-core";
+import { pgTable, text, integer, serial, bigserial, bigint, numeric, boolean, timestamp, date, jsonb, index, uniqueIndex, primaryKey } from "drizzle-orm/pg-core";
 
 // ─── Static Data (from game-data-parsed) ─────────────────────────────
 
@@ -223,6 +223,7 @@ export const commodityLatest = pgTable(
     numAuctions: integer("num_auctions").notNull(),
     priceP10: bigint("price_p10", { mode: "number" }).notNull(),
     priceP25: bigint("price_p25", { mode: "number" }).notNull(),
+    totalValue: numeric("total_value", { precision: 40, scale: 0 }),
   },
   (t) => [primaryKey({ columns: [t.regionId, t.itemId] }), index("idx_commodity_latest_observed").on(t.regionId, t.observedAt)],
 );
@@ -250,6 +251,7 @@ export const realmLatest = pgTable(
     minBuyout: bigint("min_buyout", { mode: "number" }).notNull(),
     avgBuyout: bigint("avg_buyout", { mode: "number" }).notNull(),
     medianBuyout: bigint("median_buyout", { mode: "number" }).notNull(),
+    totalValue: numeric("total_value", { precision: 40, scale: 0 }),
     maxBuyout: bigint("max_buyout", { mode: "number" }).notNull(),
     totalQuantity: bigint("total_quantity", { mode: "number" }).notNull(),
     numAuctions: integer("num_auctions").notNull(),
@@ -282,6 +284,7 @@ export const commoditySnapshots = pgTable(
     numAuctions: integer("num_auctions"),
     priceP10: bigint("price_p10", { mode: "number" }),
     priceP25: bigint("price_p25", { mode: "number" }),
+    totalValue: numeric("total_value", { precision: 40, scale: 0 }),
   },
   (t) => [index("idx_commodity_item_time").on(t.itemId, t.snapshotTime), index("idx_commodity_snapshot_time").on(t.snapshotTime)],
 );
@@ -299,6 +302,7 @@ export const realmSnapshots = pgTable(
     minBuyout: bigint("min_buyout", { mode: "number" }).notNull(),
     avgBuyout: bigint("avg_buyout", { mode: "number" }),
     medianBuyout: bigint("median_buyout", { mode: "number" }),
+    totalValue: numeric("total_value", { precision: 40, scale: 0 }),
     maxBuyout: bigint("max_buyout", { mode: "number" }),
     totalQuantity: bigint("total_quantity", { mode: "number" }).notNull(),
     numAuctions: integer("num_auctions"),
@@ -327,6 +331,10 @@ export const commodityDaily = pgTable(
     avgPrice: bigint("avg_price", { mode: "number" }),
     maxPrice: bigint("max_price", { mode: "number" }),
     avgQuantity: bigint("avg_quantity", { mode: "number" }),
+    totalValue: numeric("total_value", { precision: 40, scale: 0 }),
+    observedQuantity: numeric("observed_quantity", { precision: 40, scale: 0 }),
+    sampleCount: integer("sample_count"),
+    averageIsExact: boolean("average_is_exact").notNull().default(false),
   },
   (t) => [uniqueIndex("commodity_daily_region_item_date").on(t.regionId, t.itemId, t.date), index("idx_commodity_daily_date").on(t.date)],
 );
@@ -345,9 +353,14 @@ export const realmDaily = pgTable(
     avgBuyout: bigint("avg_buyout", { mode: "number" }),
     maxBuyout: bigint("max_buyout", { mode: "number" }),
     avgQuantity: bigint("avg_quantity", { mode: "number" }),
+    totalValue: numeric("total_value", { precision: 40, scale: 0 }),
+    observedQuantity: numeric("observed_quantity", { precision: 40, scale: 0 }),
+    sampleCount: integer("sample_count"),
+    averageIsExact: boolean("average_is_exact").notNull().default(false),
   },
   (t) => [
     uniqueIndex("realm_daily_realm_region_item_date").on(t.connectedRealmId, t.regionId, t.itemId, t.date),
     index("idx_realm_daily_date").on(t.date),
+    index("idx_realm_daily_item_region_date").on(t.itemId, t.regionId, t.date),
   ],
 );

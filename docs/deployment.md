@@ -12,7 +12,7 @@ Copy `.env.example` to `.env` and replace every `replace_me` value. Production d
 
 Database migrations and the bundled profession catalog are applied automatically before the backend starts listening. Blizzard price refreshes then run in the background at minute 5 of every hour. Newly discovered auction items are hydrated in bounded batches every five minutes, with newer item IDs prioritized after profession items. The readiness endpoint is `/api/health/ready`; it reports database/catalog status, price freshness, and the last result of each persistent sync job.
 
-`REALM_SYNC_CONCURRENCY` limits simultaneous connected-realm downloads. Keep the default of `4` unless measurements show the API and database have headroom. `ITEM_METADATA_BATCH_SIZE` limits item-detail requests per hydration run. Realm history is sampled every `REALM_HISTORY_INTERVAL_HOURS`; current realm data is still replaced hourly. Raw hourly history defaults to 14 days, 30-day and longer charts use daily rollups, and daily history defaults to one year. Both limits remain configurable through `RAW_SNAPSHOT_RETENTION_DAYS` and `DAILY_HISTORY_RETENTION_DAYS`.
+`REALM_SYNC_CONCURRENCY` limits simultaneous connected-realm downloads. Keep the default of `4` unless measurements show the API and database have headroom. `ITEM_METADATA_BATCH_SIZE` limits item-detail requests per hydration run. Realm history is sampled every `REALM_HISTORY_INTERVAL_HOURS`; current realm data is still replaced hourly. Raw history defaults to 30 days (`RAW_SNAPSHOT_RETENTION_DAYS`). Daily summaries and compressed raw archives are retained indefinitely. Six-month and longer charts use quantity-weighted daily rollups. The `price_history_archives` volume must be backed up alongside PostgreSQL. Compaction verifies both the daily summary and a durable archive before removing database rows; see [price history](price-history.md) for calculation and recovery details.
 
 ## Build and start
 
@@ -32,7 +32,7 @@ Create a timestamped PostgreSQL custom-format backup:
 docker compose --profile backup run --rm db-backup
 ```
 
-Backups are written to `BACKUP_DIR` (default `./backups`) with owner-only permissions. Copy them to separate durable storage and schedule the command using the host scheduler. Test restores periodically against a disposable database:
+A database dump and matching raw-history archive bundle are written to `BACKUP_DIR` (default `./backups`) with owner-only permissions. Copy both to separate durable storage and schedule the command using the host scheduler. Test restores periodically against a disposable database:
 
 ```bash
 docker compose exec -T db createdb -U wowtools wowtools_restore_test

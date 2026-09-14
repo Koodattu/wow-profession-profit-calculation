@@ -176,7 +176,7 @@ describe.serial("auction refresh interface", () => {
       const third = await refresh.refreshRealm(TEST_REGION, 2_147_483_001, new Set([itemId]));
 
       const current = rows(
-        await sql`SELECT variant_key, bonus_lists, modifiers, min_buyout, num_auctions FROM realm_latest WHERE region_id = ${TEST_REGION}`,
+        await sql`SELECT variant_key, bonus_lists, modifiers, min_buyout, num_auctions, total_value::text FROM realm_latest WHERE region_id = ${TEST_REGION}`,
       );
       const history = rows(await sql`SELECT snapshot_time FROM realm_snapshots WHERE region_id = ${TEST_REGION} ORDER BY snapshot_time`);
       expect(current).toHaveLength(1);
@@ -187,8 +187,30 @@ describe.serial("auction refresh interface", () => {
       ]);
       expect(Number(current[0]?.min_buyout)).toBe(900);
       expect(current[0]?.num_auctions).toBe(2);
+      expect(current[0]?.total_value).toBe("2900");
       expect(history).toHaveLength(2);
       expect([first.historyRowCount, second.historyRowCount, third.historyRowCount]).toEqual([1, 0, 1]);
+    } finally {
+      await cleanAuctionRefreshTestMarket();
+    }
+  });
+
+  test("the next UTC hour records history even when a refresh finishes earlier", async () => {
+    await prepareTestMarket();
+    try {
+      const itemId = TEST_ITEM_MIN + 3;
+      await seedTestItems([itemId]);
+      let now = new Date("2026-08-09T00:59:00Z");
+      const refresh = createAuctionRefreshModule({
+        source: sourceWith({ fetchRealmAuctions: async () => [{ item: { id: itemId }, buyout: 100, quantity: 3 }] }),
+        realmHistoryIntervalHours: 1,
+        now: () => now,
+      });
+      await refresh.refreshRealm(TEST_REGION, 2_147_483_001, new Set([itemId]));
+      now = new Date("2026-08-09T01:00:00Z");
+      await refresh.refreshRealm(TEST_REGION, 2_147_483_001, new Set([itemId]));
+      const history = rows(await sql`SELECT total_value::text FROM realm_snapshots WHERE region_id = ${TEST_REGION}`);
+      expect(history).toEqual([{ total_value: "100" }, { total_value: "100" }]);
     } finally {
       await cleanAuctionRefreshTestMarket();
     }

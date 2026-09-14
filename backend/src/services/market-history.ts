@@ -60,17 +60,17 @@ function getTimeRangeCutoff(range: HistoryRange): Date | null {
 }
 
 function useDailyTable(range: HistoryRange): boolean {
-  return range === "30d" || range === "6m" || range === "1y" || range === "all";
+  return range === "6m" || range === "1y" || range === "all";
 }
 
 function normalizePoint(row: HistoryRow): MarketHistoryPoint {
   return {
     time: row.time instanceof Date ? row.time.toISOString() : String(row.time),
-    min_price: row.min_price,
-    avg_price: row.avg_price,
-    median_price: row.median_price,
-    max_price: row.max_price,
-    total_quantity: row.total_quantity,
+    min_price: row.min_price == null ? null : Number(row.min_price),
+    avg_price: row.avg_price == null ? null : Number(row.avg_price),
+    median_price: row.median_price == null ? null : Number(row.median_price),
+    max_price: row.max_price == null ? null : Number(row.max_price),
+    total_quantity: row.total_quantity == null ? null : Number(row.total_quantity),
   };
 }
 
@@ -154,14 +154,15 @@ async function getRealmHistory(
       .select({
         itemId: realmDaily.itemId,
         time: realmDaily.date,
-        min_price: realmDaily.minBuyout,
-        avg_price: realmDaily.avgBuyout,
+        min_price: sql<number>`min(${realmDaily.minBuyout})::bigint`,
+        avg_price: sql<number>`round(sum(coalesce(${realmDaily.totalValue}, ${realmDaily.avgBuyout}::numeric * ${realmDaily.avgQuantity})) / nullif(sum(coalesce(${realmDaily.observedQuantity}, ${realmDaily.avgQuantity})), 0))::bigint`,
         median_price: sql<number | null>`NULL`,
-        max_price: realmDaily.maxBuyout,
-        total_quantity: realmDaily.avgQuantity,
+        max_price: sql<number>`max(${realmDaily.maxBuyout})::bigint`,
+        total_quantity: sql<number>`sum(${realmDaily.avgQuantity})::bigint`,
       })
       .from(realmDaily)
       .where(and(...conditions))
+      .groupBy(realmDaily.itemId, realmDaily.date)
       .orderBy(realmDaily.itemId, desc(realmDaily.date));
     return groupHistory(rows, itemIds);
   }
@@ -170,6 +171,29 @@ async function getRealmHistory(
   if (cutoff) conditions.push(gte(realmSnapshots.snapshotTime, cutoff));
   if (connectedRealmId !== undefined) conditions.push(eq(realmSnapshots.connectedRealmId, connectedRealmId));
   const hourBucket = sql<Date>`date_trunc('hour', ${realmSnapshots.snapshotTime})`;
+  if (connectedRealmId === undefined) {
+    const rows = await db.execute(sql`
+      WITH per_realm AS (
+        SELECT DISTINCT ON (item_id, connected_realm_id, ${hourBucket})
+          item_id, connected_realm_id, ${hourBucket} AS hour,
+          min_buyout, avg_buyout, max_buyout, total_quantity, total_value
+        FROM realm_snapshots WHERE ${and(...conditions)}
+        ORDER BY item_id, connected_realm_id, ${hourBucket}, snapshot_time DESC, id DESC
+      )
+      SELECT item_id AS "itemId", hour AS time,
+        min(min_buyout)::bigint AS min_price,
+        round(sum(coalesce(total_value, coalesce(avg_buyout, min_buyout)::numeric * total_quantity)) / nullif(sum(total_quantity), 0))::bigint AS avg_price,
+        NULL::bigint AS median_price, max(max_buyout)::bigint AS max_price,
+        sum(total_quantity)::bigint AS total_quantity
+      FROM per_realm GROUP BY item_id, hour ORDER BY item_id, hour DESC
+    `);
+    return groupHistory(Array.from(rows).map((row) => ({
+      itemId: Number(row.itemId), time: row.time as Date | string,
+      min_price: Number(row.min_price), avg_price: row.avg_price == null ? null : Number(row.avg_price),
+      median_price: null, max_price: row.max_price == null ? null : Number(row.max_price),
+      total_quantity: Number(row.total_quantity),
+    })), itemIds);
+  }
   const rows = await db
     .select({
       itemId: realmSnapshots.itemId,

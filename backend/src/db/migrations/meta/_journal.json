@@ -71,6 +71,20 @@
       "when": 1786520793227,
       "tag": "0009_nice_princess_powerful",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1789390348627,
+      "tag": "0010_quantity_weighted_history",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1789391323143,
+      "tag": "0011_realm_daily_item_lookup",
+      "breakpoints": true
     }
   ]
 }

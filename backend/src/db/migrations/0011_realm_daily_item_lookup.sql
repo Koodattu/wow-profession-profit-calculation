@@ -1,0 +1,1 @@
+CREATE INDEX "idx_realm_daily_item_region_date" ON "realm_daily" USING btree ("item_id","region_id","date");

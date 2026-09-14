@@ -17,11 +17,20 @@ describe("auction aggregation", () => {
       numAuctions: 2,
       priceP10: 100,
       priceP25: 100,
+      totalValue: "1900",
     });
   });
 
   test("keeps weighted totals precise beyond Number safe multiplication", () => {
-    expect(summarizePrices([{ price: 100_000_000_000, quantity: 1_000_000 }])?.avgPrice).toBe(100_000_000_000);
+    const result = summarizePrices([{ price: 100_000_000_000, quantity: 1_000_000 }]);
+    expect(result?.avgPrice).toBe(100_000_000_000);
+    expect(result?.totalValue).toBe("100000000000000000");
+  });
+
+  test("preserves the listed stack value before per-unit rounding", () => {
+    const summary = summarizePrices([{ price: 33, quantity: 3, totalPrice: 100 }]);
+    expect(summary?.totalValue).toBe("100");
+    expect(summary?.avgPrice).toBe(33);
   });
 
   test("returns null when no valid listings remain", () => {

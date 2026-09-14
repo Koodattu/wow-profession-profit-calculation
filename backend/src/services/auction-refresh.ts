@@ -115,12 +115,12 @@ function groupRealmAuctions(
     const variant = normalizeRealmVariant(auction.item);
     const groupKey = `${auction.item.id}:${variant.key}`;
     const group = variantGroups.get(groupKey) ?? { itemId: auction.item.id, variant, entries: [] };
-    group.entries.push({ price: perUnit, quantity: auction.quantity });
+    group.entries.push({ price: perUnit, quantity: auction.quantity, totalPrice: auction.buyout });
     variantGroups.set(groupKey, group);
 
     if (historyDue && historyItemIds.has(auction.item.id)) {
       const entries = historyGroups.get(auction.item.id) ?? [];
-      entries.push({ price: perUnit, quantity: auction.quantity });
+      entries.push({ price: perUnit, quantity: auction.quantity, totalPrice: auction.buyout });
       historyGroups.set(auction.item.id, entries);
     }
   }
@@ -160,6 +160,7 @@ export function createAuctionRefreshModule(dependencies: AuctionRefreshDependenc
           numAuctions: summary.numAuctions,
           priceP10: summary.priceP10,
           priceP25: summary.priceP25,
+          totalValue: summary.totalValue,
         });
       }
 
@@ -188,6 +189,7 @@ export function createAuctionRefreshModule(dependencies: AuctionRefreshDependenc
               numAuctions: row.numAuctions,
               priceP10: row.priceP10,
               priceP25: row.priceP25,
+              totalValue: row.totalValue,
             })),
           );
         }
@@ -221,8 +223,9 @@ export function createAuctionRefreshModule(dependencies: AuctionRefreshDependenc
         .from(realmSnapshots)
         .where(and(eq(realmSnapshots.regionId, regionId), eq(realmSnapshots.connectedRealmId, connectedRealmId)));
       const latestHistoryMs = toTimestampMs(latestHistory?.snapshotTime);
-      const historyDue =
-        latestHistoryMs === null || observedAt.getTime() - latestHistoryMs >= realmHistoryIntervalHours * 60 * 60 * 1_000;
+      const historyIntervalMs = realmHistoryIntervalHours * 60 * 60 * 1_000;
+      const historyDue = latestHistoryMs === null
+        || Math.floor(observedAt.getTime() / historyIntervalMs) > Math.floor(latestHistoryMs / historyIntervalMs);
       const historyItemIds =
         trackedHistoryItemIds ??
         new Set(
@@ -256,6 +259,7 @@ export function createAuctionRefreshModule(dependencies: AuctionRefreshDependenc
           minBuyout: summary.minPrice,
           avgBuyout: summary.avgPrice,
           medianBuyout: summary.medianPrice,
+          totalValue: summary.totalValue,
           maxBuyout: summary.maxPrice,
           totalQuantity: summary.totalQuantity,
           numAuctions: summary.numAuctions,
@@ -274,6 +278,7 @@ export function createAuctionRefreshModule(dependencies: AuctionRefreshDependenc
           minBuyout: summary.minPrice,
           avgBuyout: summary.avgPrice,
           medianBuyout: summary.medianPrice,
+          totalValue: summary.totalValue,
           maxBuyout: summary.maxPrice,
           totalQuantity: summary.totalQuantity,
           numAuctions: summary.numAuctions,

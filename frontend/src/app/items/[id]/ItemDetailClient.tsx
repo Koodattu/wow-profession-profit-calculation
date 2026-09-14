@@ -14,6 +14,7 @@ interface Props {
 
 export default function ItemDetailClient({ item }: Props) {
   const [range, setRange] = useState<HistoryRange>("24h");
+  const dailyHistory = range === "6m" || range === "1y" || range === "all";
   const usesRealmByDefault = item.marketType === "realm";
   const detail = useItemDetail(item, range);
   const { connectedRealmId, prices, realmPrices, realmPricesLoading } = detail;
@@ -22,6 +23,7 @@ export default function ItemDetailClient({ item }: Props) {
   const chartData = [...prices].reverse().map((point) => ({
     time: point.time,
     median: point.median_price,
+    average: point.avg_price,
     min: point.min_price,
     quantity: point.total_quantity,
   }));
@@ -71,7 +73,7 @@ export default function ItemDetailClient({ item }: Props) {
             )}
             {latestPrice?.total_quantity != null && (
               <p className="text-sm text-muted mt-3 tabular-nums">
-                {usesRealmByDefault ? "Listings" : "Units available"}: {latestPrice.total_quantity.toLocaleString()}
+                {dailyHistory ? "Average units available" : "Units available"}: {latestPrice.total_quantity.toLocaleString()}
               </p>
             )}
           </div>
@@ -81,11 +83,15 @@ export default function ItemDetailClient({ item }: Props) {
               <h2 className="text-sm text-muted">Price History</h2>
               <TimeRangeTabs value={range} onChange={setRange} />
             </div>
+            <p className="mb-3 text-xs text-muted">
+              Averages are weighted by available quantity. Longer ranges show daily summaries; daily medians are unavailable.
+            </p>
             {chartData.length > 1 ? (
               <HistoryLineChart
                 data={chartData}
                 series={[
                   { key: "median", label: "Median", color: "var(--accent)" },
+                  { key: "average", label: "Average", color: "#f59e0b" },
                   { key: "min", label: "Min", color: "var(--positive)" },
                   {
                     key: "quantity",

@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 export interface PriceEntry {
   price: number;
   quantity: number;
+  totalPrice?: number;
 }
 
 export interface PriceSummary {
@@ -14,6 +15,7 @@ export interface PriceSummary {
   numAuctions: number;
   priceP10: number;
   priceP25: number;
+  totalValue: string;
 }
 
 export interface RealmAuctionIdentity {
@@ -51,7 +53,8 @@ function weightedPercentile(sorted: PriceEntry[], totalQuantity: number, percent
 
 export function summarizePrices(entries: PriceEntry[]): PriceSummary | null {
   const valid = entries.filter(
-    (entry) => Number.isSafeInteger(entry.price) && entry.price > 0 && Number.isSafeInteger(entry.quantity) && entry.quantity > 0,
+    (entry) => Number.isSafeInteger(entry.price) && entry.price > 0 && Number.isSafeInteger(entry.quantity) && entry.quantity > 0
+      && (entry.totalPrice === undefined || (Number.isSafeInteger(entry.totalPrice) && entry.totalPrice > 0)),
   );
   if (valid.length === 0) return null;
 
@@ -61,7 +64,7 @@ export function summarizePrices(entries: PriceEntry[]): PriceSummary | null {
   let totalValue = 0n;
   for (const entry of valid) {
     totalQuantity += entry.quantity;
-    totalValue += BigInt(entry.price) * BigInt(entry.quantity);
+    totalValue += entry.totalPrice === undefined ? BigInt(entry.price) * BigInt(entry.quantity) : BigInt(entry.totalPrice);
   }
 
   if (!Number.isSafeInteger(totalQuantity)) {
@@ -80,6 +83,7 @@ export function summarizePrices(entries: PriceEntry[]): PriceSummary | null {
     numAuctions: valid.length,
     priceP10: weightedPercentile(valid, totalQuantity, 10),
     priceP25: weightedPercentile(valid, totalQuantity, 25),
+    totalValue: totalValue.toString(),
   };
 }
 

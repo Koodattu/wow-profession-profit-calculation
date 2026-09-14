@@ -7,7 +7,7 @@ const ITEM_BATCH_SIZE = 500;
 export interface MarketQuote {
   minPrice: number;
   avgPrice: number;
-  medianPrice: number;
+  medianPrice: number | null;
   maxPrice: number;
   totalQuantity: number;
   numAuctions: number;
@@ -88,7 +88,7 @@ async function loadCommodityQuotes(regionId: string, itemIds: number[]): Promise
       quotes.set(row.itemId, {
         minPrice: Number(row.minPrice),
         avgPrice: Number(row.avgPrice),
-        medianPrice: Number(row.medianPrice),
+        medianPrice: row.medianPrice === null ? null : Number(row.medianPrice),
         maxPrice: Number(row.maxPrice),
         totalQuantity: Number(row.totalQuantity),
         numAuctions: row.numAuctions,
@@ -108,8 +108,8 @@ async function loadSelectedRealmQuotes(regionId: string, itemIds: number[], conn
       .select({
         itemId: realmLatest.itemId,
         minPrice: sql<number>`min(${realmLatest.minBuyout})::bigint`,
-        avgPrice: sql<number>`(sum(${realmLatest.avgBuyout} * ${realmLatest.totalQuantity}) / nullif(sum(${realmLatest.totalQuantity}), 0))::bigint`,
-        medianPrice: sql<number>`(sum(${realmLatest.medianBuyout} * ${realmLatest.totalQuantity}) / nullif(sum(${realmLatest.totalQuantity}), 0))::bigint`,
+        avgPrice: sql<number>`round(sum(coalesce(${realmLatest.totalValue}, ${realmLatest.avgBuyout}::numeric * ${realmLatest.totalQuantity})) / nullif(sum(${realmLatest.totalQuantity}), 0))::bigint`,
+        medianPrice: sql<number | null>`CASE WHEN count(*) = 1 THEN min(${realmLatest.medianBuyout}) ELSE NULL END`,
         maxPrice: sql<number>`max(${realmLatest.maxBuyout})::bigint`,
         totalQuantity: sql<number>`sum(${realmLatest.totalQuantity})::bigint`,
         numAuctions: sql<number>`sum(${realmLatest.numAuctions})::int`,
@@ -130,7 +130,7 @@ async function loadSelectedRealmQuotes(regionId: string, itemIds: number[], conn
       quotes.set(Number(row.itemId), {
         minPrice: Number(row.minPrice),
         avgPrice: Number(row.avgPrice),
-        medianPrice: Number(row.medianPrice),
+        medianPrice: row.medianPrice === null ? null : Number(row.medianPrice),
         maxPrice: Number(row.maxPrice),
         totalQuantity: Number(row.totalQuantity),
         numAuctions: Number(row.numAuctions),
@@ -180,7 +180,7 @@ async function loadEuRealmBenchmarks(regionId: string, itemIds: number[]): Promi
       quotes.set(Number(row.itemId), {
         minPrice: averageMinPrice,
         avgPrice: averageMinPrice,
-        medianPrice: averageMinPrice,
+        medianPrice: null,
         maxPrice: averageMinPrice,
         totalQuantity: Number(row.totalQuantity),
         numAuctions: Number(row.numAuctions),
@@ -232,8 +232,8 @@ export async function getCurrentRealmComparison(regionId: string, itemId: number
     .select({
       connectedRealmId: realmLatest.connectedRealmId,
       minPrice: sql<number>`min(${realmLatest.minBuyout})::bigint`,
-      avgPrice: sql<number>`(sum(${realmLatest.avgBuyout} * ${realmLatest.totalQuantity}) / nullif(sum(${realmLatest.totalQuantity}), 0))::bigint`,
-      medianPrice: sql<number>`(sum(${realmLatest.medianBuyout} * ${realmLatest.totalQuantity}) / nullif(sum(${realmLatest.totalQuantity}), 0))::bigint`,
+      avgPrice: sql<number>`round(sum(coalesce(${realmLatest.totalValue}, ${realmLatest.avgBuyout}::numeric * ${realmLatest.totalQuantity})) / nullif(sum(${realmLatest.totalQuantity}), 0))::bigint`,
+      medianPrice: sql<number | null>`CASE WHEN count(*) = 1 THEN min(${realmLatest.medianBuyout}) ELSE NULL END`,
       maxPrice: sql<number>`max(${realmLatest.maxBuyout})::bigint`,
       totalQuantity: sql<number>`sum(${realmLatest.totalQuantity})::bigint`,
       numAuctions: sql<number>`sum(${realmLatest.numAuctions})::int`,
@@ -267,7 +267,7 @@ export async function getCurrentRealmComparison(regionId: string, itemId: number
       quote: {
         minPrice: Number(row.minPrice),
         avgPrice: Number(row.avgPrice),
-        medianPrice: Number(row.medianPrice),
+        medianPrice: row.medianPrice === null ? null : Number(row.medianPrice),
         maxPrice: Number(row.maxPrice),
         totalQuantity: Number(row.totalQuantity),
         numAuctions: Number(row.numAuctions),

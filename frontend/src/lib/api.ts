@@ -131,7 +131,7 @@ export interface ItemWithPrice {
 export interface MarketPrice {
   minPrice: number;
   avgPrice: number;
-  medianPrice: number;
+  medianPrice: number | null;
   totalQuantity?: number;
   numAuctions?: number;
   observedAt?: string;

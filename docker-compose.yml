@@ -35,11 +35,13 @@ services:
       BLIZZARD_MAX_RETRIES: ${BLIZZARD_MAX_RETRIES:-4}
       REALM_SYNC_CONCURRENCY: ${REALM_SYNC_CONCURRENCY:-4}
       ITEM_METADATA_BATCH_SIZE: ${ITEM_METADATA_BATCH_SIZE:-500}
-      REALM_HISTORY_INTERVAL_HOURS: ${REALM_HISTORY_INTERVAL_HOURS:-6}
+      REALM_HISTORY_INTERVAL_HOURS: ${REALM_HISTORY_INTERVAL_HOURS:-1}
       PRICE_STALE_AFTER_MINUTES: ${PRICE_STALE_AFTER_MINUTES:-55}
       PRICE_READINESS_MAX_AGE_MINUTES: ${PRICE_READINESS_MAX_AGE_MINUTES:-90}
-      RAW_SNAPSHOT_RETENTION_DAYS: ${RAW_SNAPSHOT_RETENTION_DAYS:-14}
-      DAILY_HISTORY_RETENTION_DAYS: ${DAILY_HISTORY_RETENTION_DAYS:-365}
+      RAW_SNAPSHOT_RETENTION_DAYS: ${RAW_SNAPSHOT_RETENTION_DAYS:-30}
+      HISTORY_ARCHIVE_DIR: /archives
+    volumes:
+      - price_history_archives:/archives
     depends_on:
       db:
         condition: service_healthy
@@ -83,12 +85,16 @@ services:
         condition: service_healthy
     volumes:
       - ${BACKUP_DIR:-./backups}:/backups
+      - price_history_archives:/archives:ro
     entrypoint: ["/bin/sh", "-c"]
     command:
       - >-
         umask 077;
+        backup_stamp=$$(date -u +%Y%m%dT%H%M%SZ);
         pg_dump --host=db --username="$${POSTGRES_USER}" --dbname="$${POSTGRES_DB}"
-        --format=custom --file="/backups/wowtools-$$(date -u +%Y%m%dT%H%M%SZ).dump"
+        --format=custom --file="/backups/wowtools-$${backup_stamp}.dump" &&
+        tar --exclude='*.partial' -cf "/backups/price-history-$${backup_stamp}.tar" -C /archives .
 
 volumes:
   pgdata:
+  price_history_archives:
