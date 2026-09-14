@@ -4,6 +4,7 @@ import { logger } from "hono/logger";
 import { env } from "./config/env";
 import { startScheduler, runInitialSync } from "./jobs/scheduler";
 import { initializeDatabase } from "./startup";
+import { loadSavedGearData } from "./services/gear-data-sync";
 
 import health from "./routes/health";
 import itemRoutes from "./routes/items";
@@ -32,6 +33,7 @@ app.route("/api/market", marketRoutes);
 
 // Migrations and the bundled catalog are required for the API to be usable.
 await initializeDatabase();
+await loadSavedGearData();
 
 // External price data can refresh in the background after startup.
 startScheduler();

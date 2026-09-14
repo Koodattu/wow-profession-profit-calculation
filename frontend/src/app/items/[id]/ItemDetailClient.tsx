@@ -7,6 +7,7 @@ import TimeRangeTabs from "@/app/TimeRangeTabs";
 import HistoryLineChart from "@/app/HistoryLineChart";
 import type { HistoryRange } from "@/lib/time-ranges";
 import { useItemDetail } from "@/features/item-detail";
+import GearMarket from "./GearMarket";
 
 interface Props {
   item: Item;
@@ -17,7 +18,7 @@ export default function ItemDetailClient({ item }: Props) {
   const dailyHistory = range === "6m" || range === "1y" || range === "all";
   const usesRealmByDefault = item.marketType === "realm";
   const detail = useItemDetail(item, range);
-  const { connectedRealmId, prices, realmPrices, realmPricesLoading } = detail;
+  const { prices } = detail;
 
   const latestPrice = prices.length > 0 ? prices[0] : null;
   const chartData = [...prices].reverse().map((point) => ({
@@ -48,6 +49,8 @@ export default function ItemDetailClient({ item }: Props) {
         </div>
       </div>
 
+      {usesRealmByDefault && <GearMarket key={item.id} item={item} />}
+      {usesRealmByDefault && <p className="mb-3 text-sm text-muted">Historical prices below combine all versions of this item. Version filters apply to current listings above.</p>}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="lg:col-span-1">
           <div className="surface p-4 mb-6">
@@ -137,50 +140,6 @@ export default function ItemDetailClient({ item }: Props) {
             </div>
           )}
 
-          {usesRealmByDefault && (
-            <div className="surface p-4 mt-6">
-              <h2 className="text-sm text-muted mb-1">Connected realms</h2>
-              <p className="mb-3 text-xs text-muted">Variants are kept separate when Blizzard provides bonus or modifier data.</p>
-              {realmPricesLoading ? (
-                <p className="text-muted">Loading realm prices...</p>
-              ) : realmPrices.length === 0 ? (
-                <p className="text-muted">No realm price data available.</p>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b border-border text-left text-muted">
-                        <th className="py-2 pr-4 font-medium">Realm</th>
-                        <th className="py-2 pr-4 font-medium text-right">Min</th>
-                        <th className="py-2 pr-4 font-medium text-right">Average</th>
-                        <th className="py-2 pr-4 font-medium text-right">Listings</th>
-                        <th className="py-2 font-medium text-right">Variants</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {[...realmPrices]
-                        .sort((a, b) => b.min_buyout - a.min_buyout)
-                        .map((realm) => {
-                          const isSelected = connectedRealmId !== null && realm.realm_id === connectedRealmId;
-                          return (
-                            <tr key={realm.realm_id} className={`border-b border-border/30 ${isSelected ? "bg-accent/10" : ""}`}>
-                              <td className={`py-1 ${isSelected ? "text-accent font-medium" : "text-foreground"}`}>
-                                {realm.realm_name ?? `Realm ${realm.realm_id}`}
-                                {isSelected ? " (Selected)" : ""}
-                              </td>
-                              <td className="py-1 text-right">{formatPrice(realm.min_buyout)}</td>
-                              <td className="py-1 text-right">{formatPrice(realm.avg_buyout)}</td>
-                               <td className="py-1 text-right text-muted">{realm.total_quantity.toLocaleString()}</td>
-                               <td className="py-1 text-right text-muted">{realm.variant_count.toLocaleString()}</td>
-                            </tr>
-                          );
-                        })}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          )}
         </div>
       </div>
     </div>

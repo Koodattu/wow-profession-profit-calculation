@@ -27,8 +27,8 @@ describe("selected realm interface", () => {
     expect(realm.getSnapshot()).toEqual({
       status: "selection-required",
       options: [
-        { id: 10, label: "Alpha" },
-        { id: 20, label: "Zulu" },
+        { id: 10, label: "Alpha", fullLabel: "Alpha" },
+        { id: 20, label: "Zulu", fullLabel: "Zulu" },
       ],
       selectedId: null,
     });

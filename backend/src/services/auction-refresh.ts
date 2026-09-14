@@ -7,6 +7,7 @@ import {
   items,
   realmLatest,
   realmSnapshots,
+  type RealmListing,
 } from "../db/schema";
 import { normalizeRealmVariant, summarizePrices, type PriceEntry, type RealmAuctionIdentity } from "./auction-aggregation";
 import { toTimestampMs } from "./freshness-policy";
@@ -18,8 +19,11 @@ export interface CommodityAuctionInput {
 }
 
 export interface RealmAuctionInput {
+  id?: number;
   item: RealmAuctionIdentity & { id: number };
   buyout?: number;
+  bid?: number;
+  time_left?: string;
   quantity: number;
 }
 
@@ -57,6 +61,7 @@ type RealmGroup = {
   itemId: number;
   variant: ReturnType<typeof normalizeRealmVariant>;
   entries: PriceEntry[];
+  listings: RealmListing[];
 };
 
 function batches<T>(values: T[], size = 500): T[][] {
@@ -103,8 +108,8 @@ function groupRealmAuctions(
   for (const auction of auctions) {
     if (
       !auction.buyout ||
-      auction.buyout <= 0 ||
-      auction.quantity <= 0 ||
+      !Number.isSafeInteger(auction.buyout) || auction.buyout <= 0 ||
+      !Number.isSafeInteger(auction.quantity) || auction.quantity <= 0 ||
       !Number.isSafeInteger(auction.item.id) ||
       auction.item.id <= 0
     ) {
@@ -114,8 +119,13 @@ function groupRealmAuctions(
     const perUnit = Math.round(auction.buyout / auction.quantity);
     const variant = normalizeRealmVariant(auction.item);
     const groupKey = `${auction.item.id}:${variant.key}`;
-    const group = variantGroups.get(groupKey) ?? { itemId: auction.item.id, variant, entries: [] };
+    const group = variantGroups.get(groupKey) ?? { itemId: auction.item.id, variant, entries: [], listings: [] };
     group.entries.push({ price: perUnit, quantity: auction.quantity, totalPrice: auction.buyout });
+    if (Number.isSafeInteger(auction.id) && auction.id! > 0) {
+      group.listings.push({ id: String(auction.id), buyout: auction.buyout, quantity: auction.quantity,
+        bid: Number.isSafeInteger(auction.bid) && auction.bid! >= 0 ? auction.bid! : null,
+        timeLeft: auction.time_left ?? null });
+    }
     variantGroups.set(groupKey, group);
 
     if (historyDue && historyItemIds.has(auction.item.id)) {
@@ -247,6 +257,7 @@ export function createAuctionRefreshModule(dependencies: AuctionRefreshDependenc
           connectedRealmId,
           itemId: group.itemId,
           variantKey: group.variant.key,
+          listings: group.listings,
           syncRunId: runId,
           observedAt,
           context: group.variant.context,

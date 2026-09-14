@@ -47,6 +47,7 @@ jobs:
       - run: bunx drizzle-kit check
       - run: bun run migrate
       - run: bun test ./test/price-maintenance.integration.ts
+      - run: bun test ./test/gear-market.integration.ts
       - run: bun test ./test/auction-refresh.integration.ts
       - run: bun test ./test/market-refresh-cycle.integration.ts
 
