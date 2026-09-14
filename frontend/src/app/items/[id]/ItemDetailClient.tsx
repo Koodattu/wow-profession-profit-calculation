@@ -52,7 +52,7 @@ export default function ItemDetailClient({ item }: Props) {
         <div className="lg:col-span-1">
           <div className="surface p-4 mb-6">
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-sm text-muted">Current price · {usesRealmByDefault ? "selected realm" : "EU"}</h2>
+              <h2 className="text-sm text-muted">Price summary · {usesRealmByDefault ? "selected realm" : "EU"}</h2>
               <span className="text-sm text-muted" />
             </div>
             {detail.status === "selection-required" ? (
