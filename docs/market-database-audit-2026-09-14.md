@@ -1,13 +1,13 @@
 # Market database audit — 14 September 2026
 
-Production access was read-only. No deployment, production migration, configuration change, refresh job, or database write was performed. Local source at the start of the audit was `f8f7044` (`refactor market and catalog architecture`).
+This section records the initial read-only audit, before the separately authorized release. Local source at the start of the audit was `f8f7044` (`refactor market and catalog architecture`). The release deployed successfully on 14 September at 13:40 UTC as `ea04a1d`. See [release verification](release-verification-2026-09-14.md) for the current state and selected retention policy.
 
 ## Why Venom Rite Mantle is missing
 
 There are two independent findings:
 
 1. **Production still uses the profession-only catalog.** Its `items` table contains 1,113 rows, all marked as a reagent or crafted output. The deployed `/app/backend/src/services/auction-sync.ts` downloads complete auction payloads but executes `if (!knownItemIds.has(itemId)) continue` for both commodities and realm auctions. It never discovers new item IDs. Item 271434 is absent; searching its name returns HTTP 200 with zero items, and its item endpoint returns HTTP 404.
-2. **This particular item is bind on pickup.** A read-only lookup through the deployed Blizzard client at `/data/wow/item/271434` returned `Venom Rite Mantle`, Armor / Cloth / Shoulder, and `preview_item.binding = { type: "ON_ACQUIRE", name: "Binds when picked up" }`. This is a live EU item lookup, not an inference from the Wowhead PTR URL. It would not normally be listed on the AH even after broader discovery is enabled. Bonus-specific auction availability was not independently verified.
+2. **The base-item binding metadata did not establish auction availability.** A read-only lookup through the deployed Blizzard client at `/data/wow/item/271434` returned `Venom Rite Mantle`, Armor / Cloth / Shoulder, and `preview_item.binding = { type: "ON_ACQUIRE", name: "Binds when picked up" }`. The initial inference that this item would not normally appear on the AH was incorrect: after deployment, the actual auction feeds contained item 271434 across many realms and variants, and name search returned it successfully. The old profession-only filter explains the missing result. Base-item preview binding must not be used to exclude auction-feed items.
 
 The repository's newer implementation discovers items from auction feeds and hydrates their names afterward. It has not been deployed: production has migrations 0000–0004, while the repository also contains 0005–0009. Production has neither `commodity_latest` nor `realm_latest`, and no item metadata queue columns.
 
