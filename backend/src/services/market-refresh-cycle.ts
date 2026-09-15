@@ -107,7 +107,7 @@ export async function getRegionMarketStatus(
       .select({
         scope: auctionSyncRuns.scope,
         connectedRealmId: auctionSyncRuns.connectedRealmId,
-        observedAt: sql<Date | null>`max(${auctionSyncRuns.observedAt})`,
+        observedAt: sql<Date | null>`max(${auctionSyncRuns.observedAt})`.mapWith(auctionSyncRuns.observedAt),
       })
       .from(auctionSyncRuns)
       .where(and(eq(auctionSyncRuns.regionId, regionId), eq(auctionSyncRuns.status, "succeeded")))

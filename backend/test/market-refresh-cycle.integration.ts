@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { db, sql } from "../src/db";
 import { auctionSyncRuns, connectedRealms, regions } from "../src/db/schema";
 import { createMarketRefreshCycleModule } from "../src/services/market-refresh-cycle";
+import marketRoutes from "../src/routes/market";
 
 const TEST_REGION = "cycletest";
 const REALM_ONE = 2_147_482_901;
@@ -126,6 +127,8 @@ describe.serial("Market Refresh Cycle interface", () => {
     const status = await cycle.getStatus(TEST_REGION, 60);
 
     expect(status.commodity.fresh).toBe(true);
+    expect(status.commodity.latestAt).toBeInstanceOf(Date);
+    expect(status.realms[0]!.latestAt).toBeInstanceOf(Date);
     expect(status.realms).toEqual([expect.objectContaining({ connectedRealmId: REALM_ONE, fresh: true })]);
     expect(status.scopeCounts).toEqual({ total: 2, fresh: 2, stale: 0, missing: 0 });
   });
@@ -177,6 +180,36 @@ describe.serial("Market Refresh Cycle interface", () => {
     } finally {
       await connection`SELECT pg_advisory_unlock(hashtextextended(${`copper:market-refresh-cycle:${TEST_REGION}`}, 0))`;
       connection.release();
+    }
+  });
+
+  test("the market summary serializes aggregated realm timestamps", async () => {
+    await db.insert(regions).values({ id: "eu", name: "Europe", apiHost: "invalid.local", oauthHost: "invalid.local" }).onConflictDoNothing();
+    const realmId = 2_147_482_903;
+    const observedAt = new Date("2026-09-15T12:34:56.789Z");
+    await db.insert(connectedRealms).values({ id: realmId, regionId: "eu" });
+    try {
+      await db.insert(auctionSyncRuns).values({
+        regionId: "eu", scope: "realm", connectedRealmId: realmId,
+        status: "succeeded", observedAt, finishedAt: observedAt, rowCount: 0,
+      });
+
+      const response = await marketRoutes.request("/summary?region=eu");
+      expect(response.status).toBe(200);
+      const summary = await response.json() as {
+        marketStatus: { realms: { connectedRealmId: number; latestAt: string | null; fresh: boolean }[] };
+        realmOldestObservedAt: string | null;
+        realmNewestObservedAt: string | null;
+      };
+      expect(summary.marketStatus.realms).toContainEqual({
+        connectedRealmId: realmId, latestAt: observedAt.toISOString(), fresh: expect.any(Boolean),
+      });
+      const timestamps = summary.marketStatus.realms.flatMap((realm) => realm.latestAt ? [Date.parse(realm.latestAt)] : []);
+      expect(summary.realmOldestObservedAt).toBe(new Date(Math.min(...timestamps)).toISOString());
+      expect(summary.realmNewestObservedAt).toBe(new Date(Math.max(...timestamps)).toISOString());
+    } finally {
+      await db.delete(auctionSyncRuns).where(eq(auctionSyncRuns.connectedRealmId, realmId));
+      await db.delete(connectedRealms).where(eq(connectedRealms.id, realmId));
     }
   });
 });
