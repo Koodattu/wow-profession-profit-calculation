@@ -7,150 +7,75 @@ import TimeRangeTabs from "@/app/TimeRangeTabs";
 import HistoryLineChart from "@/app/HistoryLineChart";
 import type { HistoryRange } from "@/lib/time-ranges";
 import { useItemDetail } from "@/features/item-detail";
+import { useSelectedRealm } from "@/lib/selected-realm";
 import GearMarket from "./GearMarket";
+import styles from "./ItemMarket.module.css";
 
-interface Props {
-  item: Item;
+export default function ItemDetailClient({ item }: { item: Item }) {
+  const [view, setView] = useState<"offers" | "history">("offers");
+  const hasRealmListings = item.marketType === "realm";
+
+  return <div className={styles.page}>
+    <Link href="/items" className={styles.breadcrumb}>← Back to market</Link>
+    <header className={styles.itemHeader}>
+      <div><h1>{item.name}</h1><div className={styles.itemMeta}>
+        <span>{[item.itemSubclass ?? item.itemClass, item.inventoryType].filter(Boolean).join(" · ") || "Auction item"}</span>
+        {item.qualityRank != null && <span>Rank {item.qualityRank}</span>}
+        {item.isReagent && <span>Reagent</span>}{item.isCraftedOutput && <span>Crafted</span>}
+        <span>Item {item.id}</span>
+      </div></div>
+      <a className={styles.itemLink} href={`https://www.wowhead.com/item=${item.id}`} data-wowhead={`item=${item.id}`} target="_blank" rel="noopener noreferrer">View on Wowhead ↗</a>
+    </header>
+    {hasRealmListings && <nav className={styles.viewTabs} aria-label="Item view">
+      <button aria-pressed={view === "offers"} onClick={() => setView("offers")}>Buyout listings</button>
+      <button aria-pressed={view === "history"} onClick={() => setView("history")}>Price history</button>
+    </nav>}
+    {hasRealmListings && <div hidden={view !== "offers"}><GearMarket key={item.id} item={item} /></div>}
+    {(!hasRealmListings || view === "history") && <ItemHistory key={item.id} item={item} />}
+  </div>;
 }
 
-export default function ItemDetailClient({ item }: Props) {
+function ItemHistory({ item }: { item: Item }) {
   const [range, setRange] = useState<HistoryRange>("24h");
   const dailyHistory = range === "6m" || range === "1y" || range === "all";
-  const usesRealmByDefault = item.marketType === "realm";
   const detail = useItemDetail(item, range);
+  const realm = useSelectedRealm();
+  const realmName = realm.options.find((option) => option.id === detail.connectedRealmId)?.label;
+  const realmHistory = item.marketType === "realm";
   const { prices } = detail;
+  const latestPrice = prices[0];
+  const chartData = [...prices].reverse().map((point) => ({ time: point.time, median: point.median_price, average: point.avg_price, min: point.min_price, quantity: point.total_quantity }));
 
-  const latestPrice = prices.length > 0 ? prices[0] : null;
-  const chartData = [...prices].reverse().map((point) => ({
-    time: point.time,
-    median: point.median_price,
-    average: point.avg_price,
-    min: point.min_price,
-    quantity: point.total_quantity,
-  }));
-
-  return (
-    <div className="w-full">
-      <div className="mb-6">
-        <Link href="/items" className="inline-flex h-10 items-center text-sm text-muted transition-colors hover:text-accent">
-          &larr; Market
-        </Link>
-        <h1 className="text-2xl font-bold mt-2">
-          <a href={`https://www.wowhead.com/item=${item.id}`} data-wowhead={`item=${item.id}`} target="_blank" rel="noopener noreferrer" className="hover:underline">
-            {item.name}
-          </a>
-        </h1>
-        <div className="flex gap-3 text-sm text-muted mt-1">
-          {item.qualityRank && <span>Rank {item.qualityRank}</span>}
-          {item.isReagent && <span>Reagent</span>}
-          {item.isCraftedOutput && <span>Crafted</span>}
-          {item.itemClass && <span>{item.itemClass}</span>}
-          <span>ID: {item.id}</span>
-        </div>
-      </div>
-
-      {usesRealmByDefault && <GearMarket key={item.id} item={item} />}
-      {usesRealmByDefault && <p className="mb-3 text-sm text-muted">Historical prices below combine all versions of this item. Version filters apply to current listings above.</p>}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="lg:col-span-1">
-          <div className="surface p-4 mb-6">
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-sm text-muted">Price summary · {usesRealmByDefault ? "selected realm" : "EU"}</h2>
-              <span className="text-sm text-muted" />
-            </div>
-            {detail.status === "selection-required" ? (
-              <p className="text-muted">Select a realm to view this item.</p>
-            ) : detail.status === "error" ? (
-              <p className="text-muted">Couldn’t load price data. Try again in a moment.</p>
-            ) : detail.status === "loading" ? (
-              <p className="text-muted">Loading price data...</p>
-            ) : latestPrice ? (
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <PriceStat label="Min" value={latestPrice.min_price} />
-                <PriceStat label="Median" value={latestPrice.median_price} />
-                <PriceStat label="Average" value={latestPrice.avg_price} />
-                <PriceStat label="Max" value={latestPrice.max_price} />
-              </div>
-            ) : (
-              <p className="text-muted">No price data available</p>
-            )}
-            {latestPrice?.total_quantity != null && (
-              <p className="text-sm text-muted mt-3 tabular-nums">
-                {dailyHistory ? "Average units available" : "Units available"}: {latestPrice.total_quantity.toLocaleString()}
-              </p>
-            )}
+  return <section className={styles.history} aria-label="Price history">
+    <div className={styles.historyHeader}><h2>Price history · {realmHistory ? realmName ?? "Select a realm" : "EU commodities"}</h2><TimeRangeTabs value={range} onChange={setRange} /></div>
+    {realmHistory && <p className={styles.footnote}>History combines all item versions on this realm. The filters in Buyout listings don’t apply here.</p>}
+    {detail.status === "selection-required" ? <div className={styles.empty}>Choose a realm in the navigation to view its price history.</div>
+      : detail.status === "error" ? <div className={styles.empty} role="alert">Couldn’t load price history. Try another time range or reload the page.</div>
+      : detail.status === "loading" ? <div className={styles.empty} role="status">Loading price history…</div>
+      : <>
+        {latestPrice && (!realmHistory || chartData.length > 1) && <>
+          <div className={styles.historyStats}>
+            <PriceStat label={dailyHistory ? "Latest daily low" : "Latest low"} value={latestPrice.min_price} />
+            <PriceStat label={dailyHistory ? "Latest daily average" : "Latest average"} value={latestPrice.avg_price} />
+            {!dailyHistory && latestPrice.median_price !== null ? <PriceStat label="Latest median" value={latestPrice.median_price} /> : <PriceStat label={dailyHistory ? "Latest daily high" : "Latest high"} value={latestPrice.max_price} />}
+            <div><span>{dailyHistory ? "Average units available" : "Units available"}</span><strong>{latestPrice.total_quantity?.toLocaleString() ?? "—"}</strong></div>
           </div>
-
-          <div className="surface p-4">
-            <div className="mb-3 flex items-center justify-between gap-3">
-              <h2 className="text-sm text-muted">Price History</h2>
-              <TimeRangeTabs value={range} onChange={setRange} />
-            </div>
-            <p className="mb-3 text-xs text-muted">
-              Averages are weighted by available quantity. Longer ranges show daily summaries; daily medians are unavailable.
-            </p>
-            {chartData.length > 1 ? (
-              <HistoryLineChart
-                data={chartData}
-                series={[
-                  { key: "median", label: "Median", color: "var(--accent)" },
-                  { key: "average", label: "Average", color: "#f59e0b" },
-                  { key: "min", label: "Min", color: "var(--positive)" },
-                  {
-                    key: "quantity",
-                    label: "Quantity",
-                    color: "#3da3d4",
-                    axis: "right",
-                    type: "bar",
-                    formatValue: (value) => Math.round(value).toLocaleString(),
-                  },
-                ]}
-                formatValue={formatPrice}
-              />
-            ) : (
-              <p className="text-muted">Not enough data points for chart</p>
-            )}
-          </div>
-        </div>
-
-        <div className="lg:col-span-1">
-          {prices.length > 1 && range === "24h" && (
-            <div className="surface p-4">
-              <h2 className="text-sm text-muted mb-3">History · 24h</h2>
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-border text-left text-muted">
-                    <th className="py-2 pr-4 font-medium">Time</th>
-                    <th className="py-2 pr-4 font-medium text-right">Min</th>
-                    <th className="py-2 pr-4 font-medium text-right">Median</th>
-                    <th className="py-2 pr-4 font-medium text-right">Quantity</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {prices.slice(0, 24).map((point) => (
-                    <tr key={point.time} className="border-b border-border/30">
-                      <td className="py-1 text-muted">{new Date(point.time).toLocaleString([], { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" })}</td>
-                      <td className="py-1 text-right">{point.min_price != null ? formatPrice(point.min_price) : "—"}</td>
-                      <td className="py-1 text-right">{point.median_price != null ? formatPrice(point.median_price) : "—"}</td>
-                      <td className="py-1 text-right text-muted">{point.total_quantity?.toLocaleString() ?? "—"}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-        </div>
-      </div>
-    </div>
-  );
+        </>}{chartData.length > 1 ? <>
+          <HistoryLineChart data={chartData} series={[
+            ...(!dailyHistory && prices.some((point) => point.median_price !== null) ? [{ key: "median", label: "Median", color: "var(--accent)" }] : []),
+            { key: "average", label: "Average", color: "#f59e0b" },
+            { key: "min", label: "Min", color: "var(--positive)" },
+            { key: "quantity", label: "Quantity", color: "#3da3d4", axis: "right", type: "bar", formatValue: (value) => Math.round(value).toLocaleString() },
+          ]} formatValue={formatPrice} />
+          <p className={styles.footnote}>Averages are weighted by listed quantity. Six-month and longer ranges use daily summaries.</p>
+          {range === "24h" && <details className={styles.historyRecords}><summary>View hourly observations</summary><table><thead><tr><th>Time</th><th>Lowest</th><th>Average</th><th>Quantity</th></tr></thead><tbody>{prices.slice(0, 24).map((point) => <tr key={point.time}>
+            <td>{new Date(point.time).toLocaleString([], { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" })}</td><td>{point.min_price !== null ? formatPrice(point.min_price) : "—"}</td><td>{point.avg_price !== null ? formatPrice(point.avg_price) : "—"}</td><td>{point.total_quantity?.toLocaleString() ?? "—"}</td>
+          </tr>)}</tbody></table></details>}
+        </> : <div className={styles.empty}><h3>No price history to chart yet</h3><p>{realmHistory && !item.isReagent && !item.isCraftedOutput ? "We currently keep price history for profession items. This item’s current offers are available in Buyout listings." : "There aren’t enough observations in this time range. Try a longer range or check back after the next refresh."}</p></div>}
+      </>}
+  </section>;
 }
 
 function PriceStat({ label, value }: { label: string; value: number | null }) {
-  return (
-    <div>
-      <p className="text-xs text-muted">{label}</p>
-      <p className="text-lg font-semibold tabular-nums">{value != null ? formatPrice(value) : "—"}</p>
-    </div>
-  );
+  return <div><span>{label}</span><strong>{value !== null ? formatPrice(value) : "—"}</strong></div>;
 }

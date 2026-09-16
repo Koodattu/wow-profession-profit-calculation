@@ -1,10 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { fetchGearListings, fetchGearVariants, formatPrice, type GearListingsResponse, type GearVariant, type GearVariantsResponse, type Item } from "@/lib/api";
-import { selectedRealm, useSelectedRealm } from "@/lib/selected-realm";
+import { useSelectedRealm, type RealmOption } from "@/lib/selected-realm";
+import styles from "./ItemMarket.module.css";
 
-const controlClass = "h-10 w-full rounded-lg border border-border bg-card px-3 text-sm";
+const emptyFilters = { level: "", track: "", stat: "", secondStat: "", tag: "", socket: "" };
+const primaryStats = new Set([3, 4, 5, 7, 71, 72, 73, 74]);
+const pageSize = 12;
 
 export function versionName(variant: GearVariant): string {
   return [variant.itemLevel === null ? "Item level unavailable" : `ilvl ${variant.itemLevel}`,
@@ -12,148 +15,190 @@ export function versionName(variant: GearVariant): string {
   ].filter(Boolean).join(" · ");
 }
 
+function statNames(variant: GearVariant): string {
+  return variant.stats.filter((stat) => !primaryStats.has(stat.id)).map((stat) => stat.name).join(" / ");
+}
+
 export default function GearMarket({ item }: { item: Item }) {
   const realmState = useSelectedRealm();
   const realmId = realmState.status === "ready" ? realmState.selectedId : null;
+  const localRealm = realmState.options.find((realm) => realm.id === realmId);
   const [data, setData] = useState<GearVariantsResponse | null>(null);
   const [error, setError] = useState(false);
-  const [level, setLevel] = useState("");
-  const [track, setTrack] = useState("");
-  const [stat, setStat] = useState("");
-  const [secondStat, setSecondStat] = useState("");
-  const [tag, setTag] = useState("");
-  const [socket, setSocket] = useState("");
-  const [versionKey, setVersionKey] = useState<string | null>(null);
-  const [versionPage, setVersionPage] = useState(0);
-  const [listingPagination, setListingPagination] = useState({ realmId, page: 1 });
-  const listingPage = listingPagination.realmId === realmId ? listingPagination.page : 1;
-  const setListingPage = (page: number) => setListingPagination({ realmId, page });
-  const [listingResult, setListingResult] = useState<{ key: string; data: GearListingsResponse } | null>(null);
-  const [listingError, setListingError] = useState<string | null>(null);
+  const [retry, setRetry] = useState(0);
+  const [filters, setFilters] = useState(emptyFilters);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [scope, setScope] = useState<"realm" | "eu">("realm");
+  const allRealms = scope === "eu" || realmId === null;
+  const [sort, setSort] = useState("price");
+  const [pagination, setPagination] = useState({ key: "", page: 0 });
+  const [selection, setSelection] = useState<{ variant: GearVariant; realmId: number } | null>(null);
 
   useEffect(() => {
     let active = true;
     fetchGearVariants(item.id).then((result) => { if (active) setData(result); }).catch(() => { if (active) setError(true); });
     return () => { active = false; };
-  }, [item.id]);
+  }, [item.id, retry]);
 
   const variants = data?.variants ?? [];
-  const filtered = variants.filter((variant) => (!level || String(variant.itemLevel) === level)
-    && (!track || (track === "none" ? !variant.upgrade : String(variant.upgrade?.group) === track))
-    && (!stat || variant.stats.some((value) => String(value.id) === stat))
-    && (!secondStat || variant.stats.some((value) => String(value.id) === secondStat))
-    && (!tag || variant.tags.includes(tag))
-    && (!socket || (socket === "yes" ? variant.sockets > 0 : variant.sockets === 0)));
-  const localVariants = filtered.filter((variant) => variant.realms.some((realm) => realm.connectedRealmId === realmId));
-  const activeVariant = localVariants.find((variant) => variant.key === versionKey) ?? (localVariants.length === 1 ? localVariants[0] : undefined);
-  const listingKey = activeVariant && realmId ? `${item.id}:${realmId}:${activeVariant.key}:${listingPage}` : null;
-  useEffect(() => {
-    if (!listingKey || !activeVariant || !realmId) return;
-    let active = true;
-    fetchGearListings(item.id, realmId, activeVariant.key, listingPage).then((result) => {
-      if (active) { setListingResult({ key: listingKey, data: result }); setListingError(null); }
-    }).catch(() => { if (active) setListingError(listingKey); });
-    return () => { active = false; };
-  }, [activeVariant, item.id, listingKey, listingPage, realmId]);
+  const filtered = variants.filter((variant) => (!filters.level || String(variant.itemLevel) === filters.level)
+    && (!filters.track || (filters.track === "none" ? !variant.upgrade : String(variant.upgrade?.group) === filters.track))
+    && (!filters.stat || variant.stats.some((value) => String(value.id) === filters.stat))
+    && (!filters.secondStat || variant.stats.some((value) => String(value.id) === filters.secondStat))
+    && (!filters.tag || variant.tags.includes(filters.tag))
+    && (!filters.socket || (filters.socket === "yes" ? variant.sockets > 0 : variant.sockets === 0)));
+  const offers = filtered.flatMap((variant) => {
+    const realms = variant.realms.filter((realm) => allRealms || realm.connectedRealmId === realmId)
+      .toSorted((a, b) => a.minBuyout - b.minBuyout || a.connectedRealmId - b.connectedRealmId);
+    return realms.length ? [{ variant, cheapest: realms[0], listings: realms.reduce((sum, realm) => sum + realm.numAuctions, 0) }] : [];
+  }).sort((a, b) => (sort === "level" ? (b.variant.itemLevel ?? -1) - (a.variant.itemLevel ?? -1)
+    : sort === "listings" ? b.listings - a.listings : 0)
+    || a.cheapest.minBuyout - b.cheapest.minBuyout || a.variant.key.localeCompare(b.variant.key));
 
   const levels = [...new Set(variants.flatMap((variant) => variant.itemLevel === null ? [] : [variant.itemLevel]))].sort((a, b) => b - a);
   const tracks = [...new Map(variants.flatMap((variant) => variant.upgrade ? [[variant.upgrade.group, variant.upgrade] as const] : [])).values()];
-  const stats = [...new Map(variants.flatMap((variant) => variant.stats.map((value) => [value.id, value] as const))).values()].sort((a, b) => a.name.localeCompare(b.name));
+  const stats = [...new Map(variants.flatMap((variant) => variant.stats.filter((stat) => !primaryStats.has(stat.id)).map((stat) => [stat.id, stat] as const))).values()].sort((a, b) => a.name.localeCompare(b.name));
   const tags = [...new Set(variants.flatMap((variant) => variant.tags))].sort();
-  const realmQuotes = new Map<number, { minimum: number; quantity: number; listings: number; versions: number }>();
-  for (const variant of filtered) for (const realm of variant.realms) {
-    const quote = realmQuotes.get(realm.connectedRealmId) ?? { minimum: Infinity, quantity: 0, listings: 0, versions: 0 };
-    quote.minimum = Math.min(quote.minimum, realm.minBuyout);
-    quote.quantity += realm.totalQuantity; quote.listings += realm.numAuctions; quote.versions++;
-    realmQuotes.set(realm.connectedRealmId, quote);
-  }
-  const sortedRealms = [...realmQuotes.entries()].sort((a, b) => a[1].minimum - b[1].minimum || a[0] - b[0]);
-  const localRealm = realmState.options.find((realm) => realm.id === realmId);
-  const pageCount = Math.ceil(localVariants.length / 20);
-  const safePage = Math.min(versionPage, Math.max(0, pageCount - 1));
-  const listingData = listingResult?.key === listingKey ? listingResult.data : null;
-  function changeFilter(setter: (value: string) => void, value: string) {
-    setter(value); setVersionKey(null); setVersionPage(0); setListingPage(1);
-  }
-  function chooseRealm(id: number) {
-    selectedRealm.select(id); setVersionKey(null); setVersionPage(0); setListingPage(1);
-  }
+  const matchingRealms = new Set(filtered.flatMap((variant) => variant.realms.map((realm) => realm.connectedRealmId))).size;
+  const lowestPrice = offers.length ? Math.min(...offers.map((offer) => offer.cheapest.minBuyout)) : null;
+  const listingCount = offers.reduce((sum, offer) => sum + offer.listings, 0);
+  const filterCount = Object.values(filters).filter(Boolean).length;
+  const pageKey = JSON.stringify([filters, allRealms, realmId, sort]);
+  const pageCount = Math.ceil(offers.length / pageSize);
+  const page = pagination.key === pageKey ? Math.min(pagination.page, Math.max(0, pageCount - 1)) : 0;
+  const changeFilter = (key: keyof typeof filters, value: string) => setFilters({ ...filters, [key]: value });
 
-  if (error) return <p role="alert" className="surface p-4 mb-6">Couldn’t load item versions. Reload the page to try again.</p>;
-  if (!data) return <p className="surface p-4 mb-6 text-muted">Loading item versions…</p>;
-  if (!variants.length) return <p className="surface p-4 mb-6 text-muted">No current buyout listings for this item.</p>;
+  if (error) return <div className={styles.empty} role="alert"><h2>Couldn’t load listings</h2><p>Please try again.</p><button className={styles.action} onClick={() => { setError(false); setRetry(retry + 1); }}>Try again</button></div>;
+  if (!data) return <div className={styles.empty} role="status">Loading current offers…</div>;
+  if (!variants.length) return <div className={styles.empty}><h2>No buyout listings right now</h2><p>This item isn’t listed in the latest EU auction snapshots. Check back after the next hourly refresh.</p></div>;
 
-  return <section className="mb-8 space-y-5" aria-label="Item versions and listings">
-    <div className="surface p-4 space-y-3">
-      <h2 className="font-semibold">Item versions</h2>
-      <p className="text-sm text-muted">Filter the versions currently listed, compare realms, then open a version to see its buyout listings. Hover an item link for its Wowhead tooltip.</p>
-      {variants.some((variant) => variant.detailsIncomplete) && <p className="text-xs text-muted">Some versions have incomplete reference data. Check their Wowhead tooltips for additional details.</p>}
-      {variants.length > 1 && <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
-        {levels.length > 1 && <label className="text-sm">Item level<select className={controlClass} value={level} onChange={(e) => changeFilter(setLevel, e.target.value)}><option value="">All item levels</option>{levels.map((value) => <option key={value} value={value}>{value}</option>)}</select></label>}
-        {tracks.length > 0 && <label className="text-sm">Upgrade track<select className={controlClass} value={track} onChange={(e) => changeFilter(setTrack, e.target.value)}><option value="">All tracks</option>{tracks.map((value) => <option key={value.group} value={value.group}>{value.name ?? "Upgrade"} · {value.max} ranks</option>)}{variants.some((v) => !v.upgrade) && <option value="none">No upgrade track</option>}</select></label>}
-        {stats.length > 0 && <>
-          <label className="text-sm">Stat<select className={controlClass} value={stat} onChange={(e) => changeFilter(setStat, e.target.value)}><option value="">Any stat</option>{stats.map((value) => <option key={value.id} value={value.id}>{value.name}</option>)}</select></label>
-          <label className="text-sm">Additional stat<select className={controlClass} value={secondStat} onChange={(e) => changeFilter(setSecondStat, e.target.value)}><option value="">Any additional stat</option>{stats.map((value) => <option key={value.id} value={value.id}>{value.name}</option>)}</select></label>
+  return <section className={styles.market} aria-label="Item versions and listings">
+    <div className={styles.marketToolbar}>
+      <div className={styles.segmented} aria-label="Listing scope">
+        <button aria-pressed={!allRealms} disabled={!localRealm} title={localRealm?.fullLabel} onClick={() => setScope("realm")}>{localRealm?.label ?? "Your realm"}</button>
+        <button aria-pressed={allRealms} onClick={() => setScope("eu")}>All EU realms</button>
+      </div>
+      <p className={styles.quiet}>Prices per item · hourly snapshots</p>
+      {variants.length > 1 && <button className={styles.mobileFilterToggle} aria-expanded={filtersOpen} aria-controls={`item-filters-${item.id}`} onClick={() => setFiltersOpen(!filtersOpen)}>Filters{filterCount > 0 && ` (${filterCount})`} {filtersOpen ? "−" : "+"}</button>}
+    </div>
+    <div className={styles.marketSummary}>
+      <div><span>Lowest matching buyout</span><strong className={styles.gold}>{lowestPrice === null ? "—" : formatPrice(lowestPrice)}</strong><small>{allRealms ? "Across EU realms" : `On ${localRealm?.label}`}</small></div>
+      <div><span>Matching listings</span><strong>{listingCount.toLocaleString()}</strong><small>{offers.length.toLocaleString()} {offers.length === 1 ? "version" : "versions"}</small></div>
+      <div><span>Realm availability</span><strong>{matchingRealms}<small> / {realmState.options.length || "—"}</small></strong><small>Realm groups with matching versions</small></div>
+    </div>
+    <div className={styles.offerSurface}>
+      {variants.length > 1 && <div id={`item-filters-${item.id}`} className={styles.filters} data-open={filtersOpen}>
+        {tracks.length > 0 && <Filter label="Upgrade track" value={filters.track} onChange={(value) => changeFilter("track", value)}><option value="">Any track</option>{tracks.map((track) => <option key={track.group} value={track.group}>{track.name ?? "Upgrade"} · {track.max} ranks</option>)}{variants.some((v) => !v.upgrade) && <option value="none">No upgrade track</option>}</Filter>}
+        {(levels.length + Number(variants.some((v) => v.itemLevel === null))) > 1 && <Filter label="Item level" value={filters.level} onChange={(value) => changeFilter("level", value)}><option value="">Any item level</option>{levels.map((level) => <option key={level} value={level}>{level}</option>)}{variants.some((v) => v.itemLevel === null) && <option value="null">Unknown item level</option>}</Filter>}
+        {stats.length > 1 && <>
+          <Filter label="Stat" value={filters.stat} onChange={(value) => setFilters({ ...filters, stat: value, secondStat: value === filters.secondStat ? "" : filters.secondStat })}><option value="">Any stat</option>{stats.map((stat) => <option key={stat.id} value={stat.id}>{stat.name}</option>)}</Filter>
+          <Filter label="Additional stat" value={filters.secondStat} onChange={(value) => changeFilter("secondStat", value)}><option value="">Any second stat</option>{stats.filter((stat) => String(stat.id) !== filters.stat).map((stat) => <option key={stat.id} value={stat.id}>{stat.name}</option>)}</Filter>
         </>}
-        {tags.length > 0 && <label className="text-sm">Version tag<select className={controlClass} value={tag} onChange={(e) => changeFilter(setTag, e.target.value)}><option value="">All tags</option>{tags.map((value) => <option key={value} value={value}>{value}</option>)}</select></label>}
-        {variants.some((v) => v.sockets > 0) && <label className="text-sm">Sockets<select className={controlClass} value={socket} onChange={(e) => changeFilter(setSocket, e.target.value)}><option value="">Any sockets</option><option value="yes">With sockets</option><option value="no">Without sockets</option></select></label>}
+        {(tags.length > 1 || variants.some((v) => v.sockets > 0)) && <details className={styles.moreFilters}><summary>More filters{(filters.tag || filters.socket) && " •"}</summary><div>
+          {tags.length > 1 && <Filter label="Source" value={filters.tag} onChange={(value) => changeFilter("tag", value)}><option value="">Any source</option>{tags.map((tag) => <option key={tag} value={tag}>{tag}</option>)}</Filter>}
+          {variants.some((v) => v.sockets > 0) && <Filter label="Sockets" value={filters.socket} onChange={(value) => changeFilter("socket", value)}><option value="">Any sockets</option><option value="yes">With sockets</option><option value="no">Without sockets</option></Filter>}
+        </div></details>}
+        {filterCount > 0 && <button className={styles.textButton} onClick={() => setFilters(emptyFilters)}>Reset ({filterCount})</button>}
       </div>}
-      <p className="text-sm text-muted">{filtered.length.toLocaleString()} versions · {realmQuotes.size} connected realms</p>
-      {(level || track || stat || secondStat || tag || socket) && <button className="text-sm text-accent" onClick={() => { setLevel(""); setTrack(""); setStat(""); setSecondStat(""); setTag(""); setSocket(""); setVersionKey(null); setVersionPage(0); setListingPage(1); }}>Clear filters</button>}
-    </div>
-
-    <div className="grid gap-5 lg:grid-cols-[minmax(260px,1fr)_minmax(0,2fr)]">
-      <div className="surface p-4 self-start">
-        <h3 className="font-semibold mb-3">Realms · matching versions</h3>
-        <div className="max-h-[32rem] overflow-auto">
-          <table className="w-full text-sm"><thead><tr className="text-left text-muted"><th className="pb-2 font-medium">Realm</th><th className="pb-2 text-right font-medium">From</th><th className="pb-2 pl-3 text-right font-medium">Listings</th></tr></thead>
-            <tbody>{sortedRealms.map(([id, quote]) => {
-              const realm = realmState.options.find((option) => option.id === id);
-              return <tr key={id} className={`border-t border-border/50 ${id === realmId ? "bg-accent/10" : ""}`}>
-                <td className="py-2 pr-2"><button className="text-left hover:text-accent" aria-pressed={id === realmId} disabled={!realm} onClick={() => chooseRealm(id)} title={realm?.fullLabel}>{realm?.label ?? `Realm ${id}`}{id === realmId && <span className="sr-only"> (Selected)</span>}</button>
-                  {realm && realm.fullLabel !== realm.label && <details className="mt-1 text-xs text-muted"><summary className="cursor-pointer">Connected realms</summary><p className="py-1 max-w-56">{realm.fullLabel}</p></details>}
-                </td><td className="py-2 text-right tabular-nums whitespace-nowrap">{formatPrice(quote.minimum)}</td><td className="py-2 pl-3 text-right tabular-nums">{quote.listings.toLocaleString()}</td>
-              </tr>;
-            })}</tbody>
-          </table>
-        </div>
-        {sortedRealms.length === 0 && <p className="text-sm text-muted">No listings match these filters.</p>}
+      <div className={styles.resultsToolbar}>
+        <h2 aria-live="polite">{offers.length.toLocaleString()} {offers.length === 1 ? "version" : "versions"}{" "}<span>{allRealms ? " across EU realms" : ` on ${localRealm?.label}`}</span></h2>
+        <label className={styles.sort}>Sort by<select value={sort} onChange={(event) => setSort(event.target.value)}><option value="price">Lowest price</option><option value="level">Highest item level</option><option value="listings">Most listings</option></select></label>
       </div>
-
-      <div className="space-y-5 min-w-0">
-        <div className="surface p-4">
-          <h3 className="font-semibold mb-3" title={localRealm?.fullLabel}>{localRealm ? `Versions on ${localRealm.label}` : "Choose a realm"}</h3>
-          {localVariants.length === 0 ? <p className="text-sm text-muted">{realmId ? "No matching versions on this realm. Choose another realm or change the filters." : "Select a realm to view its versions and listings."}</p> : <>
-            <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-left text-muted"><th className="pb-2 font-medium">Version</th><th className="pb-2 font-medium">Stats</th><th className="pb-2 text-right font-medium">From</th><th className="pb-2 pl-3 text-right font-medium">Listings</th></tr></thead>
-              <tbody>{localVariants.slice(safePage * 20, safePage * 20 + 20).map((variant) => {
-                const quote = variant.realms.find((realm) => realm.connectedRealmId === realmId)!;
-                return <tr key={variant.key} className={`border-t border-border/50 ${activeVariant?.key === variant.key ? "bg-accent/10" : ""}`}>
-                  <td className="py-3 pr-3"><a href={variant.wowhead.url} data-wowhead={variant.wowhead.tooltip} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">{versionName(variant)}</a>
-                    {variant.tags.length > 0 && <p className="text-xs text-muted">{variant.tags.join(" · ")}</p>}
-                    {variant.sockets > 0 && <p className="text-xs text-muted">{variant.sockets} {variant.sockets === 1 ? "socket" : "sockets"}</p>}
-                  </td><td className="py-3 pr-3 text-xs">{variant.stats.filter((value) => ![3, 4, 5, 7, 71, 72, 73, 74].includes(value.id)).map((value) => value.name).join(" / ") || "—"}</td>
-                  <td className="py-3 text-right whitespace-nowrap tabular-nums">{formatPrice(quote.minBuyout)}</td>
-                  <td className="py-3 pl-3 text-right"><button className="rounded border border-border px-2 py-1 hover:border-accent" aria-label={`View ${quote.numAuctions} listings for ${versionName(variant)}`} aria-pressed={activeVariant?.key === variant.key} onClick={() => { setVersionKey(variant.key); setListingPage(1); }}>{quote.numAuctions.toLocaleString()} →</button></td>
-                </tr>;
-              })}</tbody></table></div>
-            {pageCount > 1 && <div className="mt-3 flex justify-between text-sm"><button disabled={safePage === 0} onClick={() => setVersionPage(safePage - 1)}>Previous versions</button><span>{safePage + 1} / {pageCount}</span><button disabled={safePage + 1 >= pageCount} onClick={() => setVersionPage(safePage + 1)}>Next versions</button></div>}
-          </>}
-        </div>
-
-        {activeVariant && <div className="surface p-4" role="region" aria-label="Buyout listings">
-          <h3 className="font-semibold mb-2">Buyout listings · {versionName(activeVariant)}</h3>
-          <a href={activeVariant.wowhead.url} data-wowhead={activeVariant.wowhead.tooltip} target="_blank" rel="noopener noreferrer" className="text-sm text-accent hover:underline">{item.name} · view tooltip</a>
-          <p className="mt-2 text-xs text-muted">Listings are a snapshot, not a live availability guarantee. Stat amounts and effects are shown in the Wowhead tooltip.</p>
-          {listingError === listingKey ? <p role="alert" className="mt-3 text-sm">Couldn’t load listings. Reload the page to try again.</p>
-            : !listingData ? <p className="mt-3 text-sm text-muted">Loading listings…</p>
-            : !listingData.detailsAvailable ? <p className="mt-3 text-sm text-muted">Listing details will be available after this realm’s next market refresh.</p>
-            : <><div className="overflow-x-auto mt-3"><table className="w-full text-sm"><thead><tr className="text-left text-muted"><th className="pb-2 font-medium">Auction</th><th className="pb-2 text-right font-medium">Quantity</th><th className="pb-2 text-right font-medium">Buyout total</th><th className="pb-2 text-right font-medium">Per item</th><th className="pb-2 text-right font-medium">Time left</th></tr></thead>
-              <tbody>{listingData.listings.map((listing) => <tr className="border-t border-border/50" key={listing.id}><td className="py-2 pr-2"><a href={activeVariant.wowhead.url} data-wowhead={activeVariant.wowhead.tooltip} target="_blank" rel="noopener noreferrer" className="text-accent">#{listing.id}</a></td><td className="py-2 text-right">{listing.quantity.toLocaleString()}</td><td className="py-2 text-right whitespace-nowrap">{formatPrice(listing.buyout)}</td><td className="py-2 text-right whitespace-nowrap">{formatPrice(Math.round(listing.buyout / listing.quantity))}</td><td className="py-2 text-right text-muted">{({ SHORT: "< 30 min", MEDIUM: "30 min–2 hr", LONG: "2–12 hr", VERY_LONG: "> 12 hr" } as Record<string, string>)[listing.timeLeft ?? ""] ?? "—"}</td></tr>)}</tbody>
-            </table></div>{listingData.totalPages > 1 && <div className="mt-3 flex justify-between text-sm"><button disabled={listingPage === 1} onClick={() => setListingPage(listingPage - 1)}>Previous listings</button><span>{listingPage} / {listingData.totalPages}</span><button disabled={listingPage >= listingData.totalPages} onClick={() => setListingPage(listingPage + 1)}>Next listings</button></div>}
-              <p className="mt-3 text-xs text-muted">{listingData.total.toLocaleString()} listings · Observed {listingData.observedAt ? new Date(listingData.observedAt).toLocaleString() : "—"}</p></>}
-          <details className="mt-3 text-xs text-muted"><summary className="cursor-pointer">Version details</summary><div className="space-y-1 py-2 break-words"><p>Bonus IDs: {activeVariant.bonusLists.join(", ") || "None"}</p><p>Modifiers: {activeVariant.modifiers.map((value) => `${value.type}: ${value.value}`).join(", ") || "None"}</p><p>Context: {activeVariant.context ?? "None"}</p>{activeVariant.detailsIncomplete && <p>Some details are unavailable in the reference data. Original auction modifiers are listed above; supported bonuses and crafted stats are passed to Wowhead.</p>}<p>Game data: {data.dataVersion.wowBuild} · Raidbots / SimulationCraft</p></div></details>
-        </div>}
-      </div>
+      {offers.length === 0 ? <div className={styles.empty}><h3>No matching offers{!allRealms && ` on ${localRealm?.label}`}</h3><p>{matchingRealms > 0 ? `Matching versions are available on ${matchingRealms} other realm groups.` : "Try a different item level, upgrade track, or stat combination."}</p><div className={styles.emptyActions}>{!allRealms && <button className={styles.action} onClick={() => setScope("eu")}>Search all EU realms</button>}{filterCount > 0 && <button className={styles.textButton} onClick={() => setFilters(emptyFilters)}>Reset filters</button>}</div></div>
+        : <>
+          <div className={`${styles.offerGrid} ${styles.columnHead}`} aria-hidden="true"><span>Item version</span><span>Stats</span><span>Lowest buyout</span><span>Listings</span><span /></div>
+          <div className={styles.offerList}>{offers.slice(page * pageSize, (page + 1) * pageSize).map(({ variant, cheapest, listings }) => {
+            const realm = realmState.options.find((option) => option.id === cheapest.connectedRealmId);
+            return <button key={variant.key} className={`${styles.offerGrid} ${styles.offerRow}`} aria-label={`View listings for ${versionName(variant)}, ${statNames(variant) || "no secondary stats"}, from ${formatPrice(cheapest.minBuyout)}`} onClick={() => setSelection({ variant, realmId: cheapest.connectedRealmId })}>
+              <span className={styles.versionCell}><span className={styles.levelBadge}>{variant.itemLevel ?? "?"}<small>ilvl</small></span><span><strong>{variant.upgrade ? variant.upgrade.fullName ?? `${variant.upgrade.name ?? "Upgrade"} ${variant.upgrade.level}/${variant.upgrade.max}` : variant.tags.join(" · ") || (variant.detailsIncomplete ? "Version details unavailable" : "Standard")}</strong><small>{variant.upgrade ? variant.tags.join(" · ") || "Upgradeable" : variant.detailsIncomplete ? "Track unavailable" : "No upgrade track"}{variant.sockets > 0 && ` · ${variant.sockets} ${variant.sockets === 1 ? "socket" : "sockets"}`}</small><span className={styles.mobileStats}>{statNames(variant) || (variant.detailsIncomplete ? "Stats unavailable" : "No secondary stats")}</span></span></span>
+              <span className={styles.statCell}>{statNames(variant) || "—"}</span>
+              <span className={styles.priceCell}><strong>{formatPrice(cheapest.minBuyout)}</strong><small title={allRealms ? realm?.fullLabel : undefined}>{allRealms ? realm?.label ?? `Realm ${cheapest.connectedRealmId}` : variant.realms.length > 1 ? `On ${variant.realms.length} realm groups` : "Only on this realm"}</small><span className={styles.mobileStats}>{listings.toLocaleString()} {listings === 1 ? "listing" : "listings"}</span></span>
+              <span className={styles.countCell}>{listings.toLocaleString()}</span><span className={styles.rowArrow} aria-hidden="true">↗</span>
+            </button>;
+          })}</div>
+          <Pagination page={page + 1} pages={pageCount} label="versions" onChange={(next) => setPagination({ key: pageKey, page: next - 1 })} />
+        </>}
     </div>
+    <p className={styles.footnote}>Each row is an exact item version. Open an offer to compare its realm prices and view individual auctions.</p>
+    {selection && <OfferDetails key={`${selection.variant.key}:${selection.realmId}`} item={item} variant={selection.variant} initialRealmId={selection.realmId} realms={realmState.options} dataVersion={data.dataVersion} onClose={() => setSelection(null)} />}
   </section>;
+}
+
+function Filter({ label, value, onChange, children }: { label: string; value: string; onChange: (value: string) => void; children: ReactNode }) {
+  return <label className={styles.filter}><span>{label}</span><select value={value} onChange={(event) => onChange(event.target.value)}>{children}</select></label>;
+}
+
+function Pagination({ page, pages, label, onChange }: { page: number; pages: number; label: string; onChange: (page: number) => void }) {
+  if (pages <= 1) return null;
+  return <nav className={styles.pagination} aria-label={`${label} pages`}><button disabled={page === 1} onClick={() => onChange(page - 1)}>← Previous</button><span>Page {page} of {pages}</span><button disabled={page === pages} onClick={() => onChange(page + 1)}>Next →</button></nav>;
+}
+
+function OfferDetails({ item, variant, initialRealmId, realms, dataVersion, onClose }: {
+  item: Item; variant: GearVariant; initialRealmId: number; realms: RealmOption[]; dataVersion: GearVariantsResponse["dataVersion"]; onClose: () => void;
+}) {
+  const panel = useRef<HTMLElement>(null);
+  const [realmId, setRealmId] = useState(initialRealmId);
+  const [page, setPage] = useState(1);
+  const [retry, setRetry] = useState(0);
+  const [result, setResult] = useState<{ key: string; data: GearListingsResponse } | null>(null);
+  const [failedKey, setFailedKey] = useState<string | null>(null);
+  const key = `${realmId}:${page}:${retry}`;
+  const quotes = variant.realms.toSorted((a, b) => a.minBuyout - b.minBuyout || a.connectedRealmId - b.connectedRealmId);
+  const quote = quotes.find((quote) => quote.connectedRealmId === realmId)!;
+  const realm = realms.find((realm) => realm.id === realmId);
+  const data = result?.key === key ? result.data : null;
+
+  useEffect(() => {
+    const previousFocus = document.activeElement as HTMLElement | null;
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    panel.current?.focus();
+    return () => { document.body.style.overflow = overflow; previousFocus?.focus(); };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    fetchGearListings(item.id, realmId, variant.key, page).then((data) => { if (active) setResult({ key, data }); })
+      .catch(() => { if (active) setFailedKey(key); });
+    return () => { active = false; };
+  }, [item.id, realmId, variant.key, page, key]);
+
+  return <div className={styles.backdrop} onClick={(event) => { if (event.target === event.currentTarget) onClose(); }}>
+    <section ref={panel} className={styles.drawer} role="dialog" aria-modal="true" aria-labelledby="offer-title" tabIndex={-1} onKeyDown={(event) => {
+      if (event.key === "Escape") { event.stopPropagation(); onClose(); }
+      if (event.key !== "Tab") return;
+      const controls = [...event.currentTarget.querySelectorAll<HTMLElement>('button:not(:disabled), a[href], select:not(:disabled), summary')].filter((element) => element.getClientRects().length > 0);
+      const first = controls[0]; const last = controls.at(-1);
+      if (event.shiftKey && (document.activeElement === first || document.activeElement === panel.current)) { event.preventDefault(); last?.focus(); }
+      else if (!event.shiftKey && (document.activeElement === last || document.activeElement === panel.current)) { event.preventDefault(); first?.focus(); }
+    }}>
+      <header className={styles.drawerHeader}><span>Offer details</span><button onClick={onClose} aria-label="Close offer details">✕</button></header>
+      <div className={styles.drawerBody}>
+        <p className={styles.eyebrow}>{item.itemSubclass ?? item.itemClass}{item.inventoryType && ` · ${item.inventoryType}`}</p>
+        <h2 id="offer-title">{item.name}</h2>
+        <p className={styles.drawerVersion}>{versionName(variant)}</p>
+        <p className={styles.drawerStats}>{statNames(variant) || (variant.detailsIncomplete ? "Stats unavailable" : "No secondary stats")}{variant.sockets > 0 && ` · ${variant.sockets} ${variant.sockets === 1 ? "socket" : "sockets"}`}</p>
+        <a className={styles.wowhead} href={variant.wowhead.url} data-wowhead={variant.wowhead.tooltip} target="_blank" rel="noopener noreferrer">View exact item on Wowhead ↗</a>
+        {variant.detailsIncomplete && <p className={styles.footnote}>Some item details are unavailable. Check the Wowhead tooltip for supported stats and effects.</p>}
+        <div className={styles.realmChoice}><Filter label="Compare this version on other realms" value={String(realmId)} onChange={(value) => { setRealmId(Number(value)); setPage(1); }}>{quotes.map((quote) => {
+          const option = realms.find((realm) => realm.id === quote.connectedRealmId);
+          return <option key={quote.connectedRealmId} value={quote.connectedRealmId}>{option?.label ?? `Realm ${quote.connectedRealmId}`} — {formatPrice(quote.minBuyout)}</option>;
+        })}</Filter><p title={realm?.fullLabel}>{realm?.fullLabel ?? `Realm ${realmId}`}</p></div>
+        <div className={styles.drawerPrice}><span>Lowest buyout per item on {realm?.label ?? `Realm ${realmId}`}</span><strong>{formatPrice(quote.minBuyout)}</strong><small>{quote.minBuyout === quotes[0].minBuyout ? "Lowest price across EU realms for this version" : `EU lowest: ${formatPrice(quotes[0].minBuyout)}`}</small></div>
+        <section aria-label="Buyout listings" className={styles.listings}>
+          <h3>Buyout listings <span>{data?.total ?? quote.numAuctions}</span></h3>
+          {failedKey === key ? <div role="alert" className={styles.empty}><p>Couldn’t load these listings.</p><button className={styles.action} onClick={() => setRetry(retry + 1)}>Try again</button></div>
+            : !data ? <p className={styles.empty} role="status">Loading listings…</p>
+            : !data.detailsAvailable ? <p className={styles.empty}>Listing details will appear after this realm’s next refresh.</p>
+            : data.listings.length === 0 ? <p className={styles.empty}>These listings are no longer in the latest snapshot. Reopen the item page for current offers.</p>
+            : <><table><thead><tr><th>Buyout total</th><th>Quantity</th><th>Time left</th></tr></thead><tbody>{data.listings.map((listing) => <tr key={listing.id}>
+              <td><strong>{formatPrice(listing.buyout)}</strong>{listing.quantity > 1 && <small>{formatPrice(Math.round(listing.buyout / listing.quantity))} each</small>}<small><a href={variant.wowhead.url} data-wowhead={variant.wowhead.tooltip} target="_blank" rel="noopener noreferrer" aria-label={`View item tooltip for auction ${listing.id}`}>#{listing.id}</a></small></td>
+              <td>{listing.quantity.toLocaleString()}</td><td>{({ SHORT: "< 30 min", MEDIUM: "30 min–2 hr", LONG: "2–12 hr", VERY_LONG: "> 12 hr" } as Record<string, string>)[listing.timeLeft ?? ""] ?? "—"}</td>
+            </tr>)}</tbody></table><Pagination page={page} pages={data.totalPages} label="listings" onChange={setPage} /></>}
+          <p className={styles.footnote}>Snapshot from {new Date(data?.observedAt ?? quote.observedAt).toLocaleString()}. Listings may have sold since the last refresh.</p>
+        </section>
+        <details className={styles.technicalDetails}><summary>Item version details</summary><p>Bonus IDs: {variant.bonusLists.join(", ") || "None"}</p><p>Modifiers: {variant.modifiers.map((value) => `${value.type}: ${value.value}`).join(", ") || "None"}</p><p>Context: {variant.context ?? "None"}</p><p>Game data: {dataVersion.wowBuild} · Raidbots / SimulationCraft</p></details>
+      </div>
+    </section>
+  </div>;
 }
