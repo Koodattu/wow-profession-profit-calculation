@@ -219,6 +219,15 @@ export const auctionSyncRuns = pgTable(
 
 // Current market state is kept separately from history so normal reads remain
 // small and an item disappearing from an auction payload is represented exactly.
+// Realm 0 denotes the region-wide commodity feed. Row timestamps in the latest
+// tables identify the last content change; this table records every observation.
+export const marketObservations = pgTable("market_observations", {
+  regionId: text("region_id").notNull().references(() => regions.id, { onDelete: "cascade" }),
+  connectedRealmId: integer("connected_realm_id").notNull(),
+  syncRunId: bigint("sync_run_id", { mode: "number" }).notNull(),
+  observedAt: timestamp("observed_at", { withTimezone: true }).notNull(),
+}, (t) => [primaryKey({ columns: [t.regionId, t.connectedRealmId] })]);
+
 export const commodityLatest = pgTable(
   "commodity_latest",
   {

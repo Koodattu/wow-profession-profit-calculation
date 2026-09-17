@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { createBlizzardClient, type BlizzardClientDependencies } from "./blizzard-client";
+import { BlizzardHttpError, createBlizzardClient, type BlizzardClientDependencies } from "./blizzard-client";
 
 type TimedFetch = NonNullable<BlizzardClientDependencies["timedFetch"]>;
 
@@ -28,6 +28,20 @@ function authorization(init: RequestInit): string | null {
 }
 
 describe("authenticated Blizzard client", () => {
+  test("a missing item exposes its HTTP status and is not retried as a transient error", async () => {
+    let requests = 0;
+    const client = createFixtureClient(async (input) => {
+      if (String(input).includes("oauth.battle.net")) return jsonResponse({ access_token: "token", expires_in: 3600 });
+      requests++;
+      return jsonResponse({}, 404);
+    });
+    let failure: unknown;
+    try { await client.get("eu", "/data/wow/item/123", "static"); } catch (error) { failure = error; }
+    expect(failure).toBeInstanceOf(BlizzardHttpError);
+    expect(failure).toMatchObject({ status: 404, request: "GET /data/wow/item/123" });
+    expect(requests).toBe(1);
+  });
+
   test("concurrent requests share one token refresh", async () => {
     let tokenRequests = 0;
     let apiRequests = 0;

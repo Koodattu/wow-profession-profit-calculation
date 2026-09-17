@@ -4,6 +4,13 @@ import { fetchWithTimeout, isRetryableStatus, retryDelayMs, sleep } from "./requ
 type BlizzardNamespace = "static" | "dynamic";
 type TimedFetch = (input: string | URL, init: RequestInit, timeoutMs: number) => Promise<Response>;
 
+export class BlizzardHttpError extends Error {
+  constructor(readonly status: number, readonly request: string, statusText: string) {
+    super(`${request} failed: ${status} ${statusText}`);
+    this.name = "BlizzardHttpError";
+  }
+}
+
 interface TokenResponse {
   access_token: string;
   expires_in: number;
@@ -72,7 +79,7 @@ export function createBlizzardClient(dependencies: BlizzardClientDependencies): 
 
       if (response.ok || options.acceptedStatus?.(response.status)) return response;
 
-      lastError = new Error(`${options.label} failed: ${response.status} ${response.statusText}`);
+      lastError = new BlizzardHttpError(response.status, options.label, response.statusText);
       if (!isRetryableStatus(response.status) || attempt === maxRetries) throw lastError;
 
       const delayMs = retryDelayMs(attempt, response.headers.get("Retry-After"));
@@ -157,7 +164,7 @@ export function createBlizzardClient(dependencies: BlizzardClientDependencies): 
       response = await requestApi(url, endpoint, authorization);
     }
 
-    if (!response.ok) throw new Error(`GET ${endpoint} failed: ${response.status} ${response.statusText}`);
+    if (!response.ok) throw new BlizzardHttpError(response.status, `GET ${endpoint}`, response.statusText);
     return (await response.json()) as T;
   }
 

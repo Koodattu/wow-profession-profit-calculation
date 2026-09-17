@@ -10,6 +10,7 @@ import {
   type RealmListing,
 } from "../db/schema";
 import { normalizeRealmVariant, summarizePrices, type PriceEntry, type RealmAuctionIdentity } from "./auction-aggregation";
+import { writeCurrentMarket } from "./current-market-write";
 import { toTimestampMs } from "./freshness-policy";
 
 export interface CommodityAuctionInput {
@@ -180,11 +181,10 @@ export function createAuctionRefreshModule(dependencies: AuctionRefreshDependenc
           await tx
             .insert(items)
             .values(batch.map((id) => ({ id, name: `Item #${id}`, marketType: "commodity", metadataStatus: "pending" })))
-            .onConflictDoUpdate({ target: items.id, set: { marketType: "commodity" } });
+            .onConflictDoUpdate({ target: items.id, set: { marketType: "commodity" }, setWhere: sql`${items.marketType} IS DISTINCT FROM 'commodity'` });
         }
 
-        await tx.delete(commodityLatest).where(eq(commodityLatest.regionId, regionId));
-        for (const batch of batches(latestRows)) await tx.insert(commodityLatest).values(batch);
+        await writeCurrentMarket(tx, commodityLatest, latestRows, regionId, 0, runId, observedAt);
         for (const batch of batches(latestRows)) {
           await tx.insert(commoditySnapshots).values(
             batch.map((row) => ({
@@ -257,7 +257,7 @@ export function createAuctionRefreshModule(dependencies: AuctionRefreshDependenc
           connectedRealmId,
           itemId: group.itemId,
           variantKey: group.variant.key,
-          listings: group.listings,
+          listings: group.listings.sort((a, b) => a.id.localeCompare(b.id)),
           syncRunId: runId,
           observedAt,
           context: group.variant.context,
@@ -304,12 +304,12 @@ export function createAuctionRefreshModule(dependencies: AuctionRefreshDependenc
             .values(batch.map((id) => ({ id, name: `Item #${id}`, marketType: "realm", metadataStatus: "pending" })))
             .onConflictDoUpdate({
               target: items.id,
-              set: { marketType: sql`CASE WHEN ${items.marketType} = 'commodity' THEN 'commodity' ELSE 'realm' END` },
+              set: { marketType: "realm" },
+              setWhere: sql`${items.marketType} IS NULL`,
             });
         }
 
-        await tx.delete(realmLatest).where(and(eq(realmLatest.regionId, regionId), eq(realmLatest.connectedRealmId, connectedRealmId)));
-        for (const batch of batches(latestRows)) await tx.insert(realmLatest).values(batch);
+        await writeCurrentMarket(tx, realmLatest, latestRows, regionId, connectedRealmId, runId, observedAt);
         for (const batch of batches(historyRows)) await tx.insert(realmSnapshots).values(batch);
         await tx
           .update(auctionSyncRuns)
