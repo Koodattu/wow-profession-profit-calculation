@@ -1,6 +1,7 @@
 import { and, eq } from "drizzle-orm";
 import { db } from "../db";
-import { realmLatest } from "../db/schema";
+import { marketObservations, realmLatest } from "../db/schema";
+import { realmObservationJoin, realmObservedAt } from "./current-observation";
 import { getGearData } from "./gear-data";
 import { decodeGear } from "./gear-decoder";
 
@@ -8,8 +9,8 @@ export async function getGearVariants(itemId: number) {
   const rows = await db.select({
     key: realmLatest.variantKey, context: realmLatest.context, bonusLists: realmLatest.bonusLists, modifiers: realmLatest.modifiers,
     connectedRealmId: realmLatest.connectedRealmId, minBuyout: realmLatest.minBuyout,
-    totalQuantity: realmLatest.totalQuantity, numAuctions: realmLatest.numAuctions, observedAt: realmLatest.observedAt,
-  }).from(realmLatest).where(and(eq(realmLatest.regionId, "eu"), eq(realmLatest.itemId, itemId)));
+    totalQuantity: realmLatest.totalQuantity, numAuctions: realmLatest.numAuctions, observedAt: realmObservedAt,
+  }).from(realmLatest).leftJoin(marketObservations, realmObservationJoin).where(and(eq(realmLatest.regionId, "eu"), eq(realmLatest.itemId, itemId)));
   type Variant = ReturnType<typeof decodeGear> & {
     key: string; context: number | null; bonusLists: number[]; modifiers: { type: number; value: number }[];
     realms: { connectedRealmId: number; minBuyout: number; totalQuantity: number; numAuctions: number; observedAt: Date }[];
@@ -30,7 +31,7 @@ export async function getGearVariants(itemId: number) {
 }
 
 export async function getGearListings(itemId: number, connectedRealmId: number, variantKey: string, page: number) {
-  const [row] = await db.select({ listings: realmLatest.listings, observedAt: realmLatest.observedAt }).from(realmLatest)
+  const [row] = await db.select({ listings: realmLatest.listings, observedAt: realmObservedAt }).from(realmLatest).leftJoin(marketObservations, realmObservationJoin)
     .where(and(eq(realmLatest.regionId, "eu"), eq(realmLatest.itemId, itemId), eq(realmLatest.connectedRealmId, connectedRealmId), eq(realmLatest.variantKey, variantKey)))
     .limit(1);
   const listings = [...(row?.listings ?? [])].sort((a, b) => {

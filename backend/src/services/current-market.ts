@@ -1,6 +1,7 @@
 import { and, eq, inArray, sql } from "drizzle-orm";
 import { db } from "../db";
-import { commodityLatest, realmLatest, realms } from "../db/schema";
+import { commodityLatest, marketObservations, realmLatest, realms } from "../db/schema";
+import { commodityObservationJoin, commodityObservedAt, realmObservationJoin, realmObservedAt } from "./current-observation";
 
 const ITEM_BATCH_SIZE = 500;
 
@@ -79,9 +80,10 @@ async function loadCommodityQuotes(regionId: string, itemIds: number[]): Promise
         maxPrice: commodityLatest.maxPrice,
         totalQuantity: commodityLatest.totalQuantity,
         numAuctions: commodityLatest.numAuctions,
-        observedAt: commodityLatest.observedAt,
+        observedAt: commodityObservedAt,
       })
       .from(commodityLatest)
+      .leftJoin(marketObservations, commodityObservationJoin)
       .where(and(eq(commodityLatest.regionId, regionId), inArray(commodityLatest.itemId, batch)));
 
     for (const row of rows) {
@@ -113,10 +115,11 @@ async function loadSelectedRealmQuotes(regionId: string, itemIds: number[], conn
         maxPrice: sql<number>`max(${realmLatest.maxBuyout})::bigint`,
         totalQuantity: sql<number>`sum(${realmLatest.totalQuantity})::bigint`,
         numAuctions: sql<number>`sum(${realmLatest.numAuctions})::int`,
-        observedAt: sql<Date>`max(${realmLatest.observedAt})`,
+        observedAt: sql<Date>`max(${realmObservedAt})`.mapWith(realmLatest.observedAt),
         variantCount: sql<number>`count(*)::int`,
       })
       .from(realmLatest)
+      .leftJoin(marketObservations, realmObservationJoin)
       .where(
         and(
           eq(realmLatest.regionId, regionId),
@@ -154,10 +157,11 @@ async function loadEuRealmBenchmarks(regionId: string, itemIds: number[]): Promi
         minPrice: sql<number>`min(${realmLatest.minBuyout})::bigint`.as("realm_min_price"),
         totalQuantity: sql<number>`sum(${realmLatest.totalQuantity})::bigint`.as("realm_total_quantity"),
         numAuctions: sql<number>`sum(${realmLatest.numAuctions})::int`.as("realm_num_auctions"),
-        observedAt: sql<Date>`max(${realmLatest.observedAt})`.as("realm_observed_at"),
+        observedAt: sql<Date>`max(${realmObservedAt})`.mapWith(realmLatest.observedAt).as("realm_observed_at"),
         variantCount: sql<number>`count(*)::int`.as("realm_variant_count"),
       })
       .from(realmLatest)
+      .leftJoin(marketObservations, realmObservationJoin)
       .where(and(eq(realmLatest.regionId, regionId), inArray(realmLatest.itemId, batch)))
       .groupBy(realmLatest.itemId, realmLatest.connectedRealmId)
       .as("current_realm_quotes");
@@ -168,7 +172,7 @@ async function loadEuRealmBenchmarks(regionId: string, itemIds: number[]): Promi
         averageMinPrice: sql<number>`avg(${perRealm.minPrice})::bigint`,
         totalQuantity: sql<number>`sum(${perRealm.totalQuantity})::bigint`,
         numAuctions: sql<number>`sum(${perRealm.numAuctions})::int`,
-        observedAt: sql<Date>`max(${perRealm.observedAt})`,
+        observedAt: sql<Date>`max(${perRealm.observedAt})`.mapWith(realmLatest.observedAt),
         variantCount: sql<number>`sum(${perRealm.variantCount})::int`,
         realmCount: sql<number>`count(*)::int`,
       })
@@ -238,9 +242,10 @@ export async function getCurrentRealmComparison(regionId: string, itemId: number
       totalQuantity: sql<number>`sum(${realmLatest.totalQuantity})::bigint`,
       numAuctions: sql<number>`sum(${realmLatest.numAuctions})::int`,
       variantCount: sql<number>`count(*)::int`,
-      observedAt: sql<Date>`max(${realmLatest.observedAt})`,
+      observedAt: sql<Date>`max(${realmObservedAt})`.mapWith(realmLatest.observedAt),
     })
     .from(realmLatest)
+    .leftJoin(marketObservations, realmObservationJoin)
     .where(and(eq(realmLatest.regionId, regionId), eq(realmLatest.itemId, itemId)))
     .groupBy(realmLatest.connectedRealmId, realmLatest.regionId);
 

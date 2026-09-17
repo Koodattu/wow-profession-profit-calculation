@@ -9,6 +9,7 @@ const itemId = 2_147_480_001;
 const realmId = 2_147_480_001;
 async function clean() {
   await sql`DELETE FROM realm_latest WHERE item_id = ${itemId}`;
+  await sql`DELETE FROM market_observations WHERE region_id = 'eu' AND connected_realm_id IN (${realmId}, ${realmId + 1})`;
   await sql`DELETE FROM auction_sync_runs WHERE connected_realm_id IN (${realmId}, ${realmId + 1})`;
   await sql`DELETE FROM items WHERE id = ${itemId}`;
 }
@@ -19,20 +20,25 @@ test("current listings preserve exact quantities, isolate realms and versions, p
   await db.insert(regions).values({ id: "eu", name: "Europe", apiHost: "eu.api.blizzard.com", oauthHost: "oauth.battle.net" }).onConflictDoNothing();
   await db.insert(items).values({ id: itemId, name: "Gear listing integration fixture", metadataStatus: "complete" });
   let fail = false;
+  let now = new Date("2026-09-10T10:00:00Z");
   let auctions: RealmAuctionInput[] = [
     { id: 9001, item: { id: itemId, bonus_lists: [12849, 13335], modifiers: [{ type: 29, value: 32 }] }, buyout: 101, quantity: 3, bid: 90, time_left: "LONG" },
     ...Array.from({ length: 51 }, (_, index) => ({ id: 10000 + index, item: { id: itemId, bonus_lists: [13335, 12849], modifiers: [{ type: 29, value: 32 }] }, buyout: 200 + index, quantity: 2 })),
     { id: 9002, item: { id: itemId, bonus_lists: [12854, 13335] }, buyout: 1000, quantity: 1 },
     { id: 9003, item: { id: itemId }, bid: 50, quantity: 1 },
   ];
-  const refresh = createAuctionRefreshModule({ realmHistoryIntervalHours: 1, source: {
+  const refresh = createAuctionRefreshModule({ realmHistoryIntervalHours: 1, now: () => now, source: {
     fetchCommodityAuctions: async () => [], fetchRealmAuctions: async () => { if (fail) throw new Error("fixture unavailable"); return auctions; },
   } });
   await refresh.refreshRealm("eu", realmId, new Set());
+  now = new Date("2026-09-10T11:00:00Z");
+  await refresh.refreshRealm("eu", realmId, new Set());
   const variants = await getGearVariants(itemId);
+  expect(variants.variants[0]?.realms[0]?.observedAt).toEqual(now);
   expect(variants.variants).toHaveLength(2);
   const key = variants.variants.find((variant) => variant.bonusLists.includes(12849))!.key;
   const page1 = await getGearListings(itemId, realmId, key, 1);
+  expect(page1.observedAt).toEqual(now);
   expect(page1).toMatchObject({ total: 52, totalPages: 2, detailsAvailable: true });
   expect(page1.listings).toHaveLength(50);
   expect(page1.listings[0]).toEqual({ id: "9001", buyout: 101, quantity: 3, bid: 90, timeLeft: "LONG" });
