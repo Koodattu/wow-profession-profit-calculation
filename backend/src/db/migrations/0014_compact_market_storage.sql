@@ -29,16 +29,22 @@ FROM realm_latest r JOIN realm_variants v USING(variant_key);
 --> statement-breakpoint
 ALTER TABLE realm_latest_compact ADD CONSTRAINT realm_latest_region_id_connected_realm_id_item_id_variant_id_pk PRIMARY KEY(region_id,connected_realm_id,item_id,variant_id);
 --> statement-breakpoint
+ANALYZE realm_latest_compact;
+--> statement-breakpoint
+ANALYZE realm_variants;
+--> statement-breakpoint
+ANALYZE realm_latest;
+--> statement-breakpoint
 DO $$ BEGIN
- IF (SELECT count(*) FROM realm_latest) <> (SELECT count(*) FROM realm_latest_compact) OR EXISTS (
-  SELECT 1 FROM realm_latest r JOIN realm_variants v USING(variant_key)
+ IF (SELECT count(*) FROM realm_latest) <> (SELECT count(*) FROM realm_latest_compact) OR (
+  SELECT count(*) FROM realm_latest r JOIN realm_variants v USING(variant_key)
   JOIN realm_latest_compact n ON (n.region_id,n.connected_realm_id,n.item_id,n.variant_id)=(r.region_id,r.connected_realm_id,r.item_id,v.id)
   WHERE to_jsonb(r) IS DISTINCT FROM (
    (to_jsonb(n)-'variant_id'-'listings') || (to_jsonb(v)-'id') || jsonb_build_object('listings',
     CASE WHEN n.listings IS NULL THEN NULL ELSE coalesce((SELECT jsonb_agg(jsonb_build_object(
      'id',l->0,'buyout',l->1,'quantity',l->2,'bid',l->3,'timeLeft',l->4) ORDER BY ord)
      FROM jsonb_array_elements(n.listings) WITH ORDINALITY a(l,ord)), '[]'::jsonb) END))
- ) THEN RAISE EXCEPTION 'Current market reconstruction failed; original data retained'; END IF;
+ ) <> 0 THEN RAISE EXCEPTION 'Current market reconstruction failed; original data retained'; END IF;
 END $$;
 --> statement-breakpoint
 DROP TABLE realm_latest;
