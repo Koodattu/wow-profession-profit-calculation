@@ -52,6 +52,7 @@ jobs:
       - run: bun test ./test/market-refresh-cycle.integration.ts
       - run: bun test ./test/current-market-write.integration.ts
       - run: bun test ./test/item-metadata.integration.ts
+      - run: bun test ./test/realm-history-storage.integration.ts
 
   frontend:
     runs-on: ubuntu-latest

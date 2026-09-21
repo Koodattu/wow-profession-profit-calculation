@@ -153,10 +153,14 @@ test("compaction requires matching daily totals and verified recoverable archive
 });
 
 test("current realm averages use exact totals without inventing a combined median", async () => {
+  const definitions = await sql`
+    INSERT INTO realm_variants (variant_key,bonus_lists,modifiers) VALUES ('maintenance-a','[]','[]'),('maintenance-b','[]','[]')
+    ON CONFLICT (variant_key) DO UPDATE SET variant_key=excluded.variant_key RETURNING id,variant_key
+  `;
   await sql`
-    INSERT INTO realm_latest (region_id, connected_realm_id, item_id, variant_key, sync_run_id, observed_at, min_buyout, avg_buyout, median_buyout, max_buyout, total_quantity, num_auctions, total_value)
-    VALUES (${REGION}, 1, ${ITEM_ID}, 'a', 0, now(), 2, 2, 2, 2, 2, 1, 3),
-           (${REGION}, 1, ${ITEM_ID}, 'b', 0, now(), 1, 1, 1, 1, 1, 1, 1)
+    INSERT INTO realm_latest (region_id, connected_realm_id, item_id, variant_id, sync_run_id, observed_at, min_buyout, avg_buyout, median_buyout, max_buyout, total_quantity, num_auctions, total_value)
+    VALUES (${REGION}, 1, ${ITEM_ID}, ${definitions.find(d => d.variant_key === 'maintenance-a')!.id}, 0, now(), 2, 2, 2, 2, 2, 1, 3),
+           (${REGION}, 1, ${ITEM_ID}, ${definitions.find(d => d.variant_key === 'maintenance-b')!.id}, 0, now(), 1, 1, 1, 1, 1, 1, 1)
   `;
   const quote = (await getCurrentItemMarkets(REGION, [ITEM_ID], 1)).get(ITEM_ID)?.selectedRealmQuote;
   expect(quote?.avgPrice).toBe(1);

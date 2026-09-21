@@ -1,4 +1,4 @@
-import { pgTable, text, integer, serial, bigserial, bigint, numeric, boolean, timestamp, date, jsonb, index, uniqueIndex, primaryKey } from "drizzle-orm/pg-core";
+import { pgTable, pgView, text, integer, serial, bigserial, bigint, numeric, boolean, timestamp, date, jsonb, index, uniqueIndex, primaryKey } from "drizzle-orm/pg-core";
 import type { GearData } from "../services/gear-data";
 
 export const gearReference = pgTable("gear_reference", {
@@ -14,6 +14,9 @@ export interface RealmListing {
   bid: number | null;
   timeLeft: string | null;
 }
+
+// Version 1: auction ID, total buyout, quantity, bid, time left. API objects remain unchanged.
+export type StoredRealmListing = [string, number, number, number | null, string | null];
 
 // ─── Static Data (from game-data-parsed) ─────────────────────────────
 
@@ -252,6 +255,18 @@ export const commodityLatest = pgTable(
   (t) => [primaryKey({ columns: [t.regionId, t.itemId] }), index("idx_commodity_latest_observed").on(t.regionId, t.observedAt)],
 );
 
+export const realmVariants = pgTable("realm_variants", {
+  id: serial("id").primaryKey(),
+  variantKey: text("variant_key").notNull().unique(),
+  context: integer("context"),
+  bonusLists: jsonb("bonus_lists").$type<number[]>().notNull(),
+  modifiers: jsonb("modifiers").$type<{ type: number; value: number }[]>().notNull(),
+  petBreedId: integer("pet_breed_id"),
+  petLevel: integer("pet_level"),
+  petQualityId: integer("pet_quality_id"),
+  petSpeciesId: integer("pet_species_id"),
+});
+
 export const realmLatest = pgTable(
   "realm_latest",
   {
@@ -262,17 +277,10 @@ export const realmLatest = pgTable(
     itemId: integer("item_id")
       .notNull()
       .references(() => items.id),
-    variantKey: text("variant_key").notNull(),
-    listings: jsonb("listings").$type<RealmListing[]>(),
+    variantId: integer("variant_id").notNull().references(() => realmVariants.id),
+    listings: jsonb("listings").$type<StoredRealmListing[]>(),
     syncRunId: bigint("sync_run_id", { mode: "number" }).notNull(),
     observedAt: timestamp("observed_at", { withTimezone: true }).notNull(),
-    context: integer("context"),
-    bonusLists: jsonb("bonus_lists").$type<number[]>().notNull().default([]),
-    modifiers: jsonb("modifiers").$type<{ type: number; value: number }[]>().notNull().default([]),
-    petBreedId: integer("pet_breed_id"),
-    petLevel: integer("pet_level"),
-    petQualityId: integer("pet_quality_id"),
-    petSpeciesId: integer("pet_species_id"),
     minBuyout: bigint("min_buyout", { mode: "number" }).notNull(),
     avgBuyout: bigint("avg_buyout", { mode: "number" }).notNull(),
     medianBuyout: bigint("median_buyout", { mode: "number" }).notNull(),
@@ -282,9 +290,8 @@ export const realmLatest = pgTable(
     numAuctions: integer("num_auctions").notNull(),
   },
   (t) => [
-    primaryKey({ columns: [t.regionId, t.connectedRealmId, t.itemId, t.variantKey] }),
+    primaryKey({ columns: [t.regionId, t.connectedRealmId, t.itemId, t.variantId] }),
     index("idx_realm_latest_item").on(t.regionId, t.itemId),
-    index("idx_realm_latest_realm").on(t.regionId, t.connectedRealmId, t.observedAt),
   ],
 );
 
@@ -340,6 +347,35 @@ export const realmSnapshots = pgTable(
 );
 
 // ─── Aggregated Tables ───────────────────────────────────────────────
+
+export const realmHistoryBlocks = pgTable("realm_history_blocks", {
+  regionId: text("region_id").notNull(),
+  connectedRealmId: integer("connected_realm_id").notNull(),
+  itemId: integer("item_id").notNull().references(() => items.id),
+  day: date("day").notNull(),
+  observations: jsonb("observations").notNull(),
+}, (t) => [
+  primaryKey({ columns: [t.regionId, t.connectedRealmId, t.itemId, t.day] }),
+  index("idx_realm_history_blocks_item_day").on(t.itemId, t.day),
+  index("idx_realm_history_blocks_day").on(t.day),
+]);
+
+// The SQL view expands packed days and includes still-unpacked observations.
+export const realmHistory = pgView("realm_history", {
+  id: bigint("id", { mode: "number" }).notNull(),
+  connectedRealmId: integer("connected_realm_id").notNull(),
+  regionId: text("region_id").notNull(),
+  itemId: integer("item_id").notNull(),
+  snapshotTime: timestamp("snapshot_time", { withTimezone: true }).notNull(),
+  minBuyout: bigint("min_buyout", { mode: "number" }).notNull(),
+  avgBuyout: bigint("avg_buyout", { mode: "number" }),
+  medianBuyout: bigint("median_buyout", { mode: "number" }),
+  maxBuyout: bigint("max_buyout", { mode: "number" }),
+  totalQuantity: bigint("total_quantity", { mode: "number" }).notNull(),
+  numAuctions: integer("num_auctions"),
+  totalValue: numeric("total_value", { precision: 40, scale: 0 }),
+  historyDay: date("history_day").notNull(),
+}).existing();
 
 export const commodityDaily = pgTable(
   "commodity_daily",

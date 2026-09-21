@@ -2,6 +2,10 @@
 
 Keep detailed observations in PostgreSQL for 30 days by default (`RAW_SNAPSHOT_RETENTION_DAYS`). Keep daily summaries indefinitely. Before removing any older UTC day's observations, write and verify a compressed archive. The Compose `price_history_archives` volume is mounted at `/archives` and survives container replacement. Outside Compose, `HISTORY_ARCHIVE_DIR` defaults to the repository's ignored `backups/price-history` directory.
 
+Within that 30-day window, completed days older than two UTC calendar days are stored in `realm_history_blocks`, one JSONB block per item, connected realm, region and day. PostgreSQL compresses these larger values. Today and the preceding days remain ordinary `realm_snapshots` rows. The `realm_history` view expands both formats into the same observations; charts, rollups and archives read through it. Packing is not a daily average: every original ID, microsecond timestamp, null, quantity, auction count and exact numeric total survives. Repeated observations keep their individual weights.
+
+Packing runs after archival in daily maintenance. Each day uses one transaction, a shared maintenance advisory lock and a short-timeout write lock on raw realm history. Existing blocks and late raw observations are combined, expanded, and compared in both directions with `EXCEPT ALL` before any raw rows are deleted. A mismatch rolls back that day. Concurrent packing/archival cannot publish overlapping formats. Query callers filter `history_day` as well as timestamps so unrelated blocks need not be expanded. Sampling cadence considers both raw and packed observations.
+
 The archive preserves every saved snapshot column. It cannot recover original individual auction listings or variants that were never stored in older snapshots. Current auction state is still refreshed separately. Tracked realm history defaults to one observation per UTC hour; `REALM_HISTORY_INTERVAL_HOURS` can explicitly reduce that sampling frequency. History coverage remains all commodities and the tracked profession realm items; broad realm discovery does not automatically create history for every non-profession item.
 
 ## Statistical contract
@@ -44,6 +48,8 @@ bun run verify-history-archive /archives/commodity_snapshots-DATE-UUID.ndjson.gz
 ```
 
 The manifest identifies the source table, UTC day, record count, and SHA-256 of the uncompressed NDJSON. The integration test verifies that decompressed records can be read back through PostgreSQL's `json_populate_record` without losing the exact value total.
+
+Packed realm observations are expanded before archival, so archive manifests and recovered `realm_snapshots` records retain the existing format. Database dumps contain both `realm_snapshots` and `realm_history_blocks`; restoring only the former does not restore all recent history. Current variant metadata lives in `realm_variants`, referenced by `realm_latest.variant_id`. Listings use version-1 JSON tuples `[auctionId, totalBuyout, quantity, bid, timeLeft]` internally; HTTP listing responses continue returning named fields.
 
 For recovery, first verify the file, then decompress it and import each JSON line into an isolated recovery database with the matching snapshot schema using `json_populate_record(NULL::commodity_snapshots, record::json)` or its realm equivalent. Restore original IDs and deduplicate by ID if several archives cover the same day. Do not restore directly over live history or reset live sequences without a reviewed recovery plan.
 

@@ -2,6 +2,7 @@ import { sql } from "drizzle-orm";
 import { env } from "../config/env";
 import { db } from "../db";
 import { archiveExpiredPriceHistory } from "./price-history-archive";
+import { packRealmHistory } from "./realm-history-storage";
 
 export async function aggregateDailyPrices(): Promise<void> {
   await db.execute(sql`
@@ -52,11 +53,11 @@ export async function aggregateDailyPrices(): Promise<void> {
       round(avg(total_quantity))::bigint,
       sum(coalesce(total_value, coalesce(avg_buyout, min_buyout)::numeric * total_quantity)),
       sum(total_quantity), count(*)::int, bool_and(total_value IS NOT NULL)
-    FROM realm_snapshots
-    WHERE snapshot_time >= coalesce(
-      (SELECT (date_trunc('day', last_success_at AT TIME ZONE 'UTC') - interval '1 day') AT TIME ZONE 'UTC'
+    FROM realm_history
+    WHERE history_day >= coalesce(
+      (SELECT (last_success_at AT TIME ZONE 'UTC')::date - 1
        FROM sync_jobs WHERE name = 'quantity-weighted-rollups'),
-      '-infinity'::timestamptz
+      '-infinity'::date
     )
     GROUP BY connected_realm_id, region_id, item_id, (snapshot_time AT TIME ZONE 'UTC')::date
     ON CONFLICT (connected_realm_id, region_id, item_id, date) DO UPDATE SET
@@ -93,5 +94,6 @@ export async function runPriceMaintenance(): Promise<void> {
   await aggregateDailyPrices();
   console.log(`[Maintenance] Archiving raw snapshots older than ${env.RAW_SNAPSHOT_RETENTION_DAYS} days`);
   await pruneRawPrices();
+  console.log(`[Maintenance] Packed ${await packRealmHistory()} realm observations without discarding detail`);
   console.log("[Maintenance] Price history maintenance complete");
 }
