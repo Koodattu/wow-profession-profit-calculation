@@ -33,7 +33,11 @@ The historical primary key and lookup indexes remain: packing reduces their work
 
 Migration 0014 is transactional and requires a current-market write/read lock. It creates and validates a replacement table, builds a smaller primary key and retains foreign keys. Conflicting identities or any reconstruction mismatch abort the migration. A five-second lock timeout prevents waiting indefinitely for another workload; schedule this release between refreshes.
 
+The first production attempt was explicitly cancelled during verification and rolled back completely; migration 0014 was not recorded as applied. The previous backend was restored and public readiness returned 200. Its `EXISTS` verification encouraged a fast-first-match plan that paired many versions before matching their definitions. Before retrying, the migration was corrected to analyze all participating tables and count all reconstruction mismatches, favoring a complete comparison plan. Both versions enforce the same exact reconstruction requirement.
+
 Take a same-host database backup and matching archive bundle before the release. Allow additional space for the replacement current table, packed blocks and WAL. The migration does not immediately pack history; startup/daily maintenance does that in separate per-day transactions. Verify readiness, refresh completion, history/listing endpoints, maintenance status and table sizes after release.
+
+On the VM, backup commands must include the production Compose override and `run --rm --no-deps db-backup` against the already-running database. Omitting the override can recreate dependency containers with the base configuration. This occurred during the first backup; the production override was restored and public readiness checked before deployment continued. The same-host backup files are `wowtools-20260921T092544Z.dump` and `price-history-20260921T092544Z.tar`; both were verified readable.
 
 After packing completes, an operator can run `VACUUM (FULL, ANALYZE) realm_snapshots` during a coordinated maintenance window to return its unused allocation to the filesystem. This locks the raw history table and is deliberately not part of recurring maintenance or application startup. Ordinary future vacuum can reuse space in the much smaller raw table.
 

@@ -1,6 +1,6 @@
 import { sql } from "../db";
 
-// Keep today and yesterday mutable; completed older days are losslessly packed.
+// Keep today and the preceding two UTC days mutable; older days are losslessly packed.
 // One day per transaction bounds locks, memory and recovery work.
 export async function packRealmHistory(cutoff = new Date(Date.now() - 2 * 86_400_000)): Promise<number> {
   const cutoffDay = cutoff.toISOString().slice(0, 10);
