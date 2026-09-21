@@ -7,6 +7,7 @@ import {
   type CommodityAuctionInput,
   type RealmAuctionInput,
 } from "../src/services/auction-refresh";
+import { packRealmHistory } from "../src/services/realm-history-storage";
 
 const TEST_REGION = "archtest";
 const TEST_ITEM_MIN = 2_100_000_000;
@@ -22,6 +23,7 @@ async function cleanAuctionRefreshTestMarket(): Promise<void> {
   await sql`DELETE FROM realm_daily WHERE region_id = ${TEST_REGION}`;
   await sql`DELETE FROM commodity_daily WHERE region_id = ${TEST_REGION}`;
   await sql`DELETE FROM realm_snapshots WHERE region_id = ${TEST_REGION}`;
+  await sql`DELETE FROM realm_history_blocks WHERE region_id = ${TEST_REGION}`;
   await sql`DELETE FROM commodity_snapshots WHERE region_id = ${TEST_REGION}`;
   await sql`DELETE FROM realm_latest WHERE region_id = ${TEST_REGION}`;
   await sql`DELETE FROM commodity_latest WHERE region_id = ${TEST_REGION}`;
@@ -176,7 +178,8 @@ describe.serial("auction refresh interface", () => {
       const third = await refresh.refreshRealm(TEST_REGION, 2_147_483_001, new Set([itemId]));
 
       const current = rows(
-        await sql`SELECT variant_key, bonus_lists, modifiers, min_buyout, num_auctions, total_value::text FROM realm_latest WHERE region_id = ${TEST_REGION}`,
+        await sql`SELECT variant_key, bonus_lists, modifiers, min_buyout, num_auctions, total_value::text
+          FROM realm_latest JOIN realm_variants ON realm_latest.variant_id=realm_variants.id WHERE region_id = ${TEST_REGION}`,
       );
       const history = rows(await sql`SELECT snapshot_time FROM realm_snapshots WHERE region_id = ${TEST_REGION} ORDER BY snapshot_time`);
       expect(current).toHaveLength(1);
@@ -269,4 +272,22 @@ describe.serial("auction refresh interface", () => {
     },
     20_000,
   );
+
+  test("packing the latest observation preserves a multi-day history cadence", async () => {
+    await prepareTestMarket();
+    try {
+      const itemId = TEST_ITEM_MIN + 3;
+      await seedTestItems([itemId]);
+      const interval = 72 * 60 * 60 * 1000;
+      let now = new Date(Math.floor(Date.parse('2026-08-01') / interval) * interval + 3600000);
+      const refresh = createAuctionRefreshModule({ realmHistoryIntervalHours: 72, now: () => now,
+        source: sourceWith({ fetchRealmAuctions: async () => [{ item: { id: itemId }, buyout: 100, quantity: 3 }] }) });
+      expect((await refresh.refreshRealm(TEST_REGION, 2_147_483_001, new Set([itemId]))).historyRowCount).toBe(1);
+      await packRealmHistory(new Date(now.getTime() + 86400000));
+      now = new Date(now.getTime() + 3600000);
+      expect((await refresh.refreshRealm(TEST_REGION, 2_147_483_001, new Set([itemId]))).historyRowCount).toBe(0);
+      now = new Date(now.getTime() + interval);
+      expect((await refresh.refreshRealm(TEST_REGION, 2_147_483_001, new Set([itemId]))).historyRowCount).toBe(1);
+    } finally { await cleanAuctionRefreshTestMarket(); }
+  });
 });

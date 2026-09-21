@@ -1,6 +1,6 @@
 import { and, desc, eq, gte, inArray, sql } from "drizzle-orm";
 import { db } from "../db";
-import { commodityDaily, commoditySnapshots, realmDaily, realmSnapshots } from "../db/schema";
+import { commodityDaily, commoditySnapshots, realmDaily, realmHistory } from "../db/schema";
 import { getCurrentItemMarkets, type MarketQuote } from "./current-market";
 
 export const HISTORY_RANGES = ["24h", "7d", "14d", "30d", "6m", "1y", "all"] as const;
@@ -167,17 +167,17 @@ async function getRealmHistory(
     return groupHistory(rows, itemIds);
   }
 
-  const conditions = [inArray(realmSnapshots.itemId, itemIds), eq(realmSnapshots.regionId, regionId)];
-  if (cutoff) conditions.push(gte(realmSnapshots.snapshotTime, cutoff));
-  if (connectedRealmId !== undefined) conditions.push(eq(realmSnapshots.connectedRealmId, connectedRealmId));
-  const hourBucket = sql<Date>`date_trunc('hour', ${realmSnapshots.snapshotTime})`;
+  const conditions = [inArray(realmHistory.itemId, itemIds), eq(realmHistory.regionId, regionId)];
+  if (cutoff) conditions.push(gte(realmHistory.snapshotTime, cutoff), gte(realmHistory.historyDay, cutoff.toISOString().slice(0, 10)));
+  if (connectedRealmId !== undefined) conditions.push(eq(realmHistory.connectedRealmId, connectedRealmId));
+  const hourBucket = sql<Date>`date_trunc('hour', ${realmHistory.snapshotTime})`;
   if (connectedRealmId === undefined) {
     const rows = await db.execute(sql`
       WITH per_realm AS (
         SELECT DISTINCT ON (item_id, connected_realm_id, ${hourBucket})
           item_id, connected_realm_id, ${hourBucket} AS hour,
           min_buyout, avg_buyout, max_buyout, total_quantity, total_value
-        FROM realm_snapshots WHERE ${and(...conditions)}
+        FROM realm_history WHERE ${and(...conditions)}
         ORDER BY item_id, connected_realm_id, ${hourBucket}, snapshot_time DESC, id DESC
       )
       SELECT item_id AS "itemId", hour AS time,
@@ -196,18 +196,18 @@ async function getRealmHistory(
   }
   const rows = await db
     .select({
-      itemId: realmSnapshots.itemId,
+      itemId: realmHistory.itemId,
       time: hourBucket,
-      min_price: sql<number>`(array_agg(${realmSnapshots.minBuyout} ORDER BY ${realmSnapshots.snapshotTime} DESC))[1]`,
-      avg_price: sql<number>`(array_agg(${realmSnapshots.avgBuyout} ORDER BY ${realmSnapshots.snapshotTime} DESC))[1]`,
-      median_price: sql<number>`(array_agg(${realmSnapshots.medianBuyout} ORDER BY ${realmSnapshots.snapshotTime} DESC))[1]`,
-      max_price: sql<number>`(array_agg(${realmSnapshots.maxBuyout} ORDER BY ${realmSnapshots.snapshotTime} DESC))[1]`,
-      total_quantity: sql<number>`(array_agg(${realmSnapshots.totalQuantity} ORDER BY ${realmSnapshots.snapshotTime} DESC))[1]`,
+      min_price: sql<number>`(array_agg(${realmHistory.minBuyout} ORDER BY ${realmHistory.snapshotTime} DESC))[1]`,
+      avg_price: sql<number>`(array_agg(${realmHistory.avgBuyout} ORDER BY ${realmHistory.snapshotTime} DESC))[1]`,
+      median_price: sql<number>`(array_agg(${realmHistory.medianBuyout} ORDER BY ${realmHistory.snapshotTime} DESC))[1]`,
+      max_price: sql<number>`(array_agg(${realmHistory.maxBuyout} ORDER BY ${realmHistory.snapshotTime} DESC))[1]`,
+      total_quantity: sql<number>`(array_agg(${realmHistory.totalQuantity} ORDER BY ${realmHistory.snapshotTime} DESC))[1]`,
     })
-    .from(realmSnapshots)
+    .from(realmHistory)
     .where(and(...conditions))
-    .groupBy(realmSnapshots.itemId, hourBucket)
-    .orderBy(realmSnapshots.itemId, desc(hourBucket));
+    .groupBy(realmHistory.itemId, hourBucket)
+    .orderBy(realmHistory.itemId, desc(hourBucket));
   return groupHistory(rows, itemIds);
 }
 

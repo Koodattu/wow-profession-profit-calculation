@@ -1,16 +1,18 @@
 import { and, eq } from "drizzle-orm";
 import { db } from "../db";
-import { marketObservations, realmLatest } from "../db/schema";
+import { marketObservations, realmLatest, realmVariants } from "../db/schema";
+import { unpackRealmListings } from "./realm-variant-storage";
 import { realmObservationJoin, realmObservedAt } from "./current-observation";
 import { getGearData } from "./gear-data";
 import { decodeGear } from "./gear-decoder";
 
 export async function getGearVariants(itemId: number) {
   const rows = await db.select({
-    key: realmLatest.variantKey, context: realmLatest.context, bonusLists: realmLatest.bonusLists, modifiers: realmLatest.modifiers,
+    key: realmVariants.variantKey, context: realmVariants.context, bonusLists: realmVariants.bonusLists, modifiers: realmVariants.modifiers,
     connectedRealmId: realmLatest.connectedRealmId, minBuyout: realmLatest.minBuyout,
     totalQuantity: realmLatest.totalQuantity, numAuctions: realmLatest.numAuctions, observedAt: realmObservedAt,
-  }).from(realmLatest).leftJoin(marketObservations, realmObservationJoin).where(and(eq(realmLatest.regionId, "eu"), eq(realmLatest.itemId, itemId)));
+  }).from(realmLatest).innerJoin(realmVariants, eq(realmLatest.variantId, realmVariants.id))
+    .leftJoin(marketObservations, realmObservationJoin).where(and(eq(realmLatest.regionId, "eu"), eq(realmLatest.itemId, itemId)));
   type Variant = ReturnType<typeof decodeGear> & {
     key: string; context: number | null; bonusLists: number[]; modifiers: { type: number; value: number }[];
     realms: { connectedRealmId: number; minBuyout: number; totalQuantity: number; numAuctions: number; observedAt: Date }[];
@@ -31,10 +33,11 @@ export async function getGearVariants(itemId: number) {
 }
 
 export async function getGearListings(itemId: number, connectedRealmId: number, variantKey: string, page: number) {
-  const [row] = await db.select({ listings: realmLatest.listings, observedAt: realmObservedAt }).from(realmLatest).leftJoin(marketObservations, realmObservationJoin)
-    .where(and(eq(realmLatest.regionId, "eu"), eq(realmLatest.itemId, itemId), eq(realmLatest.connectedRealmId, connectedRealmId), eq(realmLatest.variantKey, variantKey)))
+  const [row] = await db.select({ listings: realmLatest.listings, observedAt: realmObservedAt }).from(realmLatest)
+    .innerJoin(realmVariants, eq(realmLatest.variantId, realmVariants.id)).leftJoin(marketObservations, realmObservationJoin)
+    .where(and(eq(realmLatest.regionId, "eu"), eq(realmLatest.itemId, itemId), eq(realmLatest.connectedRealmId, connectedRealmId), eq(realmVariants.variantKey, variantKey)))
     .limit(1);
-  const listings = [...(row?.listings ?? [])].sort((a, b) => {
+  const listings = unpackRealmListings(row?.listings ?? []).sort((a, b) => {
     const delta = BigInt(a.buyout) * BigInt(b.quantity) - BigInt(b.buyout) * BigInt(a.quantity);
     return delta < 0n ? -1 : delta > 0n ? 1 : a.id.localeCompare(b.id);
   });

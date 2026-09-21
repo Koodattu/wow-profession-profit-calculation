@@ -46,22 +46,37 @@ export async function archiveExpiredPriceHistory(options: { directory?: string; 
     const average = realm ? "avg_buyout" : "avg_price";
     const minimum = realm ? "min_buyout" : "min_price";
     const maximum = realm ? "max_buyout" : "max_price";
+    const source = realm ? "realm_history" : table;
     const dates = await sql<{ day: string }[]>`
-      SELECT DISTINCT (snapshot_time AT TIME ZONE 'UTC')::date::text AS day
-      FROM ${sql(table)} WHERE snapshot_time < ${cutoffDay}::date AT TIME ZONE 'UTC' ORDER BY day
+      ${realm ? sql`
+        SELECT DISTINCT day FROM (
+          SELECT (snapshot_time AT TIME ZONE 'UTC')::date::text AS day FROM realm_snapshots
+          WHERE snapshot_time < ${cutoffDay}::date AT TIME ZONE 'UTC'
+          UNION SELECT day::text FROM realm_history_blocks WHERE day < ${cutoffDay}::date
+        ) d ORDER BY day
+      ` : sql`
+        SELECT DISTINCT (snapshot_time AT TIME ZONE 'UTC')::date::text AS day
+        FROM ${sql(table)} WHERE snapshot_time < ${cutoffDay}::date AT TIME ZONE 'UTC' ORDER BY day
+      `}
     `;
 
     for (const { day } of dates) {
       await sql.begin("isolation level repeatable read", async (tx) => {
+        if (realm) {
+          await tx`SELECT pg_advisory_xact_lock(hashtextextended('realm-history-storage', 0))`;
+          await tx`SET LOCAL lock_timeout = '5s'`;
+          await tx`LOCK TABLE realm_snapshots IN SHARE ROW EXCLUSIVE MODE`;
+        }
         const scope = realm ? tx`region_id, connected_realm_id, item_id` : tx`region_id, item_id`;
         const [coverage] = await tx<{ missing: number }[]>`
           WITH raw AS (
             SELECT ${scope}, count(*)::int AS samples, sum(total_quantity) AS quantity,
               sum(coalesce(total_value, coalesce(${tx(average)}, ${tx(minimum)})::numeric * total_quantity)) AS value,
               min(${tx(minimum)}) AS minimum, max(${tx(maximum)}) AS maximum
-            FROM ${tx(table)}
+            FROM ${tx(source)}
             WHERE snapshot_time >= ${day}::date AT TIME ZONE 'UTC'
               AND snapshot_time < (${day}::date + 1) AT TIME ZONE 'UTC'
+              ${realm ? tx`AND history_day = ${day}::date` : tx``}
             GROUP BY ${scope}
           )
           SELECT count(*)::int AS missing FROM raw r
@@ -83,9 +98,10 @@ export async function archiveExpiredPriceHistory(options: { directory?: string; 
         let rowCount = 0;
         async function* records() {
           for await (const batch of tx<{ payload: string }[]>`
-            SELECT row_to_json(s)::text AS payload FROM ${tx(table)} s
+            SELECT ${realm ? tx`(to_jsonb(s)-'history_day')::text` : tx`row_to_json(s)::text`} AS payload FROM ${tx(source)} s
             WHERE snapshot_time >= ${day}::date AT TIME ZONE 'UTC'
               AND snapshot_time < (${day}::date + 1) AT TIME ZONE 'UTC'
+              ${realm ? tx`AND history_day = ${day}::date` : tx``}
             ORDER BY id
           `.cursor(2_000)) {
             for (const row of batch) {
@@ -117,7 +133,12 @@ export async function archiveExpiredPriceHistory(options: { directory?: string; 
           WHERE snapshot_time >= ${day}::date AT TIME ZONE 'UTC'
             AND snapshot_time < (${day}::date + 1) AT TIME ZONE 'UTC'
         `;
-        if (deleted.count !== rowCount) throw new Error(`Archive row count changed for ${table} on ${day}; deletion rolled back`);
+        let deletedCount = deleted.count;
+        if (realm) {
+          const blocks = await tx`DELETE FROM realm_history_blocks WHERE day=${day}::date RETURNING jsonb_array_length(observations) AS samples`;
+          deletedCount += blocks.reduce((sum, block) => sum + Number(block.samples), 0);
+        }
+        if (deletedCount !== rowCount) throw new Error(`Archive row count changed for ${table} on ${day}; deletion rolled back`);
         console.log(`[Maintenance] Archived ${rowCount} ${table} rows for ${day}`);
       });
     }

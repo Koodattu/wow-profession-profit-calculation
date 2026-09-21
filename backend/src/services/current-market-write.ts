@@ -1,6 +1,7 @@
 import { and, eq, getTableColumns, getTableName, sql } from "drizzle-orm";
 import { db } from "../db";
 import { commodityLatest, marketObservations, realmLatest } from "../db/schema";
+import { storeRealmVariants, type RealmMarketInput } from "./realm-variant-storage";
 
 type Transaction = Parameters<Parameters<typeof db.transaction>[0]>[0];
 type CurrentTable = typeof commodityLatest | typeof realmLatest;
@@ -10,7 +11,7 @@ type CurrentTable = typeof commodityLatest | typeof realmLatest;
 export async function writeCurrentMarket(
   tx: Transaction,
   table: CurrentTable,
-  rows: (typeof commodityLatest.$inferInsert | typeof realmLatest.$inferInsert)[],
+  rows: (typeof commodityLatest.$inferInsert | RealmMarketInput)[],
   regionId: string,
   connectedRealmId: number,
   syncRunId: number,
@@ -20,10 +21,11 @@ export async function writeCurrentMarket(
   const [previous] = await tx.select({ observedAt: marketObservations.observedAt }).from(marketObservations)
     .where(and(eq(marketObservations.regionId, regionId), eq(marketObservations.connectedRealmId, connectedRealmId)));
   if (previous && previous.observedAt > observedAt) throw new Error("A newer auction observation is already published");
+  const storedRows = table === realmLatest ? await storeRealmVariants(tx, rows as RealmMarketInput[]) : rows;
   const name = getTableName(table);
   const stage = sql.identifier(`incoming_${name}`);
   const columns = Object.entries(getTableColumns(table));
-  const keys = table === realmLatest ? ["region_id", "connected_realm_id", "item_id", "variant_key"] : ["region_id", "item_id"];
+  const keys = table === realmLatest ? ["region_id", "connected_realm_id", "item_id", "variant_id"] : ["region_id", "item_id"];
   const values = columns.map(([, column]) => column.name).filter((column) => !keys.includes(column));
   const content = values.filter((column) => column !== "sync_run_id" && column !== "observed_at");
   const field = (alias: string, column: string) => sql`${sql.identifier(alias)}.${sql.identifier(column)}`;
@@ -33,8 +35,8 @@ export async function writeCurrentMarket(
     : sql`current.region_id = ${regionId}`;
 
   await tx.execute(sql`CREATE TEMP TABLE ${stage} (LIKE ${table} INCLUDING DEFAULTS) ON COMMIT DROP`);
-  for (let offset = 0; offset < rows.length; offset += 500) {
-    const payload = rows.slice(offset, offset + 500).map((row) => {
+  for (let offset = 0; offset < storedRows.length; offset += 500) {
+    const payload = storedRows.slice(offset, offset + 500).map((row) => {
       const record = row as unknown as Record<string, unknown>;
       return Object.fromEntries(columns.map(([property, column]) => [column.name, record[property] ?? null]));
     });

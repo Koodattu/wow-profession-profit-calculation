@@ -11,6 +11,7 @@ import {
 } from "../db/schema";
 import { normalizeRealmVariant, summarizePrices, type PriceEntry, type RealmAuctionIdentity } from "./auction-aggregation";
 import { writeCurrentMarket } from "./current-market-write";
+import type { RealmMarketInput } from "./realm-variant-storage";
 import { toTimestampMs } from "./freshness-policy";
 
 export interface CommodityAuctionInput {
@@ -228,11 +229,16 @@ export function createAuctionRefreshModule(dependencies: AuctionRefreshDependenc
     try {
       const auctions = await source.fetchRealmAuctions(regionId, connectedRealmId);
       const observedAt = now();
-      const [latestHistory] = await db
-        .select({ snapshotTime: sql<Date | string | null>`max(${realmSnapshots.snapshotTime})` })
-        .from(realmSnapshots)
-        .where(and(eq(realmSnapshots.regionId, regionId), eq(realmSnapshots.connectedRealmId, connectedRealmId)));
-      const latestHistoryMs = toTimestampMs(latestHistory?.snapshotTime);
+      const [latestHistory] = await db.execute(sql`
+        SELECT greatest(
+          (SELECT max(snapshot_time) FROM realm_snapshots WHERE region_id=${regionId} AND connected_realm_id=${connectedRealmId}),
+          (SELECT max((observations->-1->>'snapshot_time')::timestamptz) FROM realm_history_blocks
+           WHERE region_id=${regionId} AND connected_realm_id=${connectedRealmId} AND day=(
+             SELECT max(day) FROM realm_history_blocks WHERE region_id=${regionId} AND connected_realm_id=${connectedRealmId}
+           ))
+        ) AS "snapshotTime"
+      `);
+      const latestHistoryMs = toTimestampMs(latestHistory?.snapshotTime as Date | string | null | undefined);
       const historyIntervalMs = realmHistoryIntervalHours * 60 * 60 * 1_000;
       const historyDue = latestHistoryMs === null
         || Math.floor(observedAt.getTime() / historyIntervalMs) > Math.floor(latestHistoryMs / historyIntervalMs);
@@ -248,7 +254,7 @@ export function createAuctionRefreshModule(dependencies: AuctionRefreshDependenc
         );
       const { variantGroups, historyGroups } = groupRealmAuctions(auctions, historyDue, historyItemIds);
 
-      const latestRows: (typeof realmLatest.$inferInsert)[] = [];
+      const latestRows: RealmMarketInput[] = [];
       for (const group of variantGroups.values()) {
         const summary = summarizePrices(group.entries);
         if (!summary) continue;

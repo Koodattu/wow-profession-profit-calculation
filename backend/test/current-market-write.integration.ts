@@ -4,6 +4,7 @@ import { commodityLatest, regions } from "../src/db/schema";
 import { createAuctionRefreshModule, type CommodityAuctionInput, type RealmAuctionInput } from "../src/services/auction-refresh";
 import { getCurrentItemMarkets, getCurrentRealmComparison } from "../src/services/current-market";
 import { writeCurrentMarket } from "../src/services/current-market-write";
+import { unpackRealmListings } from "../src/services/realm-variant-storage";
 
 const region = "writetest";
 const item = 2_100_002_000;
@@ -35,6 +36,8 @@ describe.serial("incremental current market", () => {
     const commodityBefore = [...await sql`SELECT xmin::text, ctid::text FROM commodity_latest WHERE region_id=${region}`];
     const realmBefore = [...await sql`SELECT xmin::text, ctid::text FROM realm_latest WHERE region_id=${region} AND connected_realm_id=123`];
     const catalogBefore = [...await sql`SELECT id,xmin::text FROM items WHERE id IN (${item},${item + 1}) ORDER BY id`];
+    expect((await sql`SELECT count(DISTINCT variant_id)::int AS n FROM realm_latest WHERE region_id=${region}`)[0]?.n).toBe(1);
+    const sequenceBefore = [...await sql`SELECT last_value FROM realm_variants_id_seq`];
     now = new Date("2026-09-10T11:00:00Z");
     auctions.reverse();
     await refresh.refreshCommodities(region);
@@ -42,6 +45,7 @@ describe.serial("incremental current market", () => {
     expect([...await sql`SELECT xmin::text, ctid::text FROM commodity_latest WHERE region_id=${region}`]).toEqual(commodityBefore);
     expect([...await sql`SELECT xmin::text, ctid::text FROM realm_latest WHERE region_id=${region} AND connected_realm_id=123`]).toEqual(realmBefore);
     expect([...await sql`SELECT id,xmin::text FROM items WHERE id IN (${item},${item + 1}) ORDER BY id`]).toEqual(catalogBefore);
+    expect([...await sql`SELECT last_value FROM realm_variants_id_seq`]).toEqual(sequenceBefore);
     const quotes = await getCurrentItemMarkets(region, [item, item + 1], 123);
     expect(quotes.get(item)?.currentQuote?.observedAt).toEqual(now);
     expect(quotes.get(item + 1)?.currentQuote).toMatchObject({ observedAt: now, avgPrice: 60, totalQuantity: 5 });
@@ -58,7 +62,7 @@ describe.serial("incremental current market", () => {
     now = new Date("2026-09-10T11:10:00Z");
     await refresh.refreshRealm(region, 123, new Set());
     const changed = await sql`SELECT listings FROM realm_latest WHERE region_id=${region} AND connected_realm_id=123`;
-    expect(changed[0]?.listings[0]).toMatchObject({ id: "1", bid: 80, timeLeft: "SHORT" });
+    expect(unpackRealmListings(changed[0]!.listings)[0]).toMatchObject({ id: "1", bid: 80, timeLeft: "SHORT" });
 
     auctions = [{ id: 3, item: { id: item + 2 }, buyout: Number.MAX_SAFE_INTEGER, quantity: 2 },
       { id: 4, item: { id: item + 2 }, buyout: Number.MAX_SAFE_INTEGER, quantity: 3 }];

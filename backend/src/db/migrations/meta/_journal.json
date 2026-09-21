@@ -99,6 +99,13 @@
       "when": 1789644626728,
       "tag": "0013_incremental_market_refresh",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1789981723386,
+      "tag": "0014_compact_market_storage",
+      "breakpoints": true
     }
   ]
 }
