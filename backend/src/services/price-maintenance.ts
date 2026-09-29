@@ -95,5 +95,37 @@ export async function runPriceMaintenance(): Promise<void> {
   console.log(`[Maintenance] Archiving raw snapshots older than ${env.RAW_SNAPSHOT_RETENTION_DAYS} days`);
   await pruneRawPrices();
   console.log(`[Maintenance] Packed ${await packRealmHistory()} realm observations without discarding detail`);
+  const variants = await pruneUnusedRealmVariants();
+  console.log(`[Maintenance] Variant retirement: ${JSON.stringify(variants)}`);
   console.log("[Maintenance] Price history maintenance complete");
+}
+
+export async function pruneUnusedRealmVariants(now = new Date()): Promise<{ marked: number; deleted: number; skipped: boolean }> {
+  return db.transaction(async (tx) => {
+    const [lock] = await tx.execute(sql`SELECT pg_try_advisory_xact_lock(hashtextextended('realm-variant-retirement', 0)) AS acquired`);
+    if (!lock?.acquired) return { marked: 0, deleted: 0, skipped: true };
+    await tx.execute(sql`SET LOCAL statement_timeout = '60s'`);
+    await tx.execute(sql`SET LOCAL work_mem = '32MB'`);
+    // Materialize once rather than probing every realm for each definition.
+    await tx.execute(sql`CREATE TEMP TABLE referenced_realm_variants ON COMMIT DROP AS SELECT DISTINCT variant_id FROM realm_latest`);
+    await tx.execute(sql`CREATE UNIQUE INDEX ON referenced_realm_variants (variant_id)`);
+    await tx.execute(sql`ANALYZE referenced_realm_variants`);
+    await tx.execute(sql`
+      UPDATE realm_variants v SET unreferenced_at = NULL FROM referenced_realm_variants r
+      WHERE v.id = r.variant_id AND v.unreferenced_at IS NOT NULL
+    `);
+    const [marked] = await tx.execute(sql`WITH marked AS (
+      UPDATE realm_variants v SET unreferenced_at = ${now.toISOString()}::timestamptz
+      WHERE v.unreferenced_at IS NULL
+        AND NOT EXISTS (SELECT 1 FROM referenced_realm_variants r WHERE r.variant_id = v.id)
+      RETURNING id
+    ) SELECT count(*)::int AS count FROM marked`);
+    const [deleted] = await tx.execute(sql`WITH deleted AS (
+      DELETE FROM realm_variants v
+      WHERE unreferenced_at < ${now.toISOString()}::timestamptz - interval '30 days'
+        AND NOT EXISTS (SELECT 1 FROM referenced_realm_variants r WHERE r.variant_id = v.id)
+      RETURNING id
+    ) SELECT count(*)::int AS count FROM deleted`);
+    return { marked: Number(marked!.count), deleted: Number(deleted!.count), skipped: false };
+  });
 }

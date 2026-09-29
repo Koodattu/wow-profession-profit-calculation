@@ -28,6 +28,36 @@ function authorization(init: RequestInit): string | null {
 }
 
 describe("authenticated Blizzard client", () => {
+  test("body failures and HTTP failures share one bounded retry budget", async () => {
+    let requests = 0;
+    const delays: number[] = [];
+    const client = createFixtureClient(async (input) => {
+      if (String(input).includes("oauth.battle.net")) return jsonResponse({ access_token: "token", expires_in: 3600 });
+      requests++;
+      if (requests === 2) return jsonResponse({}, 503);
+      return new Response(new ReadableStream({ start(controller) { controller.error(new Error("fixture decompression failure")); } }));
+    }, { wait: async (ms) => { delays.push(ms); } });
+    await expect(client.get("eu", "/data/wow/item/1", "static")).rejects.toThrow("fixture decompression failure");
+    expect(requests).toBe(3);
+    expect(delays).toEqual([1000, 2000]);
+  });
+
+  test("retries failed OAuth and auction response bodies without publishing partial JSON", async () => {
+    let tokens = 0;
+    let auctions = 0;
+    const client = createFixtureClient(async (input) => {
+      if (String(input).includes("oauth.battle.net")) {
+        if (++tokens === 1) return new Response('{"access_token":');
+        return jsonResponse({ access_token: "token", expires_in: 3600 });
+      }
+      if (++auctions === 1) return new Response(new ReadableStream({ start(controller) { controller.error(new Error("ZlibError")); } }));
+      return jsonResponse({ auctions: [{ id: 1 }] });
+    });
+    await expect(client.get("eu", "/data/wow/connected-realm/1/auctions", "dynamic")).resolves.toEqual({ auctions: [{ id: 1 }] });
+    expect(tokens).toBe(2);
+    expect(auctions).toBe(2);
+  });
+
   test("a missing item exposes its HTTP status and is not retried as a transient error", async () => {
     let requests = 0;
     const client = createFixtureClient(async (input) => {

@@ -27,12 +27,7 @@ export function sleep(ms: number): Promise<void> {
 }
 
 export async function fetchWithTimeout(input: string | URL, init: RequestInit, timeoutMs: number): Promise<Response> {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), timeoutMs);
-
-  try {
-    return await fetch(input, { ...init, signal: controller.signal });
-  } finally {
-    clearTimeout(timeout);
-  }
+  // The signal stays active through body consumption, not only response headers.
+  const timeout = AbortSignal.timeout(timeoutMs);
+  return fetch(input, { ...init, signal: init.signal ? AbortSignal.any([init.signal, timeout]) : timeout });
 }
