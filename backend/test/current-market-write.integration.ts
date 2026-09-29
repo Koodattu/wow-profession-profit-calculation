@@ -1,10 +1,11 @@
 import { afterAll, describe, expect, test } from "bun:test";
 import { db, sql } from "../src/db";
-import { commodityLatest, regions } from "../src/db/schema";
+import { commodityLatest, realmLatest, regions } from "../src/db/schema";
 import { createAuctionRefreshModule, type CommodityAuctionInput, type RealmAuctionInput } from "../src/services/auction-refresh";
 import { getCurrentItemMarkets, getCurrentRealmComparison } from "../src/services/current-market";
 import { writeCurrentMarket } from "../src/services/current-market-write";
 import { unpackRealmListings } from "../src/services/realm-variant-storage";
+import { pruneUnusedRealmVariants } from "../src/services/price-maintenance";
 
 const region = "writetest";
 const item = 2_100_002_000;
@@ -18,6 +19,75 @@ async function clean() {
 afterAll(async () => { await clean(); await sql.end(); });
 
 describe.serial("incremental current market", () => {
+  test("variant retirement preserves live listings, waits 30 days, and resets when a version returns", async () => {
+    await clean();
+    await db.insert(regions).values({ id: region, name: "Write test", apiHost: "invalid.local", oauthHost: "invalid.local" });
+    let auctions: RealmAuctionInput[] = [{ id: 42, item: { id: item, bonus_lists: [2100002000] }, buyout: 100, quantity: 1 }];
+    const refresh = createAuctionRefreshModule({ realmHistoryIntervalHours: 1, source: {
+      fetchCommodityAuctions: async () => [], fetchRealmAuctions: async () => auctions,
+    } });
+    await refresh.refreshRealm(region, 123, new Set());
+    const [original] = await sql`SELECT v.id,v.variant_key FROM realm_variants v JOIN realm_latest l ON l.variant_id=v.id WHERE l.region_id=${region}`;
+    const stamp = async () => {
+      const value = (await sql`SELECT unreferenced_at FROM realm_variants WHERE id=${original!.id}`)[0]?.unreferenced_at;
+      return value == null ? value : new Date(value);
+    };
+    try {
+      await sql`UPDATE realm_variants SET unreferenced_at='2080-01-01' WHERE id=${original!.id}`;
+      await pruneUnusedRealmVariants(new Date("2090-01-01T00:00:00Z"));
+      expect(await stamp()).toBeNull();
+      const listing = auctions;
+      auctions = [];
+      await refresh.refreshRealm(region, 123, new Set());
+      await pruneUnusedRealmVariants(new Date("2090-01-01T00:00:00Z"));
+      expect(await stamp()).toEqual(new Date("2090-01-01T00:00:00Z"));
+      await pruneUnusedRealmVariants(new Date("2090-01-31T00:00:00Z"));
+      expect(await stamp()).toEqual(new Date("2090-01-01T00:00:00Z"));
+      auctions = listing;
+      await refresh.refreshRealm(region, 123, new Set());
+      expect(await stamp()).toBeNull();
+      expect((await sql`SELECT variant_id FROM realm_latest WHERE region_id=${region}`)[0]?.variant_id).toBe(original!.id);
+      auctions = [];
+      await refresh.refreshRealm(region, 123, new Set());
+      await pruneUnusedRealmVariants(new Date("2090-02-01T00:00:00Z"));
+      await pruneUnusedRealmVariants(new Date("2090-03-01T00:00:00Z"));
+      expect(await stamp()).toEqual(new Date("2090-02-01T00:00:00Z"));
+      await pruneUnusedRealmVariants(new Date("2090-03-05T00:00:00Z"));
+      expect(await stamp()).toBeUndefined();
+      auctions = listing;
+      await refresh.refreshRealm(region, 123, new Set());
+      const [returned] = await sql`SELECT v.id,v.variant_key,l.listings FROM realm_variants v JOIN realm_latest l ON l.variant_id=v.id WHERE l.region_id=${region}`;
+      expect(returned!.id).not.toBe(original!.id);
+      expect(returned!.variant_key).toBe(original!.variant_key);
+      expect(unpackRealmListings(returned!.listings)).toEqual([{ id: "42", buyout: 100, quantity: 1, bid: null, timeLeft: null }]);
+    } finally {
+      await clean();
+      await sql`DELETE FROM realm_variants WHERE variant_key=${original!.variant_key}`;
+    }
+  });
+
+  test("variant cleanup skips a transaction publishing current realm listings", async () => {
+    await clean();
+    await db.insert(regions).values({ id: region, name: "Write test", apiHost: "invalid.local", oauthHost: "invalid.local" });
+    let published!: () => void;
+    const ready = new Promise<void>((resolve) => { published = resolve; });
+    let release!: () => void;
+    const hold = new Promise<void>((resolve) => { release = resolve; });
+    const writer = db.transaction(async (tx) => {
+      await writeCurrentMarket(tx, realmLatest, [], region, 123, 1, new Date());
+      published();
+      await hold;
+    });
+    try {
+      await ready;
+      expect(await pruneUnusedRealmVariants()).toEqual({ marked: 0, deleted: 0, skipped: true });
+    } finally {
+      release();
+      await writer;
+    }
+    expect((await pruneUnusedRealmVariants()).skipped).toBe(false);
+  });
+
   test("unchanged content avoids heap rewrites while quotes and weighted history stay fresh", async () => {
     await clean();
     await db.insert(regions).values({ id: region, name: "Write test", apiHost: "invalid.local", oauthHost: "invalid.local" });

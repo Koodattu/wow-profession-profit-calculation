@@ -1,7 +1,19 @@
 import { describe, expect, test } from "bun:test";
-import { isRetryableStatus, parseRetryAfter, retryDelayMs } from "./request-policy";
+import { fetchWithTimeout, isRetryableStatus, parseRetryAfter, retryDelayMs } from "./request-policy";
 
 describe("request retry policy", () => {
+  test("timeout remains active while reading a stalled response body", async () => {
+    const server = Bun.serve({ hostname: "127.0.0.1", port: 0, fetch: () => new Response(new ReadableStream({
+      start(controller) { controller.enqueue(new TextEncoder().encode('{"unfinished":')); },
+    })) });
+    try {
+      const response = await fetchWithTimeout(`http://127.0.0.1:${server.port}`, {}, 150);
+      expect(response.status).toBe(200);
+      await expect(response.json()).rejects.toThrow();
+    } finally {
+      await server.stop(true);
+    }
+  });
   test("retries rate limits, timeouts, and transient server failures", () => {
     for (const status of [408, 425, 429, 500, 502, 503, 504]) {
       expect(isRetryableStatus(status)).toBe(true);

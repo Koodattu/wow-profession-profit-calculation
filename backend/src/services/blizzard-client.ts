@@ -43,6 +43,11 @@ interface RequestOptions {
   acceptedStatus?: (status: number) => boolean;
 }
 
+interface JsonResponse {
+  response: Response;
+  data: unknown;
+}
+
 export function createBlizzardClient(dependencies: BlizzardClientDependencies): BlizzardClient {
   const {
     clientId,
@@ -61,13 +66,17 @@ export function createBlizzardClient(dependencies: BlizzardClientDependencies): 
   let tokenExpiresAt = 0;
   let refreshPromise: Promise<string> | null = null;
 
-  async function requestWithRetry(options: RequestOptions): Promise<Response> {
+  async function requestWithRetry(options: RequestOptions): Promise<JsonResponse> {
     let lastError: unknown;
 
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       let response: Response;
       try {
         response = await timedFetch(options.input, options.init, requestTimeoutMs);
+        // Reading/decompressing the body is part of the same bounded attempt.
+        if (response.ok) return { response, data: await response.json() };
+        await response.body?.cancel();
+        if (options.acceptedStatus?.(response.status)) return { response, data: undefined };
       } catch (error) {
         lastError = error;
         if (attempt === maxRetries) break;
@@ -76,8 +85,6 @@ export function createBlizzardClient(dependencies: BlizzardClientDependencies): 
         await wait(delayMs);
         continue;
       }
-
-      if (response.ok || options.acceptedStatus?.(response.status)) return response;
 
       lastError = new BlizzardHttpError(response.status, options.label, response.statusText);
       if (!isRetryableStatus(response.status) || attempt === maxRetries) throw lastError;
@@ -94,7 +101,7 @@ export function createBlizzardClient(dependencies: BlizzardClientDependencies): 
   async function fetchToken(): Promise<string> {
     console.log("[BlizzardClient] Fetching new OAuth token...");
     const credentials = btoa(`${clientId}:${clientSecret}`);
-    const response = await requestWithRetry({
+    const result = await requestWithRetry({
       input: "https://oauth.battle.net/token",
       init: {
         method: "POST",
@@ -106,7 +113,7 @@ export function createBlizzardClient(dependencies: BlizzardClientDependencies): 
       },
       label: "OAuth token request",
     });
-    const data = (await response.json()) as Partial<TokenResponse>;
+    const data = result.data as Partial<TokenResponse>;
     const expiresIn = data.expires_in;
     if (!data.access_token || typeof expiresIn !== "number" || !Number.isFinite(expiresIn) || expiresIn <= 0) {
       throw new Error("OAuth token response was invalid");
@@ -133,7 +140,7 @@ export function createBlizzardClient(dependencies: BlizzardClientDependencies): 
     tokenExpiresAt = 0;
   }
 
-  async function requestApi(url: URL, endpoint: string, authorization: string): Promise<Response> {
+  async function requestApi(url: URL, endpoint: string, authorization: string): Promise<JsonResponse> {
     return requestWithRetry({
       input: url,
       init: { headers: { Authorization: `Bearer ${authorization}` } },
@@ -156,16 +163,16 @@ export function createBlizzardClient(dependencies: BlizzardClientDependencies): 
 
     console.log(`[BlizzardClient] GET ${endpoint}`);
     let authorization = await getToken();
-    let response = await requestApi(url, endpoint, authorization);
+    let result = await requestApi(url, endpoint, authorization);
 
-    if (response.status === 401) {
+    if (result.response.status === 401) {
       invalidateToken(authorization);
       authorization = await getToken();
-      response = await requestApi(url, endpoint, authorization);
+      result = await requestApi(url, endpoint, authorization);
     }
 
-    if (!response.ok) throw new BlizzardHttpError(response.status, `GET ${endpoint}`, response.statusText);
-    return (await response.json()) as T;
+    if (!result.response.ok) throw new BlizzardHttpError(result.response.status, `GET ${endpoint}`, result.response.statusText);
+    return result.data as T;
   }
 
   async function getAllPages<T>(regionId: string, endpoint: string, namespace: BlizzardNamespace): Promise<T[]> {

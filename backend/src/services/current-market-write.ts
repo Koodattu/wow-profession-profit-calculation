@@ -17,6 +17,12 @@ export async function writeCurrentMarket(
   syncRunId: number,
   observedAt: Date,
 ): Promise<void> {
+  // Large realm comparisons otherwise spill their hash joins at the 4 MB default.
+  // This applies only to this refresh transaction, not unrelated connections.
+  await tx.execute(sql`SET LOCAL work_mem = '32MB'`);
+  if (table === realmLatest) {
+    await tx.execute(sql`SELECT pg_advisory_xact_lock_shared(hashtextextended('realm-variant-retirement', 0))`);
+  }
   await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${`current-market:${regionId}:${connectedRealmId}`}, 0))`);
   const [previous] = await tx.select({ observedAt: marketObservations.observedAt }).from(marketObservations)
     .where(and(eq(marketObservations.regionId, regionId), eq(marketObservations.connectedRealmId, connectedRealmId)));

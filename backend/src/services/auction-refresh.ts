@@ -72,6 +72,24 @@ function batches<T>(values: T[], size = 500): T[][] {
   return result;
 }
 
+async function storeMarketItems(
+  tx: Parameters<Parameters<typeof db.transaction>[0]>[0], itemIds: number[], marketType: MarketType,
+): Promise<void> {
+  const correctType = marketType === "commodity" ? sql`existing.market_type = 'commodity'` : sql`existing.market_type IS NOT NULL`;
+  const needsUpdate = marketType === "commodity" ? sql`items.market_type IS DISTINCT FROM 'commodity'` : sql`items.market_type IS NULL`;
+  for (const batch of batches(itemIds)) {
+    // Filter before ON CONFLICT: even a skipped DO UPDATE locks the existing row.
+    await tx.execute(sql`
+      INSERT INTO items (id, name, market_type, metadata_status)
+      SELECT incoming.id, 'Item #' || incoming.id, ${marketType}, 'pending'
+      FROM unnest(ARRAY[${sql.join(batch.map((id) => sql`${id}`), sql`, `)}]::integer[]) AS incoming(id)
+      WHERE NOT EXISTS (SELECT 1 FROM items existing WHERE existing.id = incoming.id AND ${correctType})
+      ORDER BY incoming.id
+      ON CONFLICT (id) DO UPDATE SET market_type = ${marketType} WHERE ${needsUpdate}
+    `);
+  }
+}
+
 async function startRefresh(regionId: string, scope: MarketType, connectedRealmId?: number, cycleId?: number): Promise<number> {
   const [run] = await db
     .insert(auctionSyncRuns)
@@ -178,12 +196,7 @@ export function createAuctionRefreshModule(dependencies: AuctionRefreshDependenc
 
       const marketItemIds = latestRows.map((row) => row.itemId).sort((left, right) => left - right);
       await db.transaction(async (tx) => {
-        for (const batch of batches(marketItemIds)) {
-          await tx
-            .insert(items)
-            .values(batch.map((id) => ({ id, name: `Item #${id}`, marketType: "commodity", metadataStatus: "pending" })))
-            .onConflictDoUpdate({ target: items.id, set: { marketType: "commodity" }, setWhere: sql`${items.marketType} IS DISTINCT FROM 'commodity'` });
-        }
+        await storeMarketItems(tx, marketItemIds, "commodity");
 
         await writeCurrentMarket(tx, commodityLatest, latestRows, regionId, 0, runId, observedAt);
         for (const batch of batches(latestRows)) {
@@ -304,16 +317,7 @@ export function createAuctionRefreshModule(dependencies: AuctionRefreshDependenc
 
       const marketItemIds = [...new Set(latestRows.map((row) => row.itemId))].sort((left, right) => left - right);
       await db.transaction(async (tx) => {
-        for (const batch of batches(marketItemIds)) {
-          await tx
-            .insert(items)
-            .values(batch.map((id) => ({ id, name: `Item #${id}`, marketType: "realm", metadataStatus: "pending" })))
-            .onConflictDoUpdate({
-              target: items.id,
-              set: { marketType: "realm" },
-              setWhere: sql`${items.marketType} IS NULL`,
-            });
-        }
+        await storeMarketItems(tx, marketItemIds, "realm");
 
         await writeCurrentMarket(tx, realmLatest, latestRows, regionId, connectedRealmId, runId, observedAt);
         for (const batch of batches(historyRows)) await tx.insert(realmSnapshots).values(batch);

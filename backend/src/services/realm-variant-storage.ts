@@ -13,7 +13,7 @@ export function unpackRealmListings(listings: StoredRealmListing[]): RealmListin
 export async function storeRealmVariants(
   tx: Parameters<Parameters<typeof db.transaction>[0]>[0], rows: RealmMarketInput[],
 ): Promise<(typeof realmLatest.$inferInsert)[]> {
-  const columns = Object.entries(getTableColumns(realmVariants)).filter(([property]) => property !== "id");
+  const columns = Object.entries(getTableColumns(realmVariants)).filter(([property]) => property !== "id" && property !== "unreferencedAt");
   const definitions = [...new Map(rows.map((row) => [row.variantKey, row])).values()];
   await tx.execute(sql`CREATE TEMP TABLE incoming_realm_variants (LIKE realm_variants) ON COMMIT DROP`);
   await tx.execute(sql`ALTER TABLE incoming_realm_variants ALTER COLUMN id DROP NOT NULL`);
@@ -39,6 +39,10 @@ export async function storeRealmVariants(
       IS DISTINCT FROM ROW(${sql.join(content.map(([, c]) => sql`v.${sql.identifier(c.name)}`), sql`, `)}) LIMIT 1
   `);
   if (differing.length) throw new Error("Conflicting realm variant definition");
+  await tx.execute(sql`
+    UPDATE realm_variants v SET unreferenced_at = NULL FROM incoming_realm_variants i
+    WHERE v.variant_key = i.variant_key AND v.unreferenced_at IS NOT NULL
+  `);
   const identities = await tx.execute(sql`SELECT v.id, v.variant_key FROM realm_variants v JOIN incoming_realm_variants i USING (variant_key)`);
   const ids = new Map(identities.map((row) => [String(row.variant_key), Number(row.id)]));
   return rows.map((row) => ({ ...row, variantId: ids.get(row.variantKey)!,

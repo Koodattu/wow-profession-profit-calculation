@@ -257,6 +257,7 @@ export const commodityLatest = pgTable(
 
 export const realmVariants = pgTable("realm_variants", {
   id: serial("id").primaryKey(),
+  unreferencedAt: timestamp("unreferenced_at", { withTimezone: true }),
   variantKey: text("variant_key").notNull().unique(),
   context: integer("context"),
   bonusLists: jsonb("bonus_lists").$type<number[]>().notNull(),
@@ -292,6 +293,7 @@ export const realmLatest = pgTable(
   (t) => [
     primaryKey({ columns: [t.regionId, t.connectedRealmId, t.itemId, t.variantId] }),
     index("idx_realm_latest_item").on(t.regionId, t.itemId),
+    index("idx_realm_latest_variant").on(t.variantId),
   ],
 );
 
