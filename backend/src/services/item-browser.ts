@@ -3,6 +3,7 @@ import { db } from "../db";
 import { items, professions } from "../db/schema";
 import { isDatabaseId } from "../routes/validation";
 import { currentMarketFilterQuery, getCurrentItemMarkets } from "./current-market";
+import { MAX_ITEM_EXPANSION } from "./item-expansion-data";
 
 const sorts = {
   "name-asc": sql`i.name ASC, i.id ASC`,
@@ -52,6 +53,12 @@ export function parseItemFilters(query: Record<string, string>) {
   }
   const connectedRealmId = integer("connectedRealmId", 2147483647);
   if (connectedRealmId !== undefined && !isDatabaseId(connectedRealmId)) throw new Error("Invalid connected realm ID");
+  if (query.expansion === "unknown") filters.push(sql`NOT EXISTS (SELECT 1 FROM item_expansions e WHERE e.item_id = i.id)`);
+  else if (query.expansion) {
+    const expansion = integer("expansion", MAX_ITEM_EXPANSION);
+    if (!expansion || String(expansion) !== query.expansion) throw new Error("Invalid expansion");
+    filters.push(sql`EXISTS (SELECT 1 FROM item_expansions e WHERE e.item_id = i.id AND e.expansion = ${expansion})`);
+  }
   const profession = integer("profession", 2147483647);
   if (profession !== undefined) {
     if (!isDatabaseId(profession)) throw new Error("Invalid profession");

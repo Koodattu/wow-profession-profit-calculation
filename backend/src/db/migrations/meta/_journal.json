@@ -113,6 +113,13 @@
       "when": 1790664283288,
       "tag": "0015_variant_retirement",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1791063929196,
+      "tag": "0016_item_expansions",
+      "breakpoints": true
     }
   ]
 }

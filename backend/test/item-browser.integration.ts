@@ -27,9 +27,13 @@ beforeAll(async () => {
       VALUES ('eu', ${realm!}, ${firstId + index!}, ${variantId}, 1, now(), ${price!}, ${price!}, ${price!}, ${price!}, ${quantity!}, 1)`;
   }
   await sql`INSERT INTO item_professions (item_id, profession_id) VALUES (${firstId}, 2906)`;
+  for (const [index, expansion] of [[0, 11], [1, 12], [2, 12], [3, 12], [4, 1]]) {
+    await sql`INSERT INTO item_expansions (item_id, expansion) VALUES (${firstId + index!}, ${expansion!})`;
+  }
   await sql`UPDATE items SET name = 'Filter fixture 100%_literal' WHERE id = ${firstId + 5}`;
 });
 afterAll(async () => {
+  await sql`DELETE FROM item_expansions WHERE item_id BETWEEN ${firstId} AND ${firstId + 5}`;
   await sql`DELETE FROM item_professions WHERE item_id = ${firstId}`;
   await sql`DELETE FROM realm_latest WHERE item_id BETWEEN ${firstId} AND ${firstId + 5}`;
   await sql`DELETE FROM realm_variants WHERE id = ${variantId}`;
@@ -61,6 +65,28 @@ test("category, slot, rarity, crafting rank and catalog profession combine indep
   expect(options.categories.find(category => category.name === 'Armor')?.subcategories).toContain('Cloth');
   expect(options.slots).toContain('Head');
   expect(options.professions.some(profession => profession.id === 2906)).toBe(true);
+});
+
+test("expansion matches introduction era before pagination and combines with market filters", async () => {
+  const query = 'expansion=12&type=commodity&category=Trade%20Goods&availability=listed&minPrice=10000&sort=price-desc&limit=1';
+  const first = await browse(query);
+  expect(first).toMatchObject({ total: 2, totalPages: 2, page: 1 });
+  expect(first.items.map(item => item.id)).toEqual([firstId + 2]);
+  expect((await browse(`${query}&page=2`)).items.map(item => item.id)).toEqual([firstId + 1]);
+  expect((await browse('expansion=12&type=realm&connectedRealmId=1&maxPrice=10000')).total).toBe(0);
+  expect((await browse('expansion=12&type=realm&connectedRealmId=2&maxPrice=10000')).items.map(item => item.id)).toEqual([firstId + 3]);
+  expect((await browse('expansion=11&profession=2906')).items.map(item => item.id)).toEqual([firstId]);
+  expect((await browse('expansion=1')).items.map(item => item.id)).toEqual([firstId + 4]);
+  expect((await browse('expansion=unknown')).items.map(item => item.id)).toEqual([firstId + 5]);
+  expect((await browse('')).total).toBe(6);
+});
+
+test("invalid expansions are rejected instead of silently broadening the search", async () => {
+  for (const expansion of ['0', '13', '-1', '1.5', '1e1', '01', 'Midnight', '12 OR 1=1']) {
+    const response = await app.request(`/api/items?expansion=${encodeURIComponent(expansion)}`);
+    expect(response.status, expansion).toBe(400);
+    expect((await response.json() as { error: string }).error).toBe('Invalid expansion');
+  }
 });
 
 test("search supports exact names and IDs while treating wildcard characters literally", async () => {

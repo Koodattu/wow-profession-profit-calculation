@@ -4,7 +4,7 @@ A fast, compact EU Retail auction-house tracker with profession cost calculation
 
 ## Features
 
-- **Market Browser** — Combine category, subcategory, slot, rarity, crafting rank/use, profession, price, quantity and availability filters across the full catalog; sort results and return to a bookmarked search
+- **Market Browser** — Combine expansion, category, subcategory, slot, rarity, crafting rank/use, profession, price, quantity and availability filters across the full catalog; sort results and return to a bookmarked search
 - **Price Tracking** — Focused price and supply timelines, shareable range/realm links, paged observations and complete CSV exports; hourly history, quantity-weighted daily rollups, and verified compressed archives
 - **Crafting Cost Calculator** — Calculate reagent costs and gross profit estimates across supported reagent/output rank scenarios
 - **Realm Arbitrage** — Find the best realms to buy and sell non-commodity items
@@ -44,6 +44,7 @@ wow-tools/
 
 - **Professions & Recipes**: Extracted from an in-game addon and parsed to JSON in `game-data-parsed/`
 - **Market catalog**: Discovered from auction payloads and hydrated incrementally from Blizzard item metadata
+- **Item expansions**: Bundled public Undermine Exchange metadata with explicit Unknown coverage; see [source and updates](docs/item-expansions.md)
 - **Prices**: Blizzard Game Data API (commodities + connected-realm auctions), fetched hourly
 - **Realms**: Blizzard API connected realm discovery
 

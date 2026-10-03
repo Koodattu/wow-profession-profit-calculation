@@ -136,6 +136,7 @@ export interface ItemWithPrice {
 }
 
 export interface ItemFilters {
+  expansion?: string;
   type?: string;
   search?: string;
   searchMode?: string;

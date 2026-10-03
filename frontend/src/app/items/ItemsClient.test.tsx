@@ -24,6 +24,41 @@ function mockFilterMarket() {
   return { requests, fetcher };
 }
 
+test("expansion filters combine with stock, reset paging, survive a return, and can be removed", async () => {
+  window.history.replaceState(null, "", "/items?type=commodity&availability=listed&page=3");
+  const { requests } = mockFilterMarket();
+  const view = render(<ItemsClient />);
+  await screen.findByRole("link", { name: "Fixture item" });
+  fireEvent.change(screen.getByRole("combobox", { name: "Expansion" }), { target: { value: "12" } });
+  await waitFor(() => expect(requests.at(-1)?.searchParams.get("expansion")).toBe("12"));
+  expect(requests.at(-1)?.searchParams.get("availability")).toBe("listed");
+  expect(window.location.search).not.toContain("page=");
+  expect(screen.getByRole("link", { name: "Fixture item" }).getAttribute("href")).toContain("expansion%3D12");
+  view.unmount();
+  render(<ItemsClient />);
+  expect(screen.getByRole("combobox", { name: "Expansion" })).toHaveValue("12");
+  fireEvent.click(screen.getByRole("button", { name: "Remove Expansion: Midnight" }));
+  await waitFor(() => expect(requests.at(-1)?.searchParams.has("expansion")).toBe(false));
+  expect(window.location.search).toContain("availability=listed");
+});
+
+test("unknown expansion is bookmarkable and invalid expansion links can recover", async () => {
+  window.history.replaceState(null, "", "/items?type=commodity&expansion=13");
+  const { requests } = mockFilterMarket();
+  render(<ItemsClient />);
+  expect(await screen.findByRole("alert")).toHaveTextContent("Some filters in this link are invalid");
+  expect(requests).toHaveLength(0);
+  fireEvent.change(screen.getByRole("combobox", { name: "Expansion" }), { target: { value: "unknown" } });
+  await screen.findByRole("link", { name: "Fixture item" });
+  expect(requests.at(-1)?.searchParams.get("expansion")).toBe("unknown");
+  expect(screen.getByRole("button", { name: "Remove Expansion: Unknown expansion" })).toBeVisible();
+  fireEvent.change(screen.getByRole("combobox", { name: "Expansion" }), { target: { value: "11" } });
+  await act(async () => { window.history.back(); });
+  await waitFor(() => expect(screen.getByRole("combobox", { name: "Expansion" })).toHaveValue("unknown"));
+  fireEvent.click(screen.getByRole("button", { name: "Clear filters" }));
+  expect(window.location.search).not.toContain("expansion");
+});
+
 test("filter options retry independently while market results remain usable", async () => {
   window.history.replaceState(null, "", "/items?type=commodity&search=__proto__");
   let optionsOffline = true;

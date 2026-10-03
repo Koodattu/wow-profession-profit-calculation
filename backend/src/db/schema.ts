@@ -60,6 +60,18 @@ export const items = pgTable(
   ],
 );
 
+// Independent of discovered items: future auctions use the same reference
+// immediately, without changing or backfilling market-owned item metadata.
+export const itemExpansions = pgTable("item_expansions", {
+  itemId: integer("item_id").primaryKey(),
+  expansion: integer("expansion").notNull(),
+});
+
+export const itemExpansionReference = pgTable("item_expansion_reference", {
+  id: text("id").primaryKey(),
+  contentHash: text("content_hash").notNull(),
+});
+
 export const itemProfessions = pgTable(
   "item_professions",
   {

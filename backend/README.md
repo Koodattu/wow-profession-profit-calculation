@@ -54,3 +54,8 @@ For market-filter QA, `bun run --no-env-file test/seed-market-filters.ts` adds 3
 `GET /api/items` filters the full catalog before counting and pagination. Optional filters are `category`, `subcategory`, `slot`, `rarity` (0–8 or `unknown`), `rank` (1–5 or `none`), `usage` (`reagent`/`crafted`), `profession` (catalog ID), `availability` (`listed`/`unlisted`), and inclusive `minPrice`/`maxPrice` (whole copper) and `minQuantity`/`maxQuantity` (whole listed units). `search` matches names or an exact item ID; `searchMode=exact` matches a full name, ignoring case. `sort` accepts `name-asc`, `name-desc`, `price-asc`, `price-desc`, `quantity-asc`, `quantity-desc`; missing quotes sort last with stable name/ID ties. Realm quotes use `connectedRealmId`; legacy requests without a realm retain the EU benchmark semantics. Commodity-only browsing never uses realm quotes. `GET /api/items/filters` supplies current metadata categories, subcategories, slots and catalog professions. Unknown category metadata can be selected with `category=unknown`.
 
 The runtime and lockfile are maintained with Bun 1.3.14.
+
+Market filtering also accepts `expansion=1` through `12` (Classic through Midnight)
+or `expansion=unknown`. Startup publishes the offline item-era reference only when
+its checksum changes. See [item expansion data](../docs/item-expansions.md) for
+provenance, coverage, semantics and `bun run update-item-expansions`.

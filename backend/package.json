@@ -18,6 +18,7 @@
     "sync-prices": "bun run src/scripts/sync-prices.ts",
     "verify-history-archive": "bun run src/scripts/verify-history-archive.ts",
     "update-gear-reference": "bun run src/scripts/update-gear-reference.ts",
+    "update-item-expansions": "bun run src/scripts/update-item-expansions.ts",
     "db:generate": "bunx drizzle-kit generate",
     "db:migrate": "bunx drizzle-kit migrate",
     "db:push": "bunx drizzle-kit push",

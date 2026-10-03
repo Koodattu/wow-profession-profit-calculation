@@ -2,11 +2,12 @@
 
 import { useState, type FormEvent } from "react";
 import { useItemFilterOptions } from "@/features/item-browser";
-import { copperToGold, FILTER_KEYS, goldToCopper, RARITY_OPTIONS, SORT_OPTIONS } from "@/lib/market-filters";
+import { copperToGold, EXPANSION_OPTIONS, FILTER_KEYS, goldToCopper, RARITY_OPTIONS, SORT_OPTIONS } from "@/lib/market-filters";
 import styles from "./Items.module.css";
 
 type Change = (values: Record<string, string | null>) => void;
 const labels: Record<string, string> = {
+  expansion: "Expansion",
   search: "Search", searchMode: "Match", type: "Market", category: "Category", subcategory: "Subcategory", slot: "Slot",
   rarity: "Rarity", rank: "Rank", usage: "Crafting use", profession: "Profession", availability: "Availability",
   minPrice: "Min price", maxPrice: "Max price", minQuantity: "Min quantity", maxQuantity: "Max quantity", sort: "Sort",
@@ -43,6 +44,7 @@ export default function MarketFilters({ params, onChange, onClear }: { params: U
     const value = params.get(key)!;
     if (key === "minPrice" || key === "maxPrice") return `${copperToGold(value)}g`;
     if (key === "rarity") return RARITY_OPTIONS.find(([id]) => id === value)?.[1] ?? value;
+    if (key === "expansion") return EXPANSION_OPTIONS.find(([id]) => id === value)?.[1] ?? value;
     if (key === "sort") return SORT_OPTIONS.find(([id]) => id === value)?.[1] ?? value;
     if (key === "profession") return options.data?.professions?.find(option => String(option.id) === value)?.name ?? value;
     return ["type", "searchMode", "usage", "availability", "rank"].includes(key) ? displayValue(value) : value;
@@ -50,6 +52,7 @@ export default function MarketFilters({ params, onChange, onClear }: { params: U
 
   return <section className={styles.filters} aria-label="Market filters">
     <div className={styles.filterPrimary}>
+      {choice("Expansion", "expansion", EXPANSION_OPTIONS, "All expansions")}
       {choice("Category", "category", [...categories.map(option => [option.name, option.name] as const), ["unknown", "Uncategorized"]], "All categories")}
       {choice("Availability", "availability", [["listed", "In stock"], ["unlisted", "Not listed"]], "All items")}
       {choice("Sort by", "sort", SORT_OPTIONS.filter(([id]) => id !== "name-asc"), "Name: A–Z")}
@@ -58,6 +61,7 @@ export default function MarketFilters({ params, onChange, onClear }: { params: U
         <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" style={{ transform: open ? "rotate(180deg)" : undefined }}><path d="m4 6 4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg>
       </button>
     </div>
+    {params.has("expansion") && <p className="mt-3 text-xs leading-5 text-muted">Expansion is when an item was introduced. Items without a known expansion appear under Unknown expansion.</p>}
     {options.failed && <p className="mt-3 text-sm text-muted" role="alert">Category options couldn’t load. Other filters still work. <button type="button" className="min-h-11 px-2 text-accent underline" onClick={options.retry}>Retry filter options</button></p>}
     <div id="more-market-filters" hidden={!open}>
       <div className={styles.filterGrid}>
