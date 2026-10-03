@@ -5,12 +5,13 @@ import { items } from "../db/schema";
 import { getCurrentItemMarkets, getCurrentRealmComparison } from "../services/current-market";
 import { getItemMarketHistory, isHistoryRange, type MarketHistoryType } from "../services/market-history";
 import { getGearListings, getGearVariants } from "../services/gear-market";
+import { isDatabaseId } from "./validation";
 
 const itemRoutes = new Hono();
 
 itemRoutes.get("/:itemId/variants", async (c) => {
   const itemId = Number(c.req.param("itemId"));
-  if (!Number.isSafeInteger(itemId) || itemId <= 0 || itemId > 2_147_483_647) return c.json({ error: "Invalid item ID" }, 400);
+  if (!isDatabaseId(itemId)) return c.json({ error: "Invalid item ID" }, 400);
   try {
     const result = await getGearVariants(itemId);
     c.header("Cache-Control", "public, max-age=30");
@@ -26,8 +27,7 @@ itemRoutes.get("/:itemId/listings", async (c) => {
   const realmId = Number(c.req.query("connectedRealmId"));
   const variantKey = c.req.query("variant") ?? "";
   const page = Number(c.req.query("page") ?? 1);
-  if (!Number.isSafeInteger(itemId) || itemId <= 0 || itemId > 2_147_483_647
-    || !Number.isSafeInteger(realmId) || realmId <= 0 || realmId > 2_147_483_647
+  if (!isDatabaseId(itemId) || !isDatabaseId(realmId)
     || !/^(base|[a-f0-9]{32})$/.test(variantKey) || !Number.isInteger(page) || page < 1 || page > 5_000) {
     return c.json({ error: "Invalid listing filters" }, 400);
   }
@@ -52,12 +52,16 @@ itemRoutes.get("/", async (c) => {
   if (search.length > 100) return c.json({ error: "Search must be 100 characters or fewer" }, 400);
   const connectedRealmIdQuery = c.req.query("connectedRealmId");
   const connectedRealmId = connectedRealmIdQuery ? Number(connectedRealmIdQuery) : undefined;
-  if (connectedRealmIdQuery && (!Number.isInteger(connectedRealmId) || connectedRealmId! <= 0)) {
+  if (connectedRealmIdQuery && !isDatabaseId(connectedRealmId)) {
     return c.json({ error: "Invalid connected realm ID" }, 400);
   }
-  const page = Math.min(5_000, Math.max(1, Number(c.req.query("page")) || 1));
-  const limit = Math.min(200, Math.max(1, Number(c.req.query("limit")) || 50));
-  const offset = (page - 1) * limit;
+  const requestedPage = Number(c.req.query("page") ?? 1);
+  const requestedLimit = Number(c.req.query("limit") ?? 50);
+  if (!Number.isSafeInteger(requestedPage) || !Number.isSafeInteger(requestedLimit)) {
+    return c.json({ error: "Page and limit must be whole numbers" }, 400);
+  }
+  const page = Math.min(5_000, Math.max(1, requestedPage));
+  const limit = Math.min(200, Math.max(1, requestedLimit));
 
   try {
     // Build filter conditions
@@ -82,9 +86,12 @@ itemRoutes.get("/", async (c) => {
       .from(items)
       .where(whereClause);
     const total = countResult[0]?.total ?? 0;
+    const totalPages = Math.ceil(total / limit);
+    const currentPage = Math.min(page, Math.max(1, totalPages));
+    const offset = (currentPage - 1) * limit;
 
     // Get paginated items
-    const itemRows = await db.select().from(items).where(whereClause).orderBy(items.name).limit(limit).offset(offset);
+    const itemRows = await db.select().from(items).where(whereClause).orderBy(items.name, items.id).limit(limit).offset(offset);
 
     // Fetch current market state for these items.
     const itemIds = itemRows.map((i) => i.id);
@@ -113,8 +120,8 @@ itemRoutes.get("/", async (c) => {
     return c.json({
       items: enrichedItems,
       total,
-      page,
-      totalPages: Math.ceil(total / limit),
+      page: currentPage,
+      totalPages,
     });
   } catch (err) {
     console.error("[Items] Error listing items:", err);
@@ -126,7 +133,7 @@ itemRoutes.get("/", async (c) => {
 
 itemRoutes.get("/:itemId", async (c) => {
   const itemId = Number(c.req.param("itemId"));
-  if (isNaN(itemId)) return c.json({ error: "Invalid item ID" }, 400);
+  if (!isDatabaseId(itemId)) return c.json({ error: "Invalid item ID" }, 400);
 
   const [item] = await db.select().from(items).where(eq(items.id, itemId)).limit(1);
 
@@ -138,7 +145,7 @@ itemRoutes.get("/:itemId", async (c) => {
 
 itemRoutes.get("/:itemId/prices", async (c) => {
   const itemId = Number(c.req.param("itemId"));
-  if (isNaN(itemId)) return c.json({ error: "Invalid item ID" }, 400);
+  if (!isDatabaseId(itemId)) return c.json({ error: "Invalid item ID" }, 400);
 
   const rangeQuery = c.req.query("range") || "24h";
   if (!isHistoryRange(rangeQuery)) return c.json({ error: "Invalid history range" }, 400);
@@ -148,7 +155,7 @@ itemRoutes.get("/:itemId/prices", async (c) => {
   if (!["auto", "commodity", "realm"].includes(typeQuery)) return c.json({ error: "Invalid market history type" }, 400);
   const connectedRealmIdQuery = c.req.query("connectedRealmId");
   const connectedRealmId = connectedRealmIdQuery ? Number(connectedRealmIdQuery) : undefined;
-  if (connectedRealmIdQuery && (!Number.isInteger(connectedRealmId) || connectedRealmId! <= 0)) {
+  if (connectedRealmIdQuery && !isDatabaseId(connectedRealmId)) {
     return c.json({ error: "Invalid connected realm ID" }, 400);
   }
 
@@ -166,7 +173,7 @@ itemRoutes.get("/:itemId/prices", async (c) => {
 
 itemRoutes.get("/:itemId/realm-prices", async (c) => {
   const itemId = Number(c.req.param("itemId"));
-  if (isNaN(itemId)) return c.json({ error: "Invalid item ID" }, 400);
+  if (!isDatabaseId(itemId)) return c.json({ error: "Invalid item ID" }, 400);
 
   const region = c.req.query("region") || "eu";
   if (region !== "eu") return c.json({ error: "Only the EU region is available" }, 400);

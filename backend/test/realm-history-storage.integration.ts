@@ -73,7 +73,9 @@ test("packed observations preserve exact values, chart behavior, late data, roll
     expect([...await records()]).toEqual(withLate);
     const directory = await mkdtemp(join(tmpdir(), 'packed-history-'));
     try {
-      await expect(archiveExpiredPriceHistory({ directory, cutoff })).rejects.toThrow('coverage is incomplete');
+      const coverageError = await archiveExpiredPriceHistory({ directory, cutoff }).catch((error: unknown) => error);
+      expect(coverageError).toBeInstanceOf(Error);
+      expect((coverageError as Error).message).toContain('coverage is incomplete');
       expect([...await records()]).toEqual(withLate);
       await sql`DELETE FROM sync_jobs WHERE name='quantity-weighted-rollups'`;
       await aggregateDailyPrices();

@@ -1,3 +1,4 @@
+import { isDatabaseId } from "./validation";
 import { Hono } from "hono";
 import { isHistoryRange } from "../services/market-history";
 import { getRecipeHistory } from "../services/recipe-history";
@@ -9,13 +10,13 @@ const craftingRoutes = new Hono();
 
 craftingRoutes.get("/professions/:professionId", async (c) => {
   const professionId = Number(c.req.param("professionId"));
-  if (isNaN(professionId)) return c.json({ error: "Invalid profession ID" }, 400);
+  if (!isDatabaseId(professionId)) return c.json({ error: "Invalid profession ID" }, 400);
 
   const region = c.req.query("region") || "eu";
   if (region !== "eu") return c.json({ error: "Only the EU region is available" }, 400);
   const connectedRealmIdQuery = c.req.query("connectedRealmId");
   const connectedRealmId = connectedRealmIdQuery ? Number(connectedRealmIdQuery) : undefined;
-  if (connectedRealmIdQuery && (!Number.isInteger(connectedRealmId) || connectedRealmId! <= 0)) {
+  if (connectedRealmIdQuery && !isDatabaseId(connectedRealmId)) {
     return c.json({ error: "Invalid connected realm ID" }, 400);
   }
 
@@ -32,14 +33,14 @@ craftingRoutes.get("/professions/:professionId", async (c) => {
 
 craftingRoutes.get("/recipes/:recipeId/history", async (c) => {
   const recipeId = Number(c.req.param("recipeId"));
-  if (!Number.isInteger(recipeId) || recipeId <= 0) return c.json({ error: "Invalid recipe ID" }, 400);
+  if (!isDatabaseId(recipeId)) return c.json({ error: "Invalid recipe ID" }, 400);
 
   const region = c.req.query("region") || "eu";
   if (region !== "eu") return c.json({ error: "Only the EU region is available" }, 400);
   const rangeQuery = c.req.query("range") || "24h";
   if (!isHistoryRange(rangeQuery)) return c.json({ error: "Invalid history range" }, 400);
   const connectedRealmId = Number(c.req.query("connectedRealmId"));
-  if (!Number.isInteger(connectedRealmId) || connectedRealmId <= 0) {
+  if (!isDatabaseId(connectedRealmId)) {
     return c.json({ error: "A connected realm is required" }, 400);
   }
 
@@ -57,13 +58,13 @@ craftingRoutes.get("/recipes/:recipeId/history", async (c) => {
 
 craftingRoutes.get("/recipes/:recipeId", async (c) => {
   const recipeId = Number(c.req.param("recipeId"));
-  if (isNaN(recipeId)) return c.json({ error: "Invalid recipe ID" }, 400);
+  if (!isDatabaseId(recipeId)) return c.json({ error: "Invalid recipe ID" }, 400);
 
   const region = c.req.query("region") || "eu";
   if (region !== "eu") return c.json({ error: "Only the EU region is available" }, 400);
   const connectedRealmIdQuery = c.req.query("connectedRealmId");
   const connectedRealmId = connectedRealmIdQuery ? Number(connectedRealmIdQuery) : undefined;
-  if (connectedRealmIdQuery && (!Number.isInteger(connectedRealmId) || connectedRealmId! <= 0)) {
+  if (connectedRealmIdQuery && !isDatabaseId(connectedRealmId)) {
     return c.json({ error: "Invalid connected realm ID" }, 400);
   }
 

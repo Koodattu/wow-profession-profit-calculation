@@ -1,35 +1,8 @@
-import { Hono } from "hono";
-import { cors } from "hono/cors";
-import { logger } from "hono/logger";
+import app from "./app";
 import { env } from "./config/env";
 import { startScheduler, runInitialSync } from "./jobs/scheduler";
 import { initializeDatabase } from "./startup";
 import { loadSavedGearData } from "./services/gear-data-sync";
-
-import health from "./routes/health";
-import itemRoutes from "./routes/items";
-import professionRoutes from "./routes/professions";
-import realmRoutes from "./routes/realms";
-import craftingRoutes from "./routes/crafting";
-import searchRoutes from "./routes/search";
-import flippingRoutes from "./routes/flipping";
-import marketRoutes from "./routes/market";
-
-const app = new Hono();
-
-// Middleware
-app.use("*", cors());
-app.use("*", logger());
-
-// Routes
-app.route("/api/health", health);
-app.route("/api/items", itemRoutes);
-app.route("/api/professions", professionRoutes);
-app.route("/api/realms", realmRoutes);
-app.route("/api/crafting", craftingRoutes);
-app.route("/api/search", searchRoutes);
-app.route("/api/flipping", flippingRoutes);
-app.route("/api/market", marketRoutes);
 
 // Migrations and the bundled catalog are required for the API to be usable.
 await initializeDatabase();

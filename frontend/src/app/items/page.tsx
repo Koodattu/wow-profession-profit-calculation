@@ -1,6 +1,6 @@
+import { Suspense } from "react";
 import ItemsClient from "./ItemsClient";
 
-export default async function ItemsPage({ searchParams }: { searchParams: Promise<{ search?: string }> }) {
-  const params = await searchParams;
-  return <ItemsClient initialSearch={params.search?.slice(0, 100) ?? ""} />;
+export default function ItemsPage() {
+  return <Suspense fallback={<p role="status" className="text-muted">Loading market…</p>}><ItemsClient /></Suspense>;
 }

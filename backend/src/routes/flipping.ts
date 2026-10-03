@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { sql } from "drizzle-orm";
 import { db } from "../db";
 import { findRealmSpreadOpportunities } from "../services/current-market";
+import { isDatabaseId } from "./validation";
 
 const flippingRoutes = new Hono();
 
@@ -9,6 +10,7 @@ const flippingRoutes = new Hono();
 
 flippingRoutes.get("/categories", async (c) => {
   const region = c.req.query("region") || "eu";
+  if (region !== "eu") return c.json({ error: "Only the EU region is available" }, 400);
 
   try {
     const rows = await db.execute(sql`
@@ -39,11 +41,19 @@ flippingRoutes.get("/categories", async (c) => {
 
 flippingRoutes.get("/opportunities", async (c) => {
   const region = c.req.query("region") || "eu";
-  const minSpread = Math.max(0, Number(c.req.query("minSpread")) || 0);
-  const limit = Math.min(200, Math.max(1, Number(c.req.query("limit")) || 50));
+  if (region !== "eu") return c.json({ error: "Only the EU region is available" }, 400);
+  const requestedSpread = Number(c.req.query("minSpread") ?? 0);
+  const requestedLimit = Number(c.req.query("limit") ?? 50);
+  if (!Number.isFinite(requestedSpread) || requestedSpread > Number.MAX_SAFE_INTEGER
+    || !Number.isSafeInteger(requestedLimit)) {
+    return c.json({ error: "Invalid spread or result limit" }, 400);
+  }
+  const minSpread = Math.max(0, requestedSpread);
+  const limit = Math.min(200, Math.max(1, requestedLimit));
   const categoryIdQuery = c.req.query("categoryId");
   const parsedCategoryId = categoryIdQuery ? Number(categoryIdQuery) : undefined;
-  const categoryId = Number.isFinite(parsedCategoryId) ? parsedCategoryId : undefined;
+  if (categoryIdQuery && !isDatabaseId(parsedCategoryId)) return c.json({ error: "Invalid category ID" }, 400);
+  const categoryId = parsedCategoryId;
   const categoryNameQuery = c.req.query("categoryName")?.trim();
   const categoryName = categoryNameQuery && categoryNameQuery.length > 0 ? categoryNameQuery : undefined;
   const uncategorized = c.req.query("uncategorized") === "true";

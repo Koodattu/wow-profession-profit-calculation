@@ -5,7 +5,7 @@ import {
   type RecipeHistoryPoint,
   type RecipeProfitResult,
 } from "@/lib/api";
-import { useSelectedRealm } from "@/lib/selected-realm";
+import { selectedRealm, useSelectedRealm } from "@/lib/selected-realm";
 import type { HistoryRange } from "@/lib/time-ranges";
 
 export interface RecipeValuationAdapter {
@@ -33,6 +33,19 @@ export function useRecipeValuation(
   const [valuation, setValuation] = useState<{ key: string; data: RecipeProfitResult } | null>(null);
   const [history, setHistory] = useState<{ key: string; data: Record<string, RecipeHistoryPoint[]> } | null>(null);
   const [failedKey, setFailedKey] = useState<string | null>(null);
+  const [failedHistoryKey, setFailedHistoryKey] = useState<string | null>(null);
+  const [attempt, setAttempt] = useState(0);
+  const [historyAttempt, setHistoryAttempt] = useState(0);
+  function retry() {
+    if (realm.status === "error") { void selectedRealm.retry(); return; }
+    setFailedKey(null);
+    setAttempt((value) => value + 1);
+  }
+  function retryHistory() {
+    setFailedHistoryKey(null);
+    setHistoryAttempt((value) => value + 1);
+  }
+  const controls = { retry, retryHistory, historyFailed: historyKey !== null && failedHistoryKey === historyKey };
 
   useEffect(() => {
     if (valuationKey === null || connectedRealmId === null) return;
@@ -48,29 +61,34 @@ export function useRecipeValuation(
     return () => {
       active = false;
     };
-  }, [adapter, connectedRealmId, recipeId, valuationKey]);
+  }, [adapter, attempt, connectedRealmId, recipeId, valuationKey]);
 
   useEffect(() => {
     if (historyKey === null || connectedRealmId === null) return;
     let active = true;
     void adapter
       .loadHistory(recipeId, range, connectedRealmId)
-      .then((data) => active && setHistory({ key: historyKey, data }))
-      .catch(() => active && setHistory({ key: historyKey, data: {} }));
+      .then((data) => {
+        if (!active) return;
+        setHistory({ key: historyKey, data });
+        setFailedHistoryKey(null);
+      })
+      .catch(() => active && setFailedHistoryKey(historyKey));
     return () => {
       active = false;
     };
-  }, [adapter, connectedRealmId, historyKey, range, recipeId]);
+  }, [adapter, connectedRealmId, historyAttempt, historyKey, range, recipeId]);
 
-  if (realm.status !== "ready") return { status: realm.status, recipe: null, history: {}, historyLoading: false } as const;
+  if (realm.status !== "ready") return { ...controls, status: realm.status, recipe: null, history: {}, historyLoading: false } as const;
   if (failedKey === valuationKey && valuation?.key !== valuationKey) {
-    return { status: "error", recipe: null, history: {}, historyLoading: false } as const;
+    return { ...controls, status: "error", recipe: null, history: {}, historyLoading: false } as const;
   }
-  if (valuation?.key !== valuationKey) return { status: "loading", recipe: null, history: {}, historyLoading: true } as const;
+  if (valuation?.key !== valuationKey) return { ...controls, status: "loading", recipe: null, history: {}, historyLoading: true } as const;
   return {
+    ...controls,
     status: failedKey === valuationKey ? "refresh-error" : "ready",
     recipe: valuation.data,
     history: history?.key === historyKey ? history.data : {},
-    historyLoading: history?.key !== historyKey,
+    historyLoading: history?.key !== historyKey && !controls.historyFailed,
   } as const;
 }

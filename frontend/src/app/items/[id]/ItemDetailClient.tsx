@@ -11,12 +11,12 @@ import { useSelectedRealm } from "@/lib/selected-realm";
 import GearMarket from "./GearMarket";
 import styles from "./ItemMarket.module.css";
 
-export default function ItemDetailClient({ item }: { item: Item }) {
+export default function ItemDetailClient({ item, marketHref = "/items" }: { item: Item; marketHref?: string }) {
   const [view, setView] = useState<"offers" | "history">("offers");
   const hasRealmListings = item.marketType === "realm";
 
   return <div className={styles.page}>
-    <Link href="/items" className={styles.breadcrumb}>← Back to market</Link>
+    <Link href={marketHref} className={styles.breadcrumb}>← Back to market</Link>
     <header className={styles.itemHeader}>
       <div><h1>{item.name}</h1><div className={styles.itemMeta}>
         <span>{[item.itemSubclass ?? item.itemClass, item.inventoryType].filter(Boolean).join(" · ") || "Auction item"}</span>

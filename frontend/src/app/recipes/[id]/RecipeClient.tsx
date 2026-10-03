@@ -20,16 +20,18 @@ interface Props {
   onHistoryRangeChange(range: HistoryRange): void;
   history: Record<string, RecipeHistoryPoint[]>;
   historyLoading: boolean;
+  historyFailed: boolean;
+  onRetryHistory(): void;
 }
 
-export default function RecipeClient({ recipe, historyRange, onHistoryRangeChange, history, historyLoading }: Props) {
+export default function RecipeClient({ recipe, historyRange, onHistoryRangeChange, history, historyLoading, historyFailed, onRetryHistory }: Props) {
   const projectedScenarios = projectRecipeDetail(recipe, history);
 
   return (
     <div>
       <div className="mb-6">
-        <Link href="/" className="text-sm text-muted hover:text-accent transition-colors">
-          &larr; Back
+        <Link href={`/professions/${recipe.professionId}`} className="text-sm text-muted hover:text-accent transition-colors">
+          &larr; {recipe.professionName}
         </Link>
         <h1 className="text-2xl font-bold mt-2">
           <a
@@ -49,10 +51,11 @@ export default function RecipeClient({ recipe, historyRange, onHistoryRangeChang
       </div>
 
       <div className="border border-border rounded-lg bg-card p-4 mb-6">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-sm text-muted">Scenario Chart Range</h2>
           <TimeRangeTabs value={historyRange} onChange={onHistoryRangeChange} />
         </div>
+        {historyFailed && <div className="mt-3 text-sm" role="alert"><p className="text-muted">Couldn’t load price history. Current recipe prices are still available.</p><button type="button" onClick={onRetryHistory} className="mt-2 min-h-11 rounded-lg border border-border px-4 text-accent">Retry history</button></div>}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -64,6 +67,7 @@ export default function RecipeClient({ recipe, historyRange, onHistoryRangeChang
               title={label}
               historyData={scenarioHistory}
               historyLoading={historyLoading}
+              historyFailed={historyFailed}
             />
           );
         })}
@@ -77,11 +81,13 @@ function ScenarioCard({
   title,
   historyData,
   historyLoading,
+  historyFailed,
 }: {
   scenario: RankScenario;
   title: string;
   historyData: RecipeHistoryPoint[];
   historyLoading: boolean;
+  historyFailed: boolean;
 }) {
   const profitColor = scenario.profit !== null ? (scenario.profit >= 0 ? "text-positive" : "text-negative") : "text-muted";
   return (
@@ -150,13 +156,13 @@ function ScenarioCard({
         <span className={`text-lg font-bold ${profitColor}`}>{scenario.profit !== null ? formatPrice(scenario.profit) : "—"}</span>
       </div>
 
-      <div className="border-t border-border pt-4 mt-4">
+      {!historyFailed && <div className="border-t border-border pt-4 mt-4">
         <ScenarioHistoryChart
           scenario={scenario}
           data={historyData}
           loading={historyLoading}
         />
-      </div>
+      </div>}
 
     </div>
   );

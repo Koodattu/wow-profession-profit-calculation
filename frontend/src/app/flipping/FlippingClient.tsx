@@ -18,7 +18,11 @@ export default function FlippingClient() {
   const [data, setData] = useState<FlippingOpportunity[]>([]);
   const [isPending, startTransition] = useTransition();
   const [initialLoad, setInitialLoad] = useState(true);
+  const [failed, setFailed] = useState(false);
+  const [categoriesFailed, setCategoriesFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
   const categoryDropdownRef = useRef<HTMLDivElement>(null);
+  const categoryButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -26,16 +30,16 @@ export default function FlippingClient() {
     (async () => {
       try {
         const result = await fetchFlippingCategories("eu");
-        if (!cancelled) setCategories(result);
+        if (!cancelled) { setCategories(result); setCategoriesFailed(false); }
       } catch {
-        if (!cancelled) setCategories([]);
+        if (!cancelled) setCategoriesFailed(true);
       }
     })();
 
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [attempt]);
 
   useEffect(() => {
     let cancelled = false;
@@ -45,9 +49,9 @@ export default function FlippingClient() {
         const minSpreadCopper = minSpreadGold > 0 ? minSpreadGold * 10000 : undefined;
         const selectedCategoryName = categoryFilter.startsWith("name:") ? categoryFilter.slice(5) : undefined;
         const result = await fetchFlippingOpportunities("eu", minSpreadCopper, limit, selectedCategoryName, sortBy, categoryFilter === "none");
-        if (!cancelled) setData(result);
+        if (!cancelled) { setData(result); setFailed(false); }
       } catch {
-        if (!cancelled) setData([]);
+        if (!cancelled) setFailed(true);
       } finally {
         if (!cancelled) setInitialLoad(false);
       }
@@ -56,7 +60,7 @@ export default function FlippingClient() {
     return () => {
       cancelled = true;
     };
-  }, [minSpreadGold, limit, categoryFilter, sortBy]);
+  }, [minSpreadGold, limit, categoryFilter, sortBy, attempt]);
 
   useEffect(() => {
     if (!categoryOpen) return;
@@ -95,7 +99,7 @@ export default function FlippingClient() {
       <p className="text-xs text-muted mb-6">Price gaps are not guaranteed profit and exclude auction fees.</p>
 
       {/* Controls */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row sm:flex-wrap gap-4 mb-6">
         <div className="flex items-center gap-2">
           <label htmlFor="minSpread" className="text-sm text-muted whitespace-nowrap">
             Min spread
@@ -107,7 +111,7 @@ export default function FlippingClient() {
               min={0}
               value={minSpreadGold}
               onChange={(e) => setMinSpreadGold(Math.max(0, Number(e.target.value)))}
-              className="w-28 px-3 py-2 pr-8 rounded-md bg-card border border-border text-foreground placeholder:text-muted focus:outline-none focus:border-accent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="min-h-11 w-28 px-3 py-2 pr-8 rounded-md bg-card border border-border text-foreground placeholder:text-muted focus:outline-none focus:border-accent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted text-sm pointer-events-none">g</span>
           </div>
@@ -121,7 +125,7 @@ export default function FlippingClient() {
             id="limit"
             value={limit}
             onChange={(e) => setLimit(Number(e.target.value))}
-            className="px-3 py-2 rounded-md bg-card border border-border text-foreground focus:outline-none focus:border-accent"
+            className="min-h-11 px-3 py-2 rounded-md bg-card border border-border text-foreground focus:outline-none focus:border-accent"
           >
             {LIMIT_OPTIONS.map((n) => (
               <option key={n} value={n}>
@@ -132,11 +136,17 @@ export default function FlippingClient() {
         </div>
 
         <div className="flex items-center gap-2">
-          <label className="text-sm text-muted whitespace-nowrap">Category</label>
-          <div className="w-52 relative" ref={categoryDropdownRef}>
+          <label htmlFor="category-toggle" className="text-sm text-muted whitespace-nowrap">Category</label>
+          <div className="w-52 relative" ref={categoryDropdownRef} onKeyDown={(event) => {
+            if (event.key === "Escape") { setCategoryOpen(false); categoryButtonRef.current?.focus(); }
+          }}>
             <button
+              id="category-toggle"
+              ref={categoryButtonRef}
+              aria-expanded={categoryOpen}
+              aria-controls="category-options"
               type="button"
-              className="w-full px-3 py-2 rounded-md bg-card border border-border text-sm text-left text-foreground hover:bg-card-hover transition-colors"
+              className="min-h-11 w-full px-3 py-2 rounded-md bg-card border border-border text-sm text-left text-foreground hover:bg-card-hover transition-colors"
               onClick={() => {
                 setCategoryOpen((prev) => !prev);
                 setCategorySearch("");
@@ -146,16 +156,17 @@ export default function FlippingClient() {
             </button>
 
             {categoryOpen && (
-              <div className="absolute left-0 right-0 top-full mt-2 bg-card border border-border rounded-lg shadow-lg z-50">
+              <div id="category-options" className="absolute left-0 right-0 top-full mt-2 bg-card border border-border rounded-lg z-50">
                 <div className="p-2 border-b border-border/60">
                   <input
                     id="categorySearch"
+                    aria-label="Search categories"
                     type="text"
                     autoFocus
                     value={categorySearch}
                     onChange={(e) => setCategorySearch(e.target.value)}
                     placeholder="Search category..."
-                    className="w-full bg-background border border-border rounded-md px-2 py-1 text-xs text-foreground placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-accent"
+                    className="min-h-11 w-full bg-background border border-border rounded-md px-2 py-1 text-sm text-foreground placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-accent"
                   />
                 </div>
                 <div className="max-h-56 overflow-y-auto py-1">
@@ -167,8 +178,9 @@ export default function FlippingClient() {
                         setCategoryFilter(category.value);
                         setCategoryOpen(false);
                         setCategorySearch("");
+                        categoryButtonRef.current?.focus();
                       }}
-                      className={`w-full px-3 py-1.5 text-sm text-left hover:bg-card-hover transition-colors ${
+                      className={`min-h-11 w-full px-3 py-1.5 text-sm text-left hover:bg-card-hover transition-colors ${
                         categoryFilter === category.value ? "text-accent" : "text-foreground"
                       }`}
                     >
@@ -190,28 +202,33 @@ export default function FlippingClient() {
             id="sortBy"
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as FlippingSortBy)}
-            className="px-3 py-2 rounded-md bg-card border border-border text-foreground focus:outline-none focus:border-accent"
+            className="min-h-11 px-3 py-2 rounded-md bg-card border border-border text-foreground focus:outline-none focus:border-accent"
           >
             <option value="spread">Spread</option>
-            <option value="regionAvgPrice">Region avg</option>
+            <option value="regionAvgPrice">EU realm benchmark</option>
           </select>
         </div>
       </div>
+      {categoriesFailed && <p className="mb-4 text-sm text-muted" role="alert">Categories are unavailable. <button type="button" className="min-h-11 px-2 text-accent underline" onClick={() => setAttempt((value) => value + 1)}>Retry categories</button></p>}
 
       {/* Table */}
       {loading ? (
-        <p className="text-muted py-8 text-center">Loading…</p>
+        <p className="text-muted py-8 text-center" role="status">Loading realm comparisons…</p>
+      ) : failed ? (
+        <div className="surface p-6 text-center" role="alert"><p className="text-muted">Couldn’t load realm comparisons. Your filters are saved.</p><button type="button" className="mt-3 min-h-11 rounded-lg border border-border px-4 text-accent" onClick={() => setAttempt((value) => value + 1)}>Retry comparison</button></div>
       ) : data.length === 0 ? (
-        <p className="text-muted py-8 text-center">No flipping opportunities found</p>
+        <div className="py-8 text-center"><p className="text-muted">No items match these comparison filters.</p><button type="button" className="mt-2 min-h-11 px-3 text-accent underline" onClick={() => { setMinSpreadGold(0); setCategoryFilter("all"); }}>Clear comparison filters</button></div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm border-collapse">
+        <div>
+          <p className="mb-2 text-xs text-muted lg:hidden">Scroll to compare all realm prices.</p>
+          <div className="overflow-x-auto" role="region" aria-label="Realm price comparison" tabIndex={0}>
+          <table className="w-full min-w-[960px] text-sm border-collapse">
             <thead>
               <tr className="border-b border-border text-left text-muted">
                 <th className="py-2 pr-4 font-medium">Item</th>
                 <th className="py-2 pr-4 font-medium">Category</th>
                 <th className="py-2 pr-4 font-medium">Rank</th>
-                <th className="py-2 pr-4 font-medium text-right">Region Avg</th>
+                <th className="py-2 pr-4 font-medium text-right">EU realm benchmark</th>
                 <th className="py-2 pr-4 font-medium">Cheapest Realm</th>
                 <th className="py-2 pr-4 font-medium">Most Expensive Realm</th>
                 <th className="py-2 pr-4 font-medium text-right">Spread</th>
@@ -225,6 +242,7 @@ export default function FlippingClient() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
     </div>

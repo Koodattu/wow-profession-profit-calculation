@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { createSelectedRealmModule } from "./selected-realm";
 
 const groups = [
@@ -13,6 +13,26 @@ const groups = [
 ];
 
 describe("selected realm interface", () => {
+  test("a failed catalog load can be retried without losing the saved realm", async () => {
+    const loadCatalog = vi.fn().mockRejectedValueOnce(new Error("offline")).mockResolvedValue(groups);
+    const realm = createSelectedRealmModule({ loadCatalog, readStored: () => 20, writeStored: () => {} });
+    await realm.initialize();
+    expect(realm.getSnapshot().status).toBe("error");
+    await realm.retry();
+    expect(realm.getSnapshot()).toEqual(expect.objectContaining({ status: "ready", selectedId: 20 }));
+  });
+
+  test("unavailable browser storage does not prevent an in-session realm choice", async () => {
+    const realm = createSelectedRealmModule({
+      loadCatalog: async () => groups,
+      readStored: () => { throw new Error("Storage blocked"); },
+      writeStored: () => { throw new Error("Storage blocked"); },
+    });
+    await realm.initialize();
+    expect(realm.getSnapshot().status).toBe("selection-required");
+    realm.select(10);
+    expect(realm.getSnapshot()).toEqual(expect.objectContaining({ status: "ready", selectedId: 10 }));
+  });
   test("requires an explicit first selection and persists a valid choice", async () => {
     let stored: number | null = null;
     const realm = createSelectedRealmModule({

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { fetchItems, type ItemListResponse } from "@/lib/api";
-import { useSelectedRealm } from "@/lib/selected-realm";
+import { selectedRealm, useSelectedRealm } from "@/lib/selected-realm";
 
 export interface ItemBrowserRequest {
   type?: "commodity" | "realm";
@@ -21,13 +21,19 @@ export function useItemBrowser(request: ItemBrowserRequest, adapter: ItemBrowser
   const realm = useSelectedRealm();
   const { type, search, page, limit } = request;
   const needsRealm = type !== "commodity";
-  const connectedRealmId = realm.status === "ready" ? realm.selectedId : undefined;
+  const connectedRealmId = needsRealm && realm.status === "ready" ? realm.selectedId : undefined;
   const key =
     needsRealm && connectedRealmId === undefined
       ? null
       : JSON.stringify([connectedRealmId ?? "region", type ?? "all", search ?? "", page, limit]);
   const [result, setResult] = useState<{ key: string; data: ItemListResponse } | null>(null);
   const [failedKey, setFailedKey] = useState<string | null>(null);
+  const [attempt, setAttempt] = useState(0);
+  function retry() {
+    if (needsRealm && realm.status === "error") { void selectedRealm.retry(); return; }
+    setFailedKey(null);
+    setAttempt((value) => value + 1);
+  }
 
   useEffect(() => {
     if (key === null) return;
@@ -43,10 +49,10 @@ export function useItemBrowser(request: ItemBrowserRequest, adapter: ItemBrowser
     return () => {
       active = false;
     };
-  }, [adapter, connectedRealmId, key, limit, page, search, type]);
+  }, [adapter, attempt, connectedRealmId, key, limit, page, search, type]);
 
-  if (needsRealm && realm.status !== "ready") return { status: realm.status, data: null } as const;
-  if (failedKey === key && result?.key !== key) return { status: "error", data: null } as const;
-  if (result?.key !== key) return { status: "loading", data: null } as const;
-  return { status: failedKey === key ? "refresh-error" : "ready", data: result.data } as const;
+  if (needsRealm && realm.status !== "ready") return { status: realm.status, data: null, retry } as const;
+  if (failedKey === key && result?.key !== key) return { status: "error", data: null, retry } as const;
+  if (result?.key !== key) return { status: "loading", data: null, retry } as const;
+  return { status: failedKey === key ? "refresh-error" : "ready", data: result.data, retry } as const;
 }

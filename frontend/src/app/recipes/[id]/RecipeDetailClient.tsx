@@ -22,7 +22,7 @@ export default function RecipeDetailClient({ recipeId }: Props) {
   }
 
   if (!valuation.recipe && valuation.status === "error") {
-    return <p className="text-muted">Failed to load recipe data.</p>;
+    return <div role="alert"><p className="text-muted">Couldn’t load recipe prices.</p><button type="button" onClick={valuation.retry} className="mt-3 min-h-11 rounded-lg border border-border px-4 text-accent">Retry recipe</button></div>;
   }
 
   if (!valuation.recipe) {
@@ -30,12 +30,22 @@ export default function RecipeDetailClient({ recipeId }: Props) {
   }
 
   return (
-    <RecipeClient
-      recipe={valuation.recipe}
-      historyRange={historyRange}
-      onHistoryRangeChange={setHistoryRange}
-      history={valuation.history}
-      historyLoading={valuation.historyLoading}
-    />
+    <>
+      {valuation.status === "refresh-error" && (
+        <div className="mb-4 text-sm text-muted" role="alert">
+          <p>Couldn’t refresh recipe prices. Showing the last loaded prices.</p>
+          <button type="button" onClick={valuation.retry} className="min-h-11 px-2 text-accent underline">Retry recipe</button>
+        </div>
+      )}
+      <RecipeClient
+        recipe={valuation.recipe}
+        historyRange={historyRange}
+        onHistoryRangeChange={setHistoryRange}
+        history={valuation.history}
+        historyLoading={valuation.historyLoading}
+        historyFailed={valuation.historyFailed}
+        onRetryHistory={valuation.retryHistory}
+      />
+    </>
   );
 }

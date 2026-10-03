@@ -1,3 +1,4 @@
+import { isDatabaseId } from "./validation";
 import { Hono } from "hono";
 import { eq } from "drizzle-orm";
 import { db } from "../db";
@@ -21,7 +22,7 @@ professionRoutes.get("/", async (c) => {
 
 professionRoutes.get("/:professionId", async (c) => {
   const professionId = Number(c.req.param("professionId"));
-  if (isNaN(professionId)) return c.json({ error: "Invalid profession ID" }, 400);
+  if (!isDatabaseId(professionId)) return c.json({ error: "Invalid profession ID" }, 400);
 
   try {
     const [profession] = await db.select().from(professions).where(eq(professions.id, professionId)).limit(1);
@@ -40,7 +41,7 @@ professionRoutes.get("/:professionId", async (c) => {
 
 professionRoutes.get("/:professionId/recipes", async (c) => {
   const professionId = Number(c.req.param("professionId"));
-  if (isNaN(professionId)) return c.json({ error: "Invalid profession ID" }, 400);
+  if (!isDatabaseId(professionId)) return c.json({ error: "Invalid profession ID" }, 400);
 
   try {
     const categories = await db.select().from(recipeCategories).where(eq(recipeCategories.professionId, professionId));
@@ -62,7 +63,7 @@ professionRoutes.get("/:professionId/recipes", async (c) => {
 
 professionRoutes.get("/recipes/:recipeId", async (c) => {
   const recipeId = Number(c.req.param("recipeId"));
-  if (isNaN(recipeId)) return c.json({ error: "Invalid recipe ID" }, 400);
+  if (!isDatabaseId(recipeId)) return c.json({ error: "Invalid recipe ID" }, 400);
 
   try {
     const [recipe] = await db.select().from(recipes).where(eq(recipes.id, recipeId)).limit(1);

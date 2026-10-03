@@ -381,7 +381,6 @@ export function fetchMarketSummary(region = "eu", connectedRealmId?: number): Pr
 // --- Utilities ---
 
 export function formatPrice(copper: number): string {
-  if (copper === 0) return "N/A";
   const negative = copper < 0;
   const abs = Math.abs(copper);
   const gold = Math.floor(abs / 10000);

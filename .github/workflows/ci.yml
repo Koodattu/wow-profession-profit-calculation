@@ -45,14 +45,7 @@ jobs:
       - run: bun run typecheck
       - run: bun test
       - run: bunx drizzle-kit check
-      - run: bun run migrate
-      - run: bun test ./test/price-maintenance.integration.ts
-      - run: bun test ./test/gear-market.integration.ts
-      - run: bun test ./test/auction-refresh.integration.ts
-      - run: bun test ./test/market-refresh-cycle.integration.ts
-      - run: bun test ./test/current-market-write.integration.ts
-      - run: bun test ./test/item-metadata.integration.ts
-      - run: bun test ./test/realm-history-storage.integration.ts
+      - run: bun run test:integration
 
   frontend:
     runs-on: ubuntu-latest

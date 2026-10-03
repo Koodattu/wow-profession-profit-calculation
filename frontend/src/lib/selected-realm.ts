@@ -24,6 +24,7 @@ interface SelectedRealmDependencies {
 
 export interface SelectedRealmModule {
   initialize(): Promise<void>;
+  retry(): Promise<void>;
   getSnapshot(): SelectedRealmState;
   subscribe(callback: () => void): () => void;
   select(connectedRealmId: number): void;
@@ -50,22 +51,34 @@ export function createSelectedRealmModule(dependencies: SelectedRealmDependencie
     for (const listener of listeners) listener();
   }
 
+  function persist(value: number | null): void {
+    try { dependencies.writeStored(value); } catch { /* Selection still works for this session. */ }
+  }
+
+  function initialize(): Promise<void> {
+    initializePromise ??= dependencies.loadCatalog()
+      .then((groups) => {
+        const options = catalogOptions(groups);
+        let stored: number | null = null;
+        try { stored = dependencies.readStored(); } catch { /* Storage is optional. */ }
+        if (stored !== null && options.some((option) => option.id === stored)) {
+          publish({ status: "ready", options, selectedId: stored });
+        } else {
+          if (stored !== null) persist(null);
+          publish({ status: "selection-required", options, selectedId: null });
+        }
+      })
+      .catch(() => publish({ status: "error", options: [], selectedId: null }));
+    return initializePromise;
+  }
+
   return {
-    initialize() {
-      initializePromise ??= dependencies
-        .loadCatalog()
-        .then((groups) => {
-          const options = catalogOptions(groups);
-          const stored = dependencies.readStored();
-          if (stored !== null && options.some((option) => option.id === stored)) {
-            publish({ status: "ready", options, selectedId: stored });
-          } else {
-            if (stored !== null) dependencies.writeStored(null);
-            publish({ status: "selection-required", options, selectedId: null });
-          }
-        })
-        .catch(() => publish({ status: "error", options: [], selectedId: null }));
-      return initializePromise;
+    initialize,
+    retry() {
+      if (state.status === "loading") return initialize();
+      initializePromise = null;
+      publish({ status: "loading", options: [], selectedId: null });
+      return initialize();
     },
 
     getSnapshot: () => state,
@@ -79,7 +92,7 @@ export function createSelectedRealmModule(dependencies: SelectedRealmDependencie
       if (!state.options.some((option) => option.id === connectedRealmId)) {
         throw new Error(`Unknown connected realm ${connectedRealmId}`);
       }
-      dependencies.writeStored(connectedRealmId);
+      persist(connectedRealmId);
       publish({ status: "ready", options: state.options, selectedId: connectedRealmId });
     },
   };

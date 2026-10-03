@@ -49,7 +49,9 @@ test("current listings preserve exact quantities, isolate realms and versions, p
   const payload = await response.json() as Awaited<ReturnType<typeof getGearListings>>;
   expect(payload.listings[0]!.buyout).toBe(101);
   fail = true;
-  await expect(refresh.refreshRealm("eu", realmId, new Set())).rejects.toThrow("fixture unavailable");
+  const refreshError = await refresh.refreshRealm("eu", realmId, new Set()).catch((error: unknown) => error);
+  expect(refreshError).toBeInstanceOf(Error);
+  expect((refreshError as Error).message).toContain("fixture unavailable");
   expect(await getGearListings(itemId, realmId, key, 1)).toEqual(page1);
   fail = false; auctions = [];
   await refresh.refreshRealm("eu", realmId, new Set());

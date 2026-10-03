@@ -1,42 +1,53 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import WowheadLink from "@/app/WowheadLink";
 import { formatPrice, type ItemWithPrice } from "@/lib/api";
 import { getItemQualityClass } from "@/lib/item-quality";
 import { useItemBrowser } from "@/features/item-browser";
+import styles from "./Items.module.css";
 
 const FILTERS = ["all", "commodity", "realm"] as const;
 type Filter = (typeof FILTERS)[number];
 const FILTER_LABELS: Record<Filter, string> = { all: "All", commodity: "Commodities", realm: "Realm items" };
 const PAGE_SIZE = 50;
 
-export default function ItemsClient({ initialSearch = "" }: { initialSearch?: string }) {
-  const [search, setSearch] = useState(initialSearch);
-  const [debouncedSearch, setDebouncedSearch] = useState(initialSearch);
-  const [filter, setFilter] = useState<Filter>("all");
-  const [page, setPage] = useState(1);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+function updateLocation(changes: Record<string, string | null>) {
+  const next = new URLSearchParams(window.location.search);
+  for (const [key, value] of Object.entries(changes)) {
+    if (value === null) next.delete(key);
+    else next.set(key, value);
+  }
+  window.history.replaceState(null, "", `/items${next.size ? `?${next}` : ""}`);
+}
+
+export default function ItemsClient() {
+  const params = useSearchParams();
+  const committedSearch = (params.get("search") ?? "").slice(0, 100);
+  const filter: Filter = params.get("type") === "commodity" ? "commodity" : params.get("type") === "realm" ? "realm" : "all";
+  const requestedPage = Number(params.get("page") ?? 1);
+  const page = Number.isInteger(requestedPage) ? Math.min(5_000, Math.max(1, requestedPage)) : 1;
+  const [draft, setDraft] = useState<{ source: string; value: string } | null>(null);
+  const search = draft?.source === committedSearch ? draft.value : committedSearch;
+  const marketHref = `/items${params.size ? `?${params}` : ""}`;
 
   useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => {
-      setDebouncedSearch(search.trim());
-      setPage(1);
+    if (search.trim() === committedSearch) return;
+    const timer = setTimeout(() => {
+      updateLocation({ search: search.trim() || null, page: null });
     }, 250);
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
-  }, [search]);
+    return () => clearTimeout(timer);
+  }, [committedSearch, search]);
 
   const request = useMemo(
     () => ({
       type: filter === "all" ? undefined : filter,
-      search: debouncedSearch || undefined,
+      search: committedSearch || undefined,
       page,
       limit: PAGE_SIZE,
     }),
-    [debouncedSearch, filter, page],
+    [committedSearch, filter, page],
   );
   const market = useItemBrowser(request);
   const data = market.data;
@@ -55,22 +66,21 @@ export default function ItemsClient({ initialSearch = "" }: { initialSearch?: st
           <span className="sr-only">Search items</span>
           <input
             type="search"
+            maxLength={100}
             placeholder="Search items"
             value={search}
-            onChange={(event) => setSearch(event.target.value)}
+            onChange={(event) => setDraft({ source: committedSearch, value: event.target.value })}
             className="h-11 w-full rounded-xl border border-border bg-card px-4 text-sm text-foreground outline-none transition-[border-color,background-color] duration-150 ease-out placeholder:text-muted focus:border-accent focus:bg-card-hover"
           />
         </label>
-        <div className="flex gap-1 rounded-xl bg-card p-1 shadow-[var(--shadow-surface)]" aria-label="Market type">
+        <div className="flex flex-wrap gap-1 rounded-xl bg-card p-1 shadow-[var(--shadow-surface)] sm:shrink-0" role="group" aria-label="Market type">
           {FILTERS.map((current) => (
             <button
               key={current}
               type="button"
-              onClick={() => {
-                setFilter(current);
-                setPage(1);
-              }}
-              className={`h-9 rounded-lg px-3 text-sm transition-[background-color,color,scale] duration-150 ease-out active:scale-[0.96] ${
+              aria-pressed={filter === current}
+              onClick={() => updateLocation({ type: current === "all" ? null : current, page: null })}
+              className={`min-h-11 flex-1 rounded-lg px-3 text-sm transition-[background-color,color,scale] duration-150 ease-out active:scale-[0.96] sm:flex-none ${
                 filter === current ? "bg-foreground text-background" : "text-muted hover:bg-card-hover hover:text-foreground"
               }`}
             >
@@ -80,54 +90,61 @@ export default function ItemsClient({ initialSearch = "" }: { initialSearch?: st
         </div>
       </div>
 
+      {market.status === "refresh-error" && (
+        <div className="mb-4 flex flex-wrap items-center gap-x-4 text-sm text-muted" role="alert">
+          <p>Couldn’t refresh the market. Showing the last loaded prices.</p>
+          <button type="button" className="min-h-11 px-2 text-accent underline" onClick={market.retry}>Retry market</button>
+        </div>
+      )}
+
       {market.status === "selection-required" ? (
-        <StateMessage>Select a realm to browse current market prices.</StateMessage>
+        <StateMessage>Select a realm above for local prices, or <button type="button" className="text-accent underline" onClick={() => updateLocation({ type: "commodity", page: null })}>browse EU commodities</button>.</StateMessage>
       ) : market.status === "error" ? (
-        <StateMessage>Couldn’t load the market. Try again in a moment.</StateMessage>
+        <StateMessage><p role="alert">Couldn’t load the market. Your filters are saved.</p><button type="button" className="mt-3 min-h-11 rounded-lg border border-border px-4 text-accent" onClick={market.retry}>Retry market</button></StateMessage>
       ) : loading && !data ? (
         <StateMessage>Loading market…</StateMessage>
       ) : !data || data.items.length === 0 ? (
-        <StateMessage>No matching items.</StateMessage>
+        <StateMessage><p>No items match these filters.</p><button type="button" className="mt-3 min-h-11 rounded-lg border border-border px-4 text-accent" onClick={() => { setDraft(null); updateLocation({ search: null, type: null, page: null }); }}>Clear filters</button></StateMessage>
       ) : (
         <>
           <div className={`surface overflow-hidden transition-opacity duration-150 ease-out ${loading ? "opacity-60" : "opacity-100"}`}>
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[720px] border-collapse text-sm">
+              <table className={`${styles.table} w-full border-collapse text-sm`} aria-label="Market prices">
                 <thead>
                   <tr className="border-b border-border text-left text-xs uppercase tracking-[0.1em] text-muted">
                     <th className="px-4 py-3 font-medium">Item</th>
                     <th className="px-4 py-3 font-medium">Market</th>
                     <th className="px-4 py-3 text-right font-medium">Current</th>
                     <th className="px-4 py-3 text-right font-medium">Available</th>
-                    <th className="px-4 py-3 text-right font-medium">EU realm avg</th>
+                    <th className="px-4 py-3 text-right font-medium">EU realm benchmark</th>
                   </tr>
                 </thead>
                 <tbody>
                   {data.items.map((item) => (
-                    <ItemRow key={item.id} item={item} />
+                    <ItemRow key={item.id} item={item} marketHref={marketHref} />
                   ))}
                 </tbody>
               </table>
             </div>
           </div>
 
-          <div className="mt-5 flex items-center justify-between gap-4">
+          <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
             <button
               type="button"
-              onClick={() => setPage((value) => Math.max(1, value - 1))}
-              disabled={page <= 1}
-              className="h-10 rounded-lg bg-card px-4 text-sm text-muted shadow-[var(--shadow-surface)] transition-[background-color,color,scale] duration-150 ease-out hover:bg-card-hover hover:text-foreground active:scale-[0.96] disabled:pointer-events-none disabled:opacity-40"
+              onClick={() => updateLocation({ page: String(Math.max(1, data.page - 1)) })}
+              disabled={data.page <= 1}
+              className="h-11 rounded-lg bg-card px-4 text-sm text-muted shadow-[var(--shadow-surface)] transition-[background-color,color,scale] duration-150 ease-out hover:bg-card-hover hover:text-foreground active:scale-[0.96] disabled:pointer-events-none disabled:opacity-40"
             >
               Previous
             </button>
-            <span className="text-sm tabular-nums text-muted">
+            <span className="order-first w-full text-center text-sm tabular-nums text-muted sm:order-none sm:w-auto" role="status">
               {data.page} / {Math.max(1, data.totalPages)} · {data.total.toLocaleString()} items
             </span>
             <button
               type="button"
-              onClick={() => setPage((value) => Math.min(data.totalPages, value + 1))}
-              disabled={page >= data.totalPages}
-              className="h-10 rounded-lg bg-card px-4 text-sm text-muted shadow-[var(--shadow-surface)] transition-[background-color,color,scale] duration-150 ease-out hover:bg-card-hover hover:text-foreground active:scale-[0.96] disabled:pointer-events-none disabled:opacity-40"
+              onClick={() => updateLocation({ page: String(Math.min(data.totalPages, data.page + 1)) })}
+              disabled={data.page >= data.totalPages}
+              className="h-11 rounded-lg bg-card px-4 text-sm text-muted shadow-[var(--shadow-surface)] transition-[background-color,color,scale] duration-150 ease-out hover:bg-card-hover hover:text-foreground active:scale-[0.96] disabled:pointer-events-none disabled:opacity-40"
             >
               Next
             </button>
@@ -138,14 +155,14 @@ export default function ItemsClient({ initialSearch = "" }: { initialSearch?: st
   );
 }
 
-function ItemRow({ item }: { item: ItemWithPrice }) {
+function ItemRow({ item, marketHref }: { item: ItemWithPrice; marketHref: string }) {
   const quantity = item.latestPrice?.totalQuantity;
   const isRealm = item.marketType === "realm";
 
   return (
     <tr className="border-b border-border/70 last:border-0 hover:bg-card-hover">
       <td className="px-4 py-3">
-        <WowheadLink href={`/items/${item.id}`} type="item" id={item.id} className={`${getItemQualityClass(item.itemQuality)} hover:underline`}>
+        <WowheadLink href={`/items/${item.id}?from=${encodeURIComponent(marketHref)}`} type="item" id={item.id} className={`${getItemQualityClass(item.itemQuality)} hover:underline`}>
           {item.name}
         </WowheadLink>
         {item.qualityRank && <span className="ml-2 text-xs text-muted">R{item.qualityRank}</span>}
@@ -155,11 +172,11 @@ function ItemRow({ item }: { item: ItemWithPrice }) {
           {isRealm ? "Realm" : item.marketType === "commodity" ? "EU" : "—"}
         </span>
       </td>
-      <td className="px-4 py-3 text-right font-medium tabular-nums">{item.latestPrice ? formatPrice(item.latestPrice.minPrice) : "Not listed"}</td>
-      <td className="px-4 py-3 text-right tabular-nums text-muted">
-        {quantity == null ? "—" : `${quantity.toLocaleString()}${isRealm ? " listings" : " units"}`}
+      <td data-label="Current" className="px-4 py-3 text-right font-medium tabular-nums">{item.latestPrice ? formatPrice(item.latestPrice.minPrice) : "Not listed"}</td>
+      <td data-label="Available" className="px-4 py-3 text-right tabular-nums text-muted">
+        {quantity == null ? "—" : `${quantity.toLocaleString()} ${quantity === 1 ? "unit" : "units"}`}
       </td>
-      <td className="px-4 py-3 text-right tabular-nums text-muted">
+      <td data-label="EU realm benchmark" className="px-4 py-3 text-right tabular-nums text-muted">
         {isRealm && item.regionLatestPrice ? formatPrice(item.regionLatestPrice.avgPrice) : "—"}
       </td>
     </tr>
@@ -167,5 +184,5 @@ function ItemRow({ item }: { item: ItemWithPrice }) {
 }
 
 function StateMessage({ children }: { children: React.ReactNode }) {
-  return <div className="surface py-16 text-center text-sm text-muted">{children}</div>;
+  return <div className="surface px-4 py-12 text-center text-sm text-muted">{children}</div>;
 }

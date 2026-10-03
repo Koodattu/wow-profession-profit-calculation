@@ -1,3 +1,4 @@
+import { isDatabaseId } from "./validation";
 import { Hono } from "hono";
 import { and, eq, sql } from "drizzle-orm";
 import { db } from "../db";
@@ -12,7 +13,7 @@ marketRoutes.get("/summary", async (c) => {
 
   const connectedRealmIdValue = c.req.query("connectedRealmId");
   const connectedRealmId = connectedRealmIdValue ? Number(connectedRealmIdValue) : undefined;
-  if (connectedRealmIdValue && (!Number.isInteger(connectedRealmId) || connectedRealmId! <= 0)) {
+  if (connectedRealmIdValue && !isDatabaseId(connectedRealmId)) {
     return c.json({ error: "Invalid connected realm ID" }, 400);
   }
 

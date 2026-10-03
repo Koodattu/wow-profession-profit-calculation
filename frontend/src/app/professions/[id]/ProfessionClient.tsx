@@ -42,16 +42,21 @@ export default function ProfessionClient({ profession }: Props) {
         <div className="mt-2">
           <div>
             <h1 className="text-2xl font-bold">{profession.name}</h1>
-            <p className="text-sm text-muted">{recipeCosts.length} recipes</p>
+            {valuation.data && <p className="text-sm text-muted">{recipeCosts.length} recipes</p>}
             <p className="text-xs text-muted mt-1">Gross estimates exclude auction fees and profession-stat procs.</p>
           </div>
         </div>
       </div>
 
-      <div className="h-5 mb-4 text-sm text-muted">
+      <div className="mb-4 text-sm text-muted">
         {valuation.status === "selection-required" ? "Select a realm to value recipes." : null}
         {valuation.status === "loading" ? "Loading recipe prices..." : null}
-        {valuation.status === "error" ? "Failed to load recipe prices." : null}
+        {valuation.status === "error" || valuation.status === "refresh-error" ? (
+          <div role="alert">
+            <p>{valuation.status === "refresh-error" ? "Couldn’t refresh recipe prices. Showing the last loaded prices." : "Couldn’t load recipe prices."}</p>
+            <button type="button" className="mt-2 min-h-11 rounded-lg border border-border px-4 text-accent" onClick={valuation.retry}>Retry prices</button>
+          </div>
+        ) : null}
       </div>
 
       {sortedCategories.map(([categoryId, recipes]) => {
@@ -59,7 +64,8 @@ export default function ProfessionClient({ profession }: Props) {
         return (
           <section key={categoryId ?? "uncategorized"} className="mb-8">
             <h2 className="text-lg font-semibold text-muted">{category?.name ?? "Other"}</h2>
-            <div className="overflow-x-auto">
+            <p className="my-2 text-xs text-muted lg:hidden">Scroll to compare all scenarios, or open a recipe for details.</p>
+            <div className="overflow-x-auto" role="region" aria-label={`${category?.name ?? "Other"} recipe prices`} tabIndex={0}>
               <RecipeTable recipes={recipes} />
             </div>
           </section>
@@ -76,7 +82,7 @@ function RecipeTable({ recipes }: { recipes: ProfessionRecipeCost[] }) {
   const metricColumnWidth = `${(100 - 22) / metricColumnCount}%`;
 
   return (
-    <table className="w-full text-sm border-collapse table-fixed">
+    <table className="w-full min-w-[980px] text-sm border-collapse table-fixed">
       <colgroup>
         <col style={{ width: recipeColumnWidth }} />
         {Array.from({ length: metricColumnCount }).map((_, index) => (

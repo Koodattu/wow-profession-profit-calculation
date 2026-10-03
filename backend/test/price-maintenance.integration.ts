@@ -112,7 +112,11 @@ test("compaction requires matching daily totals and verified recoverable archive
       INSERT INTO realm_snapshots (region_id, connected_realm_id, item_id, snapshot_time, min_buyout, avg_buyout, max_buyout, total_quantity, total_value)
       VALUES (${REGION}, 1, ${ITEM_ID}, '2000-01-01T01:00:00Z', 33, 33, 33, 3, 100)
     `;
-    await expect(archiveExpiredPriceHistory({ directory, cutoff })).rejects.toThrow("coverage is incomplete");
+    // Await I/O before entering Bun's matcher; rejects.toThrow can stall
+    // postgres-js progress after filesystem I/O on Windows.
+    const coverageError = await archiveExpiredPriceHistory({ directory, cutoff }).catch((error: unknown) => error);
+    expect(coverageError).toBeInstanceOf(Error);
+    expect((coverageError as Error).message).toContain("coverage is incomplete");
     const [retained] = await sql`SELECT count(*)::int AS count FROM commodity_snapshots WHERE region_id = ${REGION} AND snapshot_time < '2000-01-02'`;
     expect(retained?.count).toBe(1);
     await sql`

@@ -9,7 +9,9 @@ import { env } from "../config/env";
 import { sql } from "../db";
 
 async function syncFile(path: string): Promise<void> {
-  const file = await open(path, "r");
+  // Windows FlushFileBuffers requires a handle opened with write access.
+  // POSIX also uses this helper for directories, which must stay read-only.
+  const file = await open(path, process.platform === "win32" ? "r+" : "r");
   try {
     await file.sync();
   } finally {

@@ -55,6 +55,11 @@ input[type="number"] {
   background: color-mix(in srgb, var(--accent) 28%, transparent);
 }
 
+:where(a, button, input, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
 .surface {
   background: var(--card);
   border-radius: 12px;

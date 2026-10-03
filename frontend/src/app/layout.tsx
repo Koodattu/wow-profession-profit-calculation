@@ -34,7 +34,7 @@ export default function RootLayout({
               Copper
             </Link>
             <nav
-              className="order-3 flex w-full items-center gap-1 sm:order-none sm:min-w-0 sm:flex-1 sm:overflow-x-auto"
+              className="order-3 flex w-full flex-wrap items-center gap-1 sm:order-none sm:min-w-0 sm:flex-1 sm:flex-nowrap sm:overflow-x-auto"
               aria-label="Primary navigation"
             >
               <NavLink href="/items">Market</NavLink>
@@ -63,7 +63,7 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
   return (
     <Link
       href={href}
-      className="flex h-10 shrink-0 items-center rounded-lg px-3 text-sm text-muted transition-[color,background-color,scale] duration-150 ease-out hover:bg-card-hover hover:text-foreground active:scale-[0.96]"
+      className="flex min-h-11 shrink-0 items-center rounded-lg px-3 text-sm text-muted transition-[color,background-color,scale] duration-150 ease-out hover:bg-card-hover hover:text-foreground active:scale-[0.96]"
     >
       {children}
     </Link>

@@ -1,0 +1,32 @@
+.table { min-width: 720px; }
+
+@media (max-width: 639px) {
+  .table { min-width: 0; }
+  .table, .table tbody { display: block; }
+  .table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .table tbody tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px 12px;
+    padding: 16px;
+  }
+  .table td { padding: 0; min-width: 0; text-align: start; }
+  .table td:first-child { align-self: center; overflow-wrap: anywhere; }
+  .table td:nth-child(2), .table td:nth-child(4) { text-align: end; }
+  .table td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 2px;
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-weight: 400;
+  }
+  .table td:last-child { grid-column: 1 / -1; font-size: 0.8125rem; }
+  .table td:last-child::before { display: inline; margin-right: 8px; }
+}

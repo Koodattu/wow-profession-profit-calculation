@@ -26,6 +26,15 @@ describe("profession valuation feature interface", () => {
     realmState.current = { status: "ready", options: [{ id: 1, label: "One", fullLabel: "One" }], selectedId: 1 };
   });
 
+  test("retries unavailable recipe prices for the selected profession and realm", async () => {
+    const adapter = { load: vi.fn().mockRejectedValueOnce(new Error("offline")).mockResolvedValue([]) };
+    const { result } = renderHook(() => useProfessionValuation(100, adapter));
+    await waitFor(() => expect(result.current.status).toBe("error"));
+    act(() => result.current.retry());
+    await waitFor(() => expect(result.current.status).toBe("ready"));
+    expect(adapter.load).toHaveBeenLastCalledWith(100, 1);
+  });
+
   test("never presents a stale realm response as the current result", async () => {
     const first = deferred<ProfessionRecipeCost[]>();
     const second = deferred<ProfessionRecipeCost[]>();

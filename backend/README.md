@@ -36,12 +36,15 @@ The normal test suite is database-independent:
 bun test
 ```
 
-The database-backed characterization suite requires a migrated, disposable local database. Auction Refresh cases use isolated test regions and reserved item-ID ranges. Profession Catalog cases temporarily replace the catalog and restore the bundled catalog during teardown, so never point this suite at a shared or production database:
+The database-backed suite requires an explicitly configured disposable local PostgreSQL 16 database. The runner rejects non-local targets and database names without a `_test` suffix, migrates it, and seeds bounded synthetic auctions over the bundled catalog. It runs suites sequentially in separate processes, with dummy Blizzard credentials and no external refreshes. Profession Catalog cases temporarily replace the catalog, so never use a shared database:
 
-```bash
-docker compose up -d db
-cd backend
+```powershell
+# From backend/ (test-only credentials)
+docker run -d --name copper-local-test --memory=512m --cpus=1 -p 127.0.0.1:55433:5432 -e POSTGRES_USER=copper_goal -e POSTGRES_PASSWORD=copper_goal -e POSTGRES_DB=copper_goal_test postgres:16
+$env:DATABASE_URL='postgresql://copper_goal:copper_goal@127.0.0.1:55433/copper_goal_test'
 bun run test:integration
 ```
+
+For browser checks, run `bun run test:setup`, then `bun run dev:fixture`. This exposes the real HTTP routes at `http://127.0.0.1:4112` without the production scheduler. Start the frontend with both `API_URL` and `NEXT_PUBLIC_API_URL` set to that URL. All prices in this mode are synthetic. Remove only the container you created when finished: `docker rm -fv copper-local-test`.
 
 The runtime and lockfile are maintained with Bun 1.3.14.
