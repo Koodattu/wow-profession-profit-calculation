@@ -43,8 +43,8 @@ test("comparison filters and detail return context survive a fresh visit to the 
     ? [{ categoryName: "Powerful Peridots" }]
     : [{ itemId: 100, itemName: "Deadly Peridot", itemQuality: 3, qualityRank: 2,
       categoryName: "Powerful Peridots", regionAvgPrice: 2000000, spread: 1000000,
-      spreadPercent: 100, realmCount: 2, cheapestRealm: { realmName: "One", minBuyout: 1000000 },
-      mostExpensiveRealm: { realmName: "Two", minBuyout: 2000000 } }])));
+      spreadPercent: 100, realmCount: 2, cheapestRealm: { realmId: 1, realmName: "One", minBuyout: 1000000 },
+      mostExpensiveRealm: { realmId: 2, realmName: "Two", minBuyout: 2000000 } }])));
   const view = render(<FlippingClient />);
   await screen.findByRole("link", { name: "Deadly Peridot" });
   fireEvent.change(screen.getByRole("spinbutton", { name: "Min spread" }), { target: { value: "50" } });
@@ -68,4 +68,28 @@ test("comparison filters and detail return context survive a fresh visit to the 
   const request = new URL(vi.mocked(fetch).mock.calls.filter(([url]) => String(url).includes("opportunities")).at(-1)![0] as string);
   expect(request.searchParams.get("minSpread")).toBe("500000");
   expect(request.searchParams.get("categoryName")).toBe("Powerful Peridots");
+});
+
+test("realm prices link to their own listings and retain the complete comparison context", async () => {
+  window.history.replaceState(null, "", "/flipping?minSpread=50&limit=50&sort=regionAvgPrice&category=name%3APowerful+Peridots");
+  vi.stubGlobal("fetch", vi.fn(async (url: string) => Response.json(url.includes("categories")
+    ? [{ categoryName: "Powerful Peridots" }]
+    : [{ itemId: 100, itemName: "Deadly Peridot", itemQuality: 3, qualityRank: 2,
+      categoryName: "Powerful Peridots", regionAvgPrice: 2000000, spread: 1000000,
+      spreadPercent: 100, realmCount: 2,
+      cheapestRealm: { realmId: 41, realmName: "One / Connected One / Connected Two", minBuyout: 1000000 },
+      mostExpensiveRealm: { realmId: 82, realmName: "Two", minBuyout: 2000000 } }])));
+  render(<FlippingClient />);
+
+  const cheapest = await screen.findByRole("link", { name: "Inspect Deadly Peridot listings on One / Connected One / Connected Two at 100g 0s" });
+  const expensive = screen.getByRole("link", { name: "Inspect Deadly Peridot listings on Two at 200g 0s" });
+  expect(cheapest).toHaveTextContent("One (+2)");
+  expect(cheapest).toHaveAttribute("title", "One / Connected One / Connected Two");
+  for (const [link, realm] of [[cheapest, "41"], [expensive, "82"]] as const) {
+    const url = new URL(link.getAttribute("href")!, window.location.origin);
+    expect(url.pathname).toBe("/items/100");
+    expect(url.searchParams.get("realm")).toBe(realm);
+    expect(url.searchParams.get("from")).toBe("/flipping?minSpread=50&limit=50&sort=regionAvgPrice&category=name%3APowerful+Peridots");
+  }
+  expect(screen.getByText(/minimums can come from different item versions/i)).toBeVisible();
 });

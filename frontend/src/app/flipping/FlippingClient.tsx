@@ -2,9 +2,11 @@
 
 import { useState, useEffect, useRef, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import WowheadLink from "@/app/WowheadLink";
 import { fetchFlippingCategories, fetchFlippingOpportunities, formatPrice, type FlippingCategory, type FlippingOpportunity, type FlippingSortBy } from "@/lib/api";
 import { getItemQualityClass } from "@/lib/item-quality";
+import { realmLabel } from "@/lib/realm-label";
 
 const LIMIT_OPTIONS = [25, 50, 100] as const;
 
@@ -107,10 +109,9 @@ export default function FlippingClient() {
 
   return (
     <div>
-      <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-accent">Europe · Current listings</p>
       <h1 className="text-3xl font-semibold tracking-tight mb-2">Realm comparison</h1>
-      <p className="text-muted mb-2">Compare current crafted-item prices across connected realms.</p>
-      <p className="text-xs text-muted mb-6">Price gaps are not guaranteed profit and exclude auction fees.</p>
+      <p className="text-muted mb-2">Compare current crafted-item prices across connected EU realms. Open a realm price to inspect its listings.</p>
+      <p className="text-xs text-muted mb-6">Minimums can come from different item versions. Check item level and stats before comparing. Price gaps are not guaranteed profit and exclude auction fees.</p>
 
       {/* Controls */}
       <div className="flex flex-col sm:flex-row sm:flex-wrap gap-4 mb-6">
@@ -275,10 +276,26 @@ function FlipRow({ opp, comparisonHref }: { opp: FlippingOpportunity; comparison
       <td className="py-2 pr-4 text-muted">{opp.qualityRank ? `R${opp.qualityRank}` : "—"}</td>
       <td className="py-2 pr-4 text-right">{formatPrice(opp.regionAvgPrice)}</td>
       <td className="py-2 pr-4">
-        <span className="text-muted">{opp.cheapestRealm.realmName}</span> <span className="text-positive">{formatPrice(opp.cheapestRealm.minBuyout)}</span>
+        <Link
+          href={`/items/${opp.itemId}?realm=${opp.cheapestRealm.realmId}&from=${encodeURIComponent(comparisonHref)}`}
+          aria-label={`Inspect ${opp.itemName} listings on ${opp.cheapestRealm.realmName} at ${formatPrice(opp.cheapestRealm.minBuyout)}`}
+          title={opp.cheapestRealm.realmName}
+          className="inline-flex min-h-11 flex-col justify-center rounded-sm underline decoration-border underline-offset-4 hover:decoration-current focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+        >
+          <span className="text-muted">{realmLabel(opp.cheapestRealm.realmName)}</span>
+          <span className="text-positive tabular-nums">{formatPrice(opp.cheapestRealm.minBuyout)}</span>
+        </Link>
       </td>
       <td className="py-2 pr-4">
-        <span className="text-muted">{opp.mostExpensiveRealm.realmName}</span> <span className="text-amber-400">{formatPrice(opp.mostExpensiveRealm.minBuyout)}</span>
+        <Link
+          href={`/items/${opp.itemId}?realm=${opp.mostExpensiveRealm.realmId}&from=${encodeURIComponent(comparisonHref)}`}
+          aria-label={`Inspect ${opp.itemName} listings on ${opp.mostExpensiveRealm.realmName} at ${formatPrice(opp.mostExpensiveRealm.minBuyout)}`}
+          title={opp.mostExpensiveRealm.realmName}
+          className="inline-flex min-h-11 flex-col justify-center rounded-sm underline decoration-border underline-offset-4 hover:decoration-current focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+        >
+          <span className="text-muted">{realmLabel(opp.mostExpensiveRealm.realmName)}</span>
+          <span className="text-amber-400 tabular-nums">{formatPrice(opp.mostExpensiveRealm.minBuyout)}</span>
+        </Link>
       </td>
       <td className="py-2 pr-4 text-right">{formatPrice(opp.spread)}</td>
       <td className={`py-2 pr-4 text-right ${opp.spreadPercent > 100 ? "text-positive" : ""}`}>{opp.spreadPercent.toFixed(1)}%</td>
