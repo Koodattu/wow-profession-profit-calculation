@@ -6,6 +6,9 @@ import WowheadLink from "@/app/WowheadLink";
 import { formatPrice, type ItemWithPrice } from "@/lib/api";
 import { getItemQualityClass } from "@/lib/item-quality";
 import { useItemBrowser } from "@/features/item-browser";
+import { FILTER_KEYS, readMarketFilters } from "@/lib/market-filters";
+import { useLinkedHistoryRealm } from "@/lib/history-view";
+import MarketFilters from "./MarketFilters";
 import styles from "./Items.module.css";
 
 const FILTERS = ["all", "commodity", "realm"] as const;
@@ -13,52 +16,65 @@ type Filter = (typeof FILTERS)[number];
 const FILTER_LABELS: Record<Filter, string> = { all: "All", commodity: "Commodities", realm: "Realm items" };
 const PAGE_SIZE = 50;
 
-function updateLocation(changes: Record<string, string | null>) {
+function writeLocation(changes: Record<string, string | null>, replace = false) {
   const next = new URLSearchParams(window.location.search);
   for (const [key, value] of Object.entries(changes)) {
     if (value === null) next.delete(key);
     else next.set(key, value);
   }
-  window.history.replaceState(null, "", `/items${next.size ? `?${next}` : ""}`);
+  window.history[replace ? "replaceState" : "pushState"](null, "", `/items${next.size ? `?${next}` : ""}`);
 }
 
 export default function ItemsClient() {
   const params = useSearchParams();
+  const query = params.toString();
+  const parsed = useMemo(() => readMarketFilters(new URLSearchParams(query)), [query]);
   const committedSearch = (params.get("search") ?? "").slice(0, 100);
   const filter: Filter = params.get("type") === "commodity" ? "commodity" : params.get("type") === "realm" ? "realm" : "all";
+  const linkedRealm = useLinkedHistoryRealm(filter !== "commodity");
   const requestedPage = Number(params.get("page") ?? 1);
   const page = Number.isInteger(requestedPage) ? Math.min(5_000, Math.max(1, requestedPage)) : 1;
   const [draft, setDraft] = useState<{ source: string; value: string } | null>(null);
   const search = draft?.source === committedSearch ? draft.value : committedSearch;
   const marketHref = `/items${params.size ? `?${params}` : ""}`;
 
+  function updateLocation(changes: Record<string, string | null>) {
+    const nextType = Object.hasOwn(changes, "type") ? changes.type : filter;
+    writeLocation({ page: null, search: search.trim() || null, ...changes,
+      ...(nextType === "commodity" ? { realm: null } : linkedRealm.realm.status === "ready" ? { realm: String(linkedRealm.realm.selectedId) } : {}) });
+  }
+  function clearFilters() {
+    setDraft(null);
+    updateLocation(Object.fromEntries(FILTER_KEYS.map(key => [key, null])));
+  }
+
   useEffect(() => {
     if (search.trim() === committedSearch) return;
     const timer = setTimeout(() => {
-      updateLocation({ search: search.trim() || null, page: null });
+      writeLocation({ search: search.trim() || null, page: null }, true);
     }, 250);
     return () => clearTimeout(timer);
   }, [committedSearch, search]);
 
   const request = useMemo(
     () => ({
+      ...parsed.filters,
       type: filter === "all" ? undefined : filter,
       search: committedSearch || undefined,
       page,
       limit: PAGE_SIZE,
     }),
-    [committedSearch, filter, page],
+    [committedSearch, filter, page, parsed.filters],
   );
-  const market = useItemBrowser(request);
+  const market = useItemBrowser(request, undefined, !parsed.invalid && !linkedRealm.pending && !linkedRealm.invalid);
   const data = market.data;
   const loading = market.status === "loading";
 
   return (
     <div>
       <div className="mb-7">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-accent">Europe · Retail</p>
         <h1 className="text-3xl font-semibold tracking-tight">Market</h1>
-        <p className="mt-2 text-sm text-muted">Current auction prices and available quantity.</p>
+        <p className="mt-2 text-sm text-muted">EU Retail prices and supply{filter !== "commodity" && linkedRealm.realm.status === "ready" ? ` · ${linkedRealm.realm.options.find(option => option.id === linkedRealm.realm.selectedId)?.label ?? "Selected realm"}` : " · Region-wide commodities"}.</p>
       </div>
 
       <div className="mb-6 flex flex-col gap-3 sm:flex-row">
@@ -67,7 +83,7 @@ export default function ItemsClient() {
           <input
             type="search"
             maxLength={100}
-            placeholder="Search items"
+            placeholder="Search by item name or ID"
             value={search}
             onChange={(event) => setDraft({ source: committedSearch, value: event.target.value })}
             className="h-11 w-full rounded-xl border border-border bg-card px-4 text-sm text-foreground outline-none transition-[border-color,background-color] duration-150 ease-out placeholder:text-muted focus:border-accent focus:bg-card-hover"
@@ -90,6 +106,13 @@ export default function ItemsClient() {
         </div>
       </div>
 
+      <MarketFilters params={new URLSearchParams(query)} onChange={updateLocation} onClear={clearFilters} />
+
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-sm text-muted" aria-live="polite" aria-atomic="true">
+        <p>{!parsed.invalid && !linkedRealm.invalid && !linkedRealm.pending && data ? `${data.total.toLocaleString()} matching ${data.total === 1 ? "item" : "items"}` : loading ? "Updating results…" : ""}</p>
+        <p className="text-xs">Prices and stock use EU commodities and your selected realm. Unlisted prices stay unavailable.</p>
+      </div>
+
       {market.status === "refresh-error" && (
         <div className="mb-4 flex flex-wrap items-center gap-x-4 text-sm text-muted" role="alert">
           <p>Couldn’t refresh the market. Showing the last loaded prices.</p>
@@ -97,14 +120,20 @@ export default function ItemsClient() {
         </div>
       )}
 
-      {market.status === "selection-required" ? (
+      {parsed.invalid ? (
+        <StateMessage><p role="alert">Some filters in this link are invalid. Correct them above or clear the filters.</p></StateMessage>
+      ) : linkedRealm.invalid ? (
+        <StateMessage><p role="alert">This link refers to an unavailable realm. Choose a realm above or use your current selection.</p><button type="button" className="mt-3 min-h-11 px-4 text-accent underline" onClick={() => writeLocation({ realm: null, page: null })}>Use selected realm</button></StateMessage>
+      ) : linkedRealm.pending ? (
+        <StateMessage>Loading the linked realm…</StateMessage>
+      ) : market.status === "selection-required" ? (
         <StateMessage>Select a realm above for local prices, or <button type="button" className="text-accent underline" onClick={() => updateLocation({ type: "commodity", page: null })}>browse EU commodities</button>.</StateMessage>
       ) : market.status === "error" ? (
         <StateMessage><p role="alert">Couldn’t load the market. Your filters are saved.</p><button type="button" className="mt-3 min-h-11 rounded-lg border border-border px-4 text-accent" onClick={market.retry}>Retry market</button></StateMessage>
       ) : loading && !data ? (
         <StateMessage>Loading market…</StateMessage>
       ) : !data || data.items.length === 0 ? (
-        <StateMessage><p>No items match these filters.</p><button type="button" className="mt-3 min-h-11 rounded-lg border border-border px-4 text-accent" onClick={() => { setDraft(null); updateLocation({ search: null, type: null, page: null }); }}>Clear filters</button></StateMessage>
+        <StateMessage><p>No items match these filters.</p><p className="mt-2">Try a wider price range, another category, or remove a filter above.</p></StateMessage>
       ) : (
         <>
           <div className={`surface overflow-hidden transition-opacity duration-150 ease-out ${loading ? "opacity-60" : "opacity-100"}`}>
@@ -166,6 +195,7 @@ function ItemRow({ item, marketHref }: { item: ItemWithPrice; marketHref: string
           {item.name}
         </WowheadLink>
         {item.qualityRank && <span className="ml-2 text-xs text-muted">R{item.qualityRank}</span>}
+        {item.itemClass && <p className="mt-1 text-xs text-muted">{[item.itemClass, item.itemSubclass, item.inventoryType].filter(value => value && !["Non-equippable", "NON_EQUIP"].includes(value)).join(" · ")}</p>}
       </td>
       <td className="px-4 py-3">
         <span className={`rounded-md px-2 py-1 text-xs ${isRealm ? "bg-amber-400/10 text-amber-300" : "bg-positive/10 text-positive"}`}>

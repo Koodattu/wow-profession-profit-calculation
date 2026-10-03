@@ -130,6 +130,34 @@ export interface ItemWithPrice {
   latestPrice: MarketPrice | null;
   regionLatestPrice: MarketPrice | null;
   realmLatestPrice: MarketPrice | null;
+  itemClass?: string | null;
+  itemSubclass?: string | null;
+  inventoryType?: string | null;
+}
+
+export interface ItemFilters {
+  type?: string;
+  search?: string;
+  searchMode?: string;
+  category?: string;
+  subcategory?: string;
+  slot?: string;
+  rarity?: string;
+  rank?: string;
+  usage?: string;
+  profession?: number;
+  availability?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  minQuantity?: number;
+  maxQuantity?: number;
+  sort?: string;
+}
+
+export interface ItemFilterOptions {
+  categories: Array<{ name: string; subcategories: string[] }>;
+  slots: string[];
+  professions: Array<{ id: number; name: string; expansion: string }>;
 }
 
 export interface MarketPrice {
@@ -340,17 +368,13 @@ export function fetchItemPrices(
   );
 }
 
-export function fetchItems(params: { region?: string; type?: string; search?: string; page?: number; limit?: number; connectedRealmId?: number } = {}): Promise<ItemListResponse> {
-  return apiFetch(
-    `/api/items${qs({
-      region: params.region,
-      type: params.type,
-      search: params.search,
-      page: params.page?.toString(),
-      limit: params.limit?.toString(),
-      connectedRealmId: params.connectedRealmId?.toString(),
-    })}`,
-  );
+export function fetchItems(params: ItemFilters & { region?: string; page?: number; limit?: number; connectedRealmId?: number } = {}): Promise<ItemListResponse> {
+  return apiFetch(`/api/items${qs(Object.fromEntries(Object.entries(params)
+    .filter(([, value]) => value !== undefined).map(([key, value]) => [key, String(value)])))}`);
+}
+
+export function fetchItemFilterOptions(): Promise<ItemFilterOptions> {
+  return apiFetch("/api/items/filters");
 }
 
 export function fetchSearch(q: string, region = "eu"): Promise<SearchResult> {

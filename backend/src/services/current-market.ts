@@ -4,6 +4,32 @@ import { commodityLatest, marketObservations, realmLatest, realms } from "../db/
 import { commodityObservationJoin, commodityObservedAt, realmObservationJoin, realmObservedAt } from "./current-observation";
 
 const ITEM_BATCH_SIZE = 500;
+type QuoteReader = Pick<typeof db, "select">;
+
+// The same commodity-first, selected-realm semantics as getCurrentItemMarkets,
+// projected to SQL so catalog filters and sorting run before pagination.
+export function currentMarketFilterQuery(regionId: string, connectedRealmId?: number, commodityOnly = false) {
+  const commodities = sql`SELECT item_id, min_price, total_quantity AS quantity FROM commodity_latest WHERE region_id = ${regionId}`;
+  if (commodityOnly) return commodities;
+  const realmQuotes = connectedRealmId === undefined ? sql`
+    SELECT item_id, avg(min_price)::bigint AS min_price, sum(quantity)::bigint AS quantity
+    FROM (
+      SELECT item_id, connected_realm_id, min(min_buyout) AS min_price, sum(total_quantity) AS quantity
+      FROM realm_latest WHERE region_id = ${regionId}
+      GROUP BY item_id, connected_realm_id
+    ) per_realm GROUP BY item_id
+  ` : sql`
+    SELECT item_id, min(min_buyout)::bigint AS min_price, sum(total_quantity)::bigint AS quantity
+    FROM realm_latest WHERE region_id = ${regionId} AND connected_realm_id = ${connectedRealmId}
+    GROUP BY item_id
+  `;
+  return sql`
+    ${commodities}
+    UNION ALL
+    SELECT realm.item_id, realm.min_price, realm.quantity FROM (${realmQuotes}) realm
+    WHERE NOT EXISTS (SELECT 1 FROM commodity_latest c WHERE c.region_id = ${regionId} AND c.item_id = realm.item_id)
+  `;
+}
 
 export interface MarketQuote {
   minPrice: number;
@@ -67,11 +93,11 @@ function batches<T>(values: T[]): T[][] {
   return result;
 }
 
-async function loadCommodityQuotes(regionId: string, itemIds: number[]): Promise<Map<number, MarketQuote>> {
+async function loadCommodityQuotes(regionId: string, itemIds: number[], reader: QuoteReader): Promise<Map<number, MarketQuote>> {
   const quotes = new Map<number, MarketQuote>();
 
   for (const batch of batches(itemIds)) {
-    const rows = await db
+    const rows = await reader
       .select({
         itemId: commodityLatest.itemId,
         minPrice: commodityLatest.minPrice,
@@ -102,11 +128,11 @@ async function loadCommodityQuotes(regionId: string, itemIds: number[]): Promise
   return quotes;
 }
 
-async function loadSelectedRealmQuotes(regionId: string, itemIds: number[], connectedRealmId: number): Promise<Map<number, MarketQuote>> {
+async function loadSelectedRealmQuotes(regionId: string, itemIds: number[], connectedRealmId: number, reader: QuoteReader): Promise<Map<number, MarketQuote>> {
   const quotes = new Map<number, MarketQuote>();
 
   for (const batch of batches(itemIds)) {
-    const rows = await db
+    const rows = await reader
       .select({
         itemId: realmLatest.itemId,
         minPrice: sql<number>`min(${realmLatest.minBuyout})::bigint`,
@@ -146,11 +172,11 @@ async function loadSelectedRealmQuotes(regionId: string, itemIds: number[], conn
   return quotes;
 }
 
-async function loadEuRealmBenchmarks(regionId: string, itemIds: number[]): Promise<Map<number, MarketQuote>> {
+async function loadEuRealmBenchmarks(regionId: string, itemIds: number[], reader: QuoteReader): Promise<Map<number, MarketQuote>> {
   const quotes = new Map<number, MarketQuote>();
 
   for (const batch of batches(itemIds)) {
-    const perRealm = db
+    const perRealm = reader
       .select({
         itemId: realmLatest.itemId,
         connectedRealmId: realmLatest.connectedRealmId,
@@ -166,7 +192,7 @@ async function loadEuRealmBenchmarks(regionId: string, itemIds: number[]): Promi
       .groupBy(realmLatest.itemId, realmLatest.connectedRealmId)
       .as("current_realm_quotes");
 
-    const rows = await db
+    const rows = await reader
       .select({
         itemId: perRealm.itemId,
         averageMinPrice: sql<number>`avg(${perRealm.minPrice})::bigint`,
@@ -198,17 +224,17 @@ async function loadEuRealmBenchmarks(regionId: string, itemIds: number[]): Promi
   return quotes;
 }
 
-export async function getCurrentItemMarkets(regionId: string, itemIds: number[], connectedRealmId?: number): Promise<Map<number, CurrentItemMarket>> {
+export async function getCurrentItemMarkets(regionId: string, itemIds: number[], connectedRealmId?: number, commodityOnly = false, reader: QuoteReader = db): Promise<Map<number, CurrentItemMarket>> {
   const uniqueItemIds = [...new Set(itemIds)];
   if (uniqueItemIds.length === 0) return new Map();
 
-  const commodityQuotes = await loadCommodityQuotes(regionId, uniqueItemIds);
-  const realmItemIds = uniqueItemIds.filter((itemId) => !commodityQuotes.has(itemId));
+  const commodityQuotes = await loadCommodityQuotes(regionId, uniqueItemIds, reader);
+  const realmItemIds = commodityOnly ? [] : uniqueItemIds.filter((itemId) => !commodityQuotes.has(itemId));
   const [selectedRealmQuotes, euRealmBenchmarks] = await Promise.all([
     connectedRealmId === undefined || realmItemIds.length === 0
       ? Promise.resolve(new Map<number, MarketQuote>())
-      : loadSelectedRealmQuotes(regionId, realmItemIds, connectedRealmId),
-    realmItemIds.length === 0 ? Promise.resolve(new Map<number, MarketQuote>()) : loadEuRealmBenchmarks(regionId, realmItemIds),
+      : loadSelectedRealmQuotes(regionId, realmItemIds, connectedRealmId, reader),
+    realmItemIds.length === 0 ? Promise.resolve(new Map<number, MarketQuote>()) : loadEuRealmBenchmarks(regionId, realmItemIds, reader),
   ]);
 
   const markets = new Map<number, CurrentItemMarket>();

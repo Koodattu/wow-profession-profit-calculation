@@ -4,7 +4,7 @@ A fast, compact EU Retail auction-house tracker with profession cost calculation
 
 ## Features
 
-- **Market Browser** — Current commodity and connected-realm prices for every item discovered in Blizzard auction data
+- **Market Browser** — Combine category, subcategory, slot, rarity, crafting rank/use, profession, price, quantity and availability filters across the full catalog; sort results and return to a bookmarked search
 - **Price Tracking** — Focused price and supply timelines, shareable range/realm links, paged observations and complete CSV exports; hourly history, quantity-weighted daily rollups, and verified compressed archives
 - **Crafting Cost Calculator** — Calculate reagent costs and gross profit estimates across supported reagent/output rank scenarios
 - **Realm Arbitrage** — Find the best realms to buy and sell non-commodity items

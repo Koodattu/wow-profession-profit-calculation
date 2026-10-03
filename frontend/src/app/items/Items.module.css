@@ -1,6 +1,39 @@
 .table { min-width: 720px; }
 
+.filters { margin-bottom: 24px; }
+.filterPrimary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) auto; align-items: end; gap: 12px; }
+.filterField { display: flex; min-width: 0; flex-direction: column; gap: 6px; font-size: 0.8125rem; }
+.filterField > span { color: var(--muted); }
+.filterField select, .filterField input {
+  width: 100%; min-width: 0; min-height: 44px; padding: 10px 12px;
+  border: 1px solid var(--border); border-radius: 8px; background: var(--card); color: var(--foreground);
+}
+.filterField select:focus-visible, .filterField input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.filterField select:disabled { opacity: 0.6; }
+.filterToggle { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 16px; border: 1px solid var(--border); border-radius: 8px; color: var(--accent); font-size: 0.875rem; }
+.filterGrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px 12px; }
+.filters > div[hidden] { display: none; }
+.filters > div[id] { margin-top: 20px; padding: 20px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.rangeFilters { margin-top: 16px; }
+.activeFilters { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+.activeFilters button { display: flex; align-items: center; gap: 8px; min-height: 44px; max-width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.75rem; text-align: start; }
+.activeFilters button span { overflow-wrap: anywhere; }
+.activeFilters button svg { flex-shrink: 0; }
+.activeFilters button:hover, .filterToggle:hover { background: var(--card-hover); }
+.activeFilters .clearFilters { border-color: transparent; color: var(--accent); }
+@media (max-width: 900px) {
+  .filterGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .filterPrimary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 420px) {
+  .filterGrid { grid-template-columns: minmax(0, 1fr); }
+  .filterPrimary { grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); }
+}
+
 @media (max-width: 639px) {
+  .activeFilters { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 6px; scrollbar-color: var(--border) var(--card); scrollbar-width: thin; }
+  .activeFilters button { flex-shrink: 0; max-width: 90%; }
+  .activeFilters .clearFilters { order: -1; }
   .table { min-width: 0; }
   .table, .table tbody { display: block; }
   .table thead {

@@ -15,6 +15,19 @@ import { useItemBrowser, type ItemBrowserAdapter } from "./item-browser";
 describe("item browser feature interface", () => {
   beforeEach(() => { realmState.current = { status: "selection-required", options: [], selectedId: null }; });
 
+  test("a slower previous filter response cannot replace the current results", async () => {
+    const older = { items: [], total: 40, page: 1, totalPages: 1 };
+    const newer = { items: [], total: 3, page: 1, totalPages: 1 };
+    let finishOlder!: (value: typeof older) => void;
+    const adapter = { load: vi.fn().mockImplementationOnce(() => new Promise(resolve => { finishOlder = resolve; })).mockResolvedValue(newer) };
+    const { result, rerender } = renderHook(({ rarity }) => useItemBrowser({ type: "commodity", rarity, page: 1, limit: 50 }, adapter), { initialProps: { rarity: "4" } });
+    rerender({ rarity: "3" });
+    await waitFor(() => expect(result.current.data?.total).toBe(3));
+    await act(async () => { finishOlder(older); });
+    expect(result.current.data?.total).toBe(3);
+    expect(adapter.load).toHaveBeenLastCalledWith({ type: "commodity", rarity: "3", page: 1, limit: 50 });
+  });
+
   test("retries a failed market request with the same search and page", async () => {
     const data = { items: [], total: 0, page: 2, totalPages: 0 };
     const adapter = { load: vi.fn().mockRejectedValueOnce(new Error("offline")).mockResolvedValue(data) };
