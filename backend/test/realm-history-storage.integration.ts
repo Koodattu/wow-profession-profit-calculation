@@ -82,9 +82,12 @@ test("packed observations preserve exact values, chart behavior, late data, roll
       const [daily] = await sql`SELECT avg_buyout::text,total_value::text,observed_quantity::text,sample_count FROM realm_daily WHERE region_id=${region} AND connected_realm_id=1`;
       expect(daily).toEqual({ avg_buyout: '38', total_value: '750', observed_quantity: '20', sample_count: 4 });
       await archiveExpiredPriceHistory({ directory, cutoff });
-      const file = (await readdir(directory)).find(f => f.startsWith('realm_snapshots-') && f.endsWith('.gz'))!;
-      expect((await verifyHistoryArchive(join(directory,file))).rows).toBe(6);
-      const lines = gunzipSync(await readFile(join(directory,file))).toString('utf8').trim().split('\n');
+      const file = (await readdir(directory)).find(f => f.startsWith(`realm_snapshots-${day}-`) && f.endsWith('.gz'))!;
+      const allLines = gunzipSync(await readFile(join(directory,file))).toString('utf8').trim().split('\n');
+      expect((await verifyHistoryArchive(join(directory,file))).rows).toBe(allLines.length);
+      // A daily archive can also contain other test regions or browser fixtures.
+      const lines = allLines.filter(line => JSON.parse(line).region_id === region);
+      expect(lines).toHaveLength(6);
       const recovered = [];
       for (const line of lines) {
         const [record] = await sql`SELECT to_jsonb(json_populate_record(NULL::realm_snapshots,${line}::json))::text AS row`;

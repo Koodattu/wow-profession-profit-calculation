@@ -22,8 +22,7 @@ test("the keyboard tooltip uses the quantity formatter even when quantity is zer
   render(<HistoryLineChart range="24h" data={[10, 11].map((hour) => ({
     time: new Date(2026, 9, 3, hour).toISOString(), price: 10000, quantity: 0,
   }))} series={[
-    { key: "price", label: "Price", color: "gold" },
-    { key: "quantity", label: "Quantity", color: "blue", axis: "right", formatValue: (value) => `${value} units` },
+    { key: "quantity", label: "Quantity", color: "blue", type: "bar", formatValue: (value) => `${value} units` },
   ]} formatValue={formatPrice} />);
   fireEvent.keyDown(screen.getByRole("application"), { key: "ArrowRight" });
   expect(screen.getAllByText("Quantity")).toHaveLength(2);
@@ -49,6 +48,8 @@ test("daily summaries keep their UTC calendar date and distinguish years", async
   expect(chart.getByText("03.10.2026")).toBeVisible();
   fireEvent.focus(screen.getByRole("application"));
   fireEvent.keyDown(screen.getByRole("application"), { key: "ArrowRight" });
+  expect(await chart.findByText("No observation recorded")).toBeVisible();
+  fireEvent.keyDown(screen.getByRole("application"), { key: "ArrowRight" });
   expect(await chart.findByText("03.10.2026", { selector: "p" })).toBeVisible();
   expect(screen.queryByText(/00:00/)).toBeNull();
 });
@@ -59,4 +60,19 @@ test("an unavailable quote leaves a gap between known prices", async () => {
   }))} series={[{ key: "price", label: "Price", color: "gold" }]} formatValue={formatPrice} />);
   // Each SVG Move command starts a separate visible line segment.
   await waitFor(() => expect(container.querySelector(".recharts-line-curve")?.getAttribute("d")?.match(/M/g)).toHaveLength(2));
+});
+
+test("missing hours retain elapsed-time spacing and break the line instead of smoothing through the gap", async () => {
+  const { container } = render(<HistoryLineChart range="24h" data={[0, 1, 5, 6].map((hour) => ({
+    time: new Date(2026, 9, 3, hour).toISOString(), price: 10000,
+  }))} series={[{ key: "price", label: "Price", color: "gold" }]} formatValue={formatPrice} />);
+  const curve = () => container.querySelector(".recharts-line-curve")?.getAttribute("d") ?? "";
+  await waitFor(() => expect(curve().match(/M/g)).toHaveLength(2));
+  expect(curve()).not.toContain("C"); // No invented smooth curvature between observations.
+  const segments = [...curve().matchAll(/M([\d.]+),[\d.]+L([\d.]+),[\d.]+/g)];
+  expect(segments).toHaveLength(2);
+  const firstX = Number(segments[0][1]);
+  const nextX = Number(segments[0][2]);
+  const lastX = Number(segments[1][2]);
+  expect((nextX - firstX) / (lastX - firstX)).toBeCloseTo(1 / 6, 2);
 });

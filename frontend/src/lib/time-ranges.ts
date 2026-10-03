@@ -4,6 +4,14 @@ export function isDailyHistoryRange(range: HistoryRange): boolean {
   return range === "6m" || range === "1y" || range === "all";
 }
 
+export function formatHistoryTime(input: string | number, range: HistoryRange): string {
+  const date = new Date(input);
+  if (Number.isNaN(date.getTime())) return String(input);
+  const daily = isDailyHistoryRange(range);
+  const label = date.toLocaleDateString("en-GB", { timeZone: daily ? "UTC" : undefined }).replaceAll("/", ".");
+  return daily ? label : `${label} ${date.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}`;
+}
+
 export const HISTORY_RANGES: Array<{ value: HistoryRange; label: string }> = [
   { value: "24h", label: "24h" },
   { value: "7d", label: "7d" },

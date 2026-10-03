@@ -47,4 +47,6 @@ bun run test:integration
 
 For browser checks, run `bun run test:setup`, then `bun run dev:fixture`. This exposes the real HTTP routes at `http://127.0.0.1:4112` without the production scheduler. Start the frontend with both `API_URL` and `NEXT_PUBLIC_API_URL` set to that URL. All prices in this mode are synthetic. Remove only the container you created when finished: `docker rm -fv copper-local-test`.
 
+For richer history checks, optionally run `bun run --no-env-file test/seed-history.ts` after setup with the same explicit disposable `DATABASE_URL`. It preserves existing samples and adds bounded hourly/daily series for item `236761` and recipe `1230866` with gaps, an average-price outlier, missing quotes, and approximate daily averages. Test `/items/236761?range=7d` and `/recipes/1230866?range=6m&realm=2`; realm 3 remains empty. Do not run the integration suite concurrently with browser checks because catalog tests replace fixture state.
+
 The runtime and lockfile are maintained with Bun 1.3.14.

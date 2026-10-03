@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { useRecipeValuation } from "@/features/recipe-valuation";
 import type { HistoryRange } from "@/lib/time-ranges";
+import { updateHistoryQuery, useHistoryRange, useLinkedHistoryRealm } from "@/lib/history-view";
 import RecipeClient from "./RecipeClient";
 
 interface Props {
@@ -11,7 +11,19 @@ interface Props {
 }
 
 export default function RecipeDetailClient({ recipeId, returnTo }: Props) {
-  const [historyRange, setHistoryRange] = useState<HistoryRange>("24h");
+  const linked = useLinkedHistoryRealm(true);
+  const { range, setRange } = useHistoryRange(true);
+  if (linked.pending) return <p role="status" className="text-muted">Loading the linked realm…</p>;
+  if (linked.invalid) return <div className="text-muted"><p>The realm in this link is unavailable. Choose a realm in the navigation to continue.</p>
+    {linked.realm.status === "ready" && <button type="button" onClick={() => updateHistoryQuery({ realm: null })} className="min-h-11 px-2 text-accent underline">Use selected realm</button>}
+  </div>;
+  return <RecipeDetailContent recipeId={recipeId} returnTo={returnTo} historyRange={range} setHistoryRange={setRange} />;
+}
+
+function RecipeDetailContent({ recipeId, returnTo, historyRange, setHistoryRange }: Props & {
+  historyRange: HistoryRange;
+  setHistoryRange(range: HistoryRange): void;
+}) {
   const valuation = useRecipeValuation(recipeId, historyRange);
 
   if (valuation.status === "loading") {

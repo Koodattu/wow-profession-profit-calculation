@@ -10,6 +10,9 @@ export type MarketHistoryType = "auto" | "commodity" | "realm";
 
 export interface MarketHistoryPoint {
   time: string;
+  resolution?: "hourly" | "daily" | "current";
+  sample_count?: number | null;
+  average_is_exact?: boolean | null;
   min_price: number | null;
   avg_price: number | null;
   median_price: number | null;
@@ -33,6 +36,8 @@ interface HistoryRow {
   median_price: number | null;
   max_price: number | null;
   total_quantity: number | null;
+  sample_count?: number | null;
+  average_is_exact?: boolean | null;
 }
 
 export function isHistoryRange(value: string): value is HistoryRange {
@@ -63,9 +68,12 @@ function useDailyTable(range: HistoryRange): boolean {
   return range === "6m" || range === "1y" || range === "all";
 }
 
-function normalizePoint(row: HistoryRow): MarketHistoryPoint {
+function normalizePoint(row: HistoryRow, resolution: "hourly" | "daily"): MarketHistoryPoint {
   return {
     time: row.time instanceof Date ? row.time.toISOString() : String(row.time),
+    resolution,
+    sample_count: row.sample_count == null ? null : Number(row.sample_count),
+    average_is_exact: row.average_is_exact ?? null,
     min_price: row.min_price == null ? null : Number(row.min_price),
     avg_price: row.avg_price == null ? null : Number(row.avg_price),
     median_price: row.median_price == null ? null : Number(row.median_price),
@@ -74,9 +82,9 @@ function normalizePoint(row: HistoryRow): MarketHistoryPoint {
   };
 }
 
-function groupHistory(rows: HistoryRow[], itemIds: number[]): Map<number, MarketHistoryPoint[]> {
+function groupHistory(rows: HistoryRow[], itemIds: number[], resolution: "hourly" | "daily"): Map<number, MarketHistoryPoint[]> {
   const grouped = new Map(itemIds.map((itemId) => [itemId, [] as MarketHistoryPoint[]]));
-  for (const row of rows) grouped.get(row.itemId)?.push(normalizePoint(row));
+  for (const row of rows) grouped.get(row.itemId)?.push(normalizePoint(row, resolution));
   return grouped;
 }
 
@@ -85,6 +93,9 @@ function quoteAsPoint(quote: MarketQuote | null | undefined): MarketHistoryPoint
   return [
     {
       time: quote.observedAt instanceof Date ? quote.observedAt.toISOString() : String(quote.observedAt),
+      resolution: "current",
+      sample_count: null,
+      average_is_exact: null,
       min_price: quote.minPrice,
       avg_price: quote.avgPrice,
       median_price: quote.medianPrice,
@@ -110,11 +121,13 @@ async function getCommodityHistory(itemIds: number[], regionId: string, range: H
         median_price: sql<number | null>`NULL`,
         max_price: commodityDaily.maxPrice,
         total_quantity: commodityDaily.avgQuantity,
+        sample_count: commodityDaily.sampleCount,
+        average_is_exact: commodityDaily.averageIsExact,
       })
       .from(commodityDaily)
       .where(and(...conditions))
       .orderBy(commodityDaily.itemId, desc(commodityDaily.date));
-    return groupHistory(rows, itemIds);
+    return groupHistory(rows, itemIds, "daily");
   }
 
   const conditions = [inArray(commoditySnapshots.itemId, itemIds), eq(commoditySnapshots.regionId, regionId)];
@@ -134,7 +147,7 @@ async function getCommodityHistory(itemIds: number[], regionId: string, range: H
     .where(and(...conditions))
     .groupBy(commoditySnapshots.itemId, hourBucket)
     .orderBy(commoditySnapshots.itemId, desc(hourBucket));
-  return groupHistory(rows, itemIds);
+  return groupHistory(rows, itemIds, "hourly");
 }
 
 async function getRealmHistory(
@@ -159,12 +172,14 @@ async function getRealmHistory(
         median_price: sql<number | null>`NULL`,
         max_price: sql<number>`max(${realmDaily.maxBuyout})::bigint`,
         total_quantity: sql<number>`sum(${realmDaily.avgQuantity})::bigint`,
+        sample_count: sql<number | null>`CASE WHEN count(${realmDaily.sampleCount}) = count(*) THEN sum(${realmDaily.sampleCount})::int ELSE NULL END`,
+        average_is_exact: sql<boolean>`bool_and(${realmDaily.averageIsExact})`,
       })
       .from(realmDaily)
       .where(and(...conditions))
       .groupBy(realmDaily.itemId, realmDaily.date)
       .orderBy(realmDaily.itemId, desc(realmDaily.date));
-    return groupHistory(rows, itemIds);
+    return groupHistory(rows, itemIds, "daily");
   }
 
   const conditions = [inArray(realmHistory.itemId, itemIds), eq(realmHistory.regionId, regionId)];
@@ -192,7 +207,7 @@ async function getRealmHistory(
       min_price: Number(row.min_price), avg_price: row.avg_price == null ? null : Number(row.avg_price),
       median_price: null, max_price: row.max_price == null ? null : Number(row.max_price),
       total_quantity: Number(row.total_quantity),
-    })), itemIds);
+    })), itemIds, "hourly");
   }
   const rows = await db
     .select({
@@ -208,7 +223,7 @@ async function getRealmHistory(
     .where(and(...conditions))
     .groupBy(realmHistory.itemId, hourBucket)
     .orderBy(realmHistory.itemId, desc(hourBucket));
-  return groupHistory(rows, itemIds);
+  return groupHistory(rows, itemIds, "hourly");
 }
 
 export async function getMarketHistories(request: MarketHistoryRequest): Promise<Map<number, MarketHistoryPoint[]>> {

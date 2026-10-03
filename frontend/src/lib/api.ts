@@ -108,6 +108,9 @@ export interface Item {
 
 export interface PricePoint {
   time: string;
+  resolution?: "hourly" | "daily" | "current";
+  sample_count?: number | null;
+  average_is_exact?: boolean | null;
   min_price: number | null;
   avg_price: number | null;
   median_price: number | null;

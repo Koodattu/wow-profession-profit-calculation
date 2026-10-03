@@ -25,6 +25,18 @@ For each item, region, UTC day, and connected realm where applicable:
 
 Charts through 30 days use detailed observations. Six-month, one-year, and all-time charts use daily summaries, including a weighted average line. Long-term daily data and archives have no automatic expiration.
 
+## Reading and reusing history
+
+Item history opens on the lowest listing price. The measure selector also offers the quantity-weighted average, median where available, or a comparison. Listed supply has its own aligned chart and unit scale. Timelines use elapsed time and straight segments between adjacent observations; missing hours/days and unavailable quotes leave gaps. Hourly labels use the browser time zone; daily dates use UTC.
+
+The summary compares the first and latest recorded values in the loaded range, not its minimum/maximum or guaranteed full coverage. Item API records add `resolution` (`hourly`, `daily`, or `current`), nullable `sample_count`, and nullable `average_is_exact`. A current quote used when history is absent is explicitly labeled; it is never treated as a daily summary. Daily records expose sampling and precision. Older data without recoverable metadata remains unavailable rather than receiving invented counts.
+
+Recipe history estimates one craft using each item's last known lowest quote. Missing timestamps carry the last quote forward; an explicitly unavailable quote clears it. Unresolved required materials prevent a partial cost total. Current-quote fallbacks do not create historical recipe points. Daily recipe estimates combine each item's independent daily low, which may have occurred at different times. These are listed-price scenarios, not observed sales or realizable historical profits.
+
+Range, item measure/view and linked realm are kept in the URL. Copy history link omits the navigation breadcrumb and includes the selected realm when relevant. Opening a valid realm link applies that scope before prices load; an unavailable realm can be replaced in the navigation. Links use rolling ranges, so revisiting them can show newer data.
+
+View observations is available for every range, with 25 rows per page. Download CSV includes **all loaded records**, exact integer copper values, UTC times, market/realm or recipe/scenario context, and daily precision where applicable. Blank cells mean unavailable; zero remains zero. The CSV is a snapshot of loaded observations, not a download of the raw archive. Approximate daily averages remain approximate even when represented as integer copper.
+
 ## Maintenance guarantees
 
 The first run of the weighted rollup implementation recomputes all raw history that is still available. Later runs revisit complete UTC days starting one day before the last successful weighted rollup. A separate `quantity-weighted-rollups` job marker prevents the old arithmetic-average maintenance marker from skipping this backfill. Reruns replace a day's aggregate rather than double-counting its observations.

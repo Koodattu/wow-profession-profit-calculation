@@ -67,6 +67,36 @@ function valuation(scenarios: RecipeScenario[]): RecipeValuation {
 }
 
 describe("recipe history interface", () => {
+  test("current quote fallbacks do not fabricate historical recipe observations", async () => {
+    const time = "2026-10-03T10:00:00Z";
+    const module = createRecipeHistoryModule({
+      loadValuation: async () => valuation([scenario()]),
+      loadMarketHistories: async () => new Map([10, 20, 30].map((id) => [id,
+        [{ ...point(time, 100, 5), resolution: "current" as const }],
+      ])),
+    });
+    expect((await module.getRecipeHistory(100, "eu", 1, "6m")).scenarios[0]?.points).toEqual([]);
+  });
+
+  test("does not carry an explicitly unavailable quote or value a recipe with unresolved required materials", async () => {
+    const t1 = "2026-10-03T10:00:00Z";
+    const t2 = "2026-10-03T11:00:00Z";
+    const complete = scenario();
+    const incomplete = scenario({ scenarioKey: "rank:2:2", cost: { ...complete.cost, reagentsComplete: false } });
+    const module = createRecipeHistoryModule({
+      loadValuation: async () => valuation([complete, incomplete]),
+      loadMarketHistories: async () => new Map([
+        [10, [point(t1, 10), point(t2, null)]],
+        [20, [point(t1, 4)]],
+        [30, [point(t1, 100, 5), point(t2, null, null)]],
+      ]),
+    });
+    const result = await module.getRecipeHistory(100, "eu", 1, "24h");
+    expect(result.scenarios[0]?.points[0]).toMatchObject({ cost: 32, output: 500 });
+    expect(result.scenarios[0]?.points[1]).toMatchObject({ cost: null, output: null, outputQuantity: null });
+    expect(result.scenarios[1]?.points.every((entry) => entry.cost === null)).toBe(true);
+  });
+
   test("aligns sparse item series and carries prices forward per scenario", async () => {
     const t1 = "2026-08-09T00:00:00.000Z";
     const t2 = "2026-08-09T01:00:00.000Z";

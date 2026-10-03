@@ -34,6 +34,7 @@ export interface RecipeHistoryModule {
 }
 
 function timestamp(point: MarketHistoryPoint): number | null {
+  if (point.resolution === "current") return null;
   const value = new Date(point.time).getTime();
   return Number.isFinite(value) ? value : null;
 }
@@ -68,7 +69,7 @@ function carryForward(
   for (let index = 0; index < timeline.length; index++) {
     while (pointer < ascending.length && ascending[pointer]!.time <= timeline[index]!) {
       const nextValue = valueFor(ascending[pointer]!.point);
-      if (nextValue !== null) lastValue = nextValue;
+      lastValue = nextValue;
       pointer++;
     }
     values[index] = lastValue;
@@ -100,7 +101,7 @@ function buildScenarioHistory(
 
   const points = timeline.map((time, index): RecipeHistoryPoint => {
     let totalCost = 0;
-    let hasCost = scenario.cost.reagents.length > 0;
+    let hasCost = scenario.cost.reagents.length > 0 && scenario.cost.reagentsComplete !== false;
     for (const reagent of scenario.cost.reagents) {
       const price = pricesByItem.get(reagent.itemId)?.[index] ?? null;
       if (price === null) {

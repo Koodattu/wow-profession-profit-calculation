@@ -12,7 +12,10 @@ import WowheadLink from "@/app/WowheadLink";
 import { getItemQualityClass } from "@/lib/item-quality";
 import TimeRangeTabs from "@/app/TimeRangeTabs";
 import HistoryLineChart from "@/app/HistoryLineChart";
-import type { HistoryRange } from "@/lib/time-ranges";
+import HistoryRecords from "@/app/HistoryRecords";
+import HistoryLink from "@/app/HistoryLink";
+import { formatHistoryTime, isDailyHistoryRange, type HistoryRange } from "@/lib/time-ranges";
+import { useSelectedRealm } from "@/lib/selected-realm";
 import { projectRecipeDetail } from "@/lib/recipe-scenario-projection";
 import { craftPlan, useCraftPlan, validCraftCount, MAX_CRAFTS } from "@/lib/craft-plan";
 
@@ -29,6 +32,8 @@ interface Props {
 
 export default function RecipeClient({ recipe, returnTo, historyRange, onHistoryRangeChange, history, historyLoading, historyFailed, onRetryHistory }: Props) {
   const projectedScenarios = projectRecipeDetail(recipe, history);
+  const realm = useSelectedRealm();
+  const realmId = realm.status === "ready" ? realm.selectedId : null;
   const plan = useCraftPlan();
   const [crafts, setCrafts] = useState("1");
   const [message, setMessage] = useState("");
@@ -84,13 +89,20 @@ export default function RecipeClient({ recipe, returnTo, historyRange, onHistory
 
       <div className="border border-border rounded-lg bg-card p-4 mb-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-sm text-muted">Scenario Chart Range</h2>
+          <h2 className="text-sm font-medium">Scenario history · {realm.options.find((option) => option.id === realmId)?.label ?? "Selected realm"}</h2>
           <TimeRangeTabs value={historyRange} onChange={onHistoryRangeChange} />
+        </div>
+        <div className="mt-2 flex flex-wrap items-start justify-between gap-3">
+          <details className="max-w-2xl text-xs leading-relaxed text-muted">
+            <summary className="min-h-11 cursor-pointer py-3">How historical estimates are calculated</summary>
+            <p>Cost and output value are per craft, using each item’s last known lowest quote. Quotes are carried forward between item observations until an explicit unavailable value. Daily estimates combine each item’s daily low; those lows may occur at different times. Supply is output items listed for sale, not the number produced by a craft. Auction fees and profession-stat procs are excluded.</p>
+          </details>
+          <HistoryLink connectedRealmId={realmId} />
         </div>
         {historyFailed && <div className="mt-3 text-sm" role="alert"><p className="text-muted">Couldn’t load price history. Current recipe prices are still available.</p><button type="button" onClick={onRetryHistory} className="mt-2 min-h-11 rounded-lg border border-border px-4 text-accent">Retry history</button></div>}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {projectedScenarios.map(({ scenario, scenarioKey, label, history: scenarioHistory }) => {
           return (
             <ScenarioCard
@@ -104,6 +116,9 @@ export default function RecipeClient({ recipe, returnTo, historyRange, onHistory
               crafts={valid ? count : null}
               canAdd={plan.ready && valid}
               onAdd={() => addScenario(scenarioKey, label)}
+              recipeId={recipe.recipeId}
+              scenarioKey={scenarioKey}
+              realmId={realmId}
             />
           );
         })}
@@ -122,6 +137,9 @@ function ScenarioCard({
   crafts,
   canAdd,
   onAdd,
+  recipeId,
+  scenarioKey,
+  realmId,
 }: {
   scenario: RankScenario;
   title: string;
@@ -132,10 +150,13 @@ function ScenarioCard({
   crafts: number | null;
   canAdd: boolean;
   onAdd(): void;
+  recipeId: number;
+  scenarioKey: string;
+  realmId: number | null;
 }) {
   const profitColor = scenario.profit !== null ? (scenario.profit >= 0 ? "text-positive" : "text-negative") : "text-muted";
   return (
-    <div className="border border-border rounded-lg bg-card p-4">
+    <div className="min-w-0 border border-border rounded-lg bg-card p-4">
       <h2 className="font-semibold mb-4">{title}</h2>
       <div className="mb-4 border-b border-border pb-4">
         <button type="button" onClick={onAdd} disabled={!canAdd} aria-label={`Add ${title} to plan`}
@@ -214,6 +235,15 @@ function ScenarioCard({
           range={historyRange}
           loading={historyLoading}
         />
+        {!historyLoading && <HistoryRecords key={historyRange} range={historyRange}
+          rows={historyData.map((point) => ({ ...point }))}
+          filename={`copper-recipe-${recipeId}-${scenarioKey.replaceAll(":", "-")}-${realmId}-${historyRange}`}
+          label={`${title} observations`} context={{ recipe_id: recipeId, scenario: scenarioKey, region: "eu", connected_realm_id: realmId ?? "", range: historyRange, valuation_method: "last_known_item_lows" }}
+          columns={[
+            { key: "cost", label: "Cost / craft", csvLabel: "cost_per_craft_copper", format: (value) => formatPrice(Number(value)) },
+            { key: "output", label: "Output / craft", csvLabel: "output_per_craft_copper", format: (value) => formatPrice(Number(value)) },
+            { key: "outputQuantity", label: isDailyHistoryRange(historyRange) ? "Average units listed" : "Output units listed", csvLabel: isDailyHistoryRange(historyRange) ? "average_output_units_listed" : "output_units_listed" },
+          ]} />}
       </div>}
 
     </div>
@@ -249,23 +279,24 @@ function ScenarioHistoryChart({
   }
 
   return (
+    <>
+    <p className="mb-4 text-xs leading-relaxed text-muted">{data.length.toLocaleString()} {isDailyHistoryRange(range) ? "daily" : "hourly"} estimates · {formatHistoryTime(data[0].time, range)} to {formatHistoryTime(data[data.length - 1].time, range)}.
+      {isDailyHistoryRange(range) ? " Daily dates are UTC." : ` Times: ${Intl.DateTimeFormat().resolvedOptions().timeZone}.`}</p>
     <HistoryLineChart
       range={range}
-      title="Cost vs Output History"
+      title="Cost and output value · per craft"
       data={data}
       series={[
-        { key: "cost", label: "Crafted Cost", color: "var(--negative)" },
-        { key: "output", label: "Output Value", color: "var(--positive)" },
-        {
-          key: "outputQuantity",
-          label: "Output Quantity",
-          color: "#3da3d4",
-          axis: "right",
-          type: "bar",
-          formatValue: (value) => Math.round(value).toLocaleString(),
-        },
+        { key: "cost", label: "Material cost", color: "var(--negative)", dash: "5 4" },
+        { key: "output", label: "Output value", color: "var(--positive)" },
       ]}
       formatValue={formatPrice}
     />
+    <div className="mt-4">
+      <HistoryLineChart range={range} title={isDailyHistoryRange(range) ? "Output supply · average units listed" : "Output supply · units listed"}
+        data={data} series={[{ key: "outputQuantity", label: "Listed supply", color: "var(--chart-secondary)", type: "bar" }]}
+        formatValue={(value) => Math.round(value).toLocaleString()} compact />
+    </div>
+    </>
   );
 }

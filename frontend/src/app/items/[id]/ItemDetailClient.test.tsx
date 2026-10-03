@@ -3,6 +3,13 @@ import { afterEach, beforeEach, expect, test, vi } from "vitest";
 import type { Item } from "@/lib/api";
 
 const state = vi.hoisted(() => ({ history: vi.fn() }));
+vi.mock("next/navigation", async () => {
+  const { useSyncExternalStore } = await import("react");
+  return { useSearchParams: () => new URLSearchParams(useSyncExternalStore(
+    (notify) => { window.addEventListener("popstate", notify); return () => window.removeEventListener("popstate", notify); },
+    () => window.location.search,
+  )) };
+});
 vi.mock("@/features/item-detail", () => ({ useItemDetail: state.history }));
 vi.mock("@/lib/selected-realm", () => ({ useSelectedRealm: () => ({ status: "ready", selectedId: 1, options: [{ id: 1, label: "Kazzak" }] }) }));
 vi.mock("./GearMarket", () => ({ default: () => <div>Current gear offers</div> }));
@@ -10,8 +17,13 @@ vi.mock("@/app/HistoryLineChart", () => ({ default: () => <div>History chart</di
 import ItemDetailClient from "./ItemDetailClient";
 
 const item: Item = { id: 271434, name: "Venom Rite Mantle", itemQuality: 4, qualityRank: null, isReagent: false, isCraftedOutput: false, marketType: "realm", itemClass: "Armor", itemSubclass: "Cloth", inventoryType: "Shoulder" };
-beforeEach(() => state.history.mockReset());
-afterEach(cleanup);
+beforeEach(() => {
+  state.history.mockReset();
+  window.history.replaceState(null, "", "/items/271434");
+  const pushState = window.history.pushState.bind(window.history);
+  vi.spyOn(window.history, "pushState").mockImplementation((...args) => { pushState(...args); window.dispatchEvent(new PopStateEvent("popstate")); });
+});
+afterEach(() => { cleanup(); vi.restoreAllMocks(); });
 
 test("loads history only when requested and explains absent non-profession history", () => {
   state.history.mockReturnValue({ status: "ready", connectedRealmId: 1, prices: [] });

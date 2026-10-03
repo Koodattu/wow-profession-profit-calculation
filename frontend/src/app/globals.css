@@ -11,6 +11,7 @@
   --positive: #66d38b;
   --negative: #f07a7a;
   --muted: #9299a6;
+  --chart-secondary: #70bddf;
   --shadow-surface: 0 0 0 1px rgba(255, 255, 255, 0.075), 0 16px 40px rgba(0, 0, 0, 0.14);
   --shadow-surface-hover: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 18px 44px rgba(0, 0, 0, 0.18);
 }
