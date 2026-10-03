@@ -15,7 +15,7 @@ function formatAge(value: string | null): string {
 
 export default function MarketDashboard() {
   const router = useRouter();
-  const { summary, failed } = useMarketDashboard();
+  const { summary, failed, loading, retry } = useMarketDashboard();
   const [query, setQuery] = useState("");
 
   function search(event: FormEvent<HTMLFormElement>) {
@@ -52,13 +52,16 @@ export default function MarketDashboard() {
         </form>
       </div>
 
-      <section className="mt-10 grid gap-3 sm:grid-cols-3" aria-label="Market status">
-        <Stat label="Items" value={summary?.itemCount} detail={summary ? `${summary.pendingMetadataCount.toLocaleString()} names queued` : undefined} />
-        <Stat label="Commodities" value={summary?.commodityCount} detail={summary ? formatAge(summary.commodityObservedAt) : undefined} />
-        <Stat label="Realm items" value={summary?.realmItemCount} detail={summary ? formatAge(summary.realmOldestObservedAt) : undefined} />
+      <section className="mt-10 grid gap-3 sm:grid-cols-3" aria-label="Market status" aria-busy={loading}>
+        <Stat label="Items" value={summary?.itemCount} detail={summary ? `${summary.pendingMetadataCount.toLocaleString()} names queued` : failed ? "Unavailable" : undefined} />
+        <Stat label="Commodities" value={summary?.commodityCount} detail={summary ? formatAge(summary.commodityObservedAt) : failed ? "Unavailable" : undefined} />
+        <Stat label="Realm items" value={summary?.realmItemCount} detail={summary ? formatAge(summary.realmOldestObservedAt) : failed ? "Unavailable" : undefined} />
       </section>
 
-      {failed && <p className="mt-4 text-sm text-negative">Market status is temporarily unavailable. Existing pages may still have cached data.</p>}
+      {failed && <div className="mt-4 flex flex-wrap items-center gap-3 text-sm" role="alert">
+        <p className="text-negative">{summary ? "Couldn’t refresh market status. Showing previously loaded status." : "Market status is temporarily unavailable."}</p>
+        <button type="button" className="min-h-11 rounded-lg border border-border px-4 text-accent" onClick={retry}>Retry market status</button>
+      </div>}
 
       <section className="mt-10 grid gap-3 md:grid-cols-3" aria-label="Tools">
         <ToolLink href="/items" title="Market" description="Search current prices and quantities." />

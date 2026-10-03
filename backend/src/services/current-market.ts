@@ -370,6 +370,9 @@ export async function findRealmSpreadOpportunities(query: RealmSpreadQuery): Pro
       LEFT JOIN recipe_categories ON recipe_categories.id = recipes.category_id
       LEFT JOIN professions ON professions.id = recipes.profession_id
       WHERE recipes.output_item_id = item_agg.item_id
+         OR recipes.id IN (
+           SELECT recipe_id FROM recipe_output_qualities WHERE item_id = item_agg.item_id
+         )
       ORDER BY (recipes.category_id IS NULL) ASC, recipe_categories.name ASC, recipes.id ASC
       LIMIT 1
     ) category ON true

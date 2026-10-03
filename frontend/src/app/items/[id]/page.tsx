@@ -11,7 +11,7 @@ export default async function ItemDetailPage({ params, searchParams }: {
   const itemId = Number(id);
   const item = await fetchItem(itemId);
   const { from } = await searchParams;
-  const marketHref = typeof from === "string" && (from === "/items" || from.startsWith("/items?")) ? from : "/items";
+  const backHref = typeof from === "string" && ["/items", "/flipping"].some((path) => from === path || from.startsWith(`${path}?`)) ? from : "/items";
 
-  return <ItemDetailClient item={item} marketHref={marketHref} />;
+  return <ItemDetailClient item={item} backHref={backHref} />;
 }

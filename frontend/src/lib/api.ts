@@ -255,11 +255,18 @@ export interface MarketSummary {
 // --- Fetch helpers ---
 
 async function apiFetch<T>(path: string): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`);
-  if (!res.ok) {
-    throw new Error(`API ${res.status}: ${res.statusText} — ${path}`);
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(new Error("Request timed out")), 15_000);
+  try {
+    const res = await fetch(`${API_BASE}${path}`, { signal: controller.signal });
+    if (!res.ok) {
+      throw new Error(`API ${res.status}: ${res.statusText} — ${path}`);
+    }
+    // Keep the deadline active while reading the body, not just the headers.
+    return await res.json() as T;
+  } finally {
+    clearTimeout(timeout);
   }
-  return res.json() as Promise<T>;
 }
 
 function qs(params: Record<string, string | undefined>): string {

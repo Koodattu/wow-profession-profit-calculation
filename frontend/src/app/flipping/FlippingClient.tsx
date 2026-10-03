@@ -1,19 +1,33 @@
 "use client";
 
 import { useState, useEffect, useRef, useTransition } from "react";
+import { useSearchParams } from "next/navigation";
 import WowheadLink from "@/app/WowheadLink";
 import { fetchFlippingCategories, fetchFlippingOpportunities, formatPrice, type FlippingCategory, type FlippingOpportunity, type FlippingSortBy } from "@/lib/api";
 import { getItemQualityClass } from "@/lib/item-quality";
 
 const LIMIT_OPTIONS = [25, 50, 100] as const;
 
+function updateLocation(changes: Record<string, string | null>) {
+  const next = new URLSearchParams(window.location.search);
+  for (const [key, value] of Object.entries(changes)) {
+    if (value === null) next.delete(key);
+    else next.set(key, value);
+  }
+  window.history.replaceState(null, "", `/flipping${next.size ? `?${next}` : ""}`);
+}
+
 export default function FlippingClient() {
-  const [minSpreadGold, setMinSpreadGold] = useState(0);
-  const [limit, setLimit] = useState<number>(25);
-  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const params = useSearchParams();
+  const requestedSpread = Number(params.get("minSpread") ?? 0);
+  const minSpreadGold = Number.isFinite(requestedSpread * 10000) ? Math.max(0, requestedSpread) : 0;
+  const limit = LIMIT_OPTIONS.find((value) => value === Number(params.get("limit"))) ?? 25;
+  const requestedCategory = params.get("category") ?? "all";
+  const categoryFilter = requestedCategory === "none" || (requestedCategory.startsWith("name:") && requestedCategory.length > 5) ? requestedCategory : "all";
+  const sortBy: FlippingSortBy = params.get("sort") === "regionAvgPrice" ? "regionAvgPrice" : "spread";
+  const comparisonHref = `/flipping${params.size ? `?${params}` : ""}`;
   const [categorySearch, setCategorySearch] = useState("");
   const [categoryOpen, setCategoryOpen] = useState(false);
-  const [sortBy, setSortBy] = useState<FlippingSortBy>("spread");
   const [categories, setCategories] = useState<FlippingCategory[]>([]);
   const [data, setData] = useState<FlippingOpportunity[]>([]);
   const [isPending, startTransition] = useTransition();
@@ -89,7 +103,7 @@ export default function FlippingClient() {
   ];
   const categorySearchLower = categorySearch.trim().toLowerCase();
   const visibleCategoryOptions = categorySearchLower.length === 0 ? categoryOptions : categoryOptions.filter((option) => option.label.toLowerCase().includes(categorySearchLower));
-  const selectedCategoryLabel = categoryOptions.find((option) => option.value === categoryFilter)?.label ?? "All categories";
+  const selectedCategoryLabel = categoryFilter === "all" ? "All categories" : categoryFilter === "none" ? "No category" : categoryFilter.slice(5);
 
   return (
     <div>
@@ -110,7 +124,7 @@ export default function FlippingClient() {
               type="number"
               min={0}
               value={minSpreadGold}
-              onChange={(e) => setMinSpreadGold(Math.max(0, Number(e.target.value)))}
+              onChange={(e) => updateLocation({ minSpread: String(Math.max(0, Number(e.target.value))) })}
               className="min-h-11 w-28 px-3 py-2 pr-8 rounded-md bg-card border border-border text-foreground placeholder:text-muted focus:outline-none focus:border-accent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted text-sm pointer-events-none">g</span>
@@ -124,7 +138,7 @@ export default function FlippingClient() {
           <select
             id="limit"
             value={limit}
-            onChange={(e) => setLimit(Number(e.target.value))}
+            onChange={(e) => updateLocation({ limit: e.target.value })}
             className="min-h-11 px-3 py-2 rounded-md bg-card border border-border text-foreground focus:outline-none focus:border-accent"
           >
             {LIMIT_OPTIONS.map((n) => (
@@ -175,7 +189,7 @@ export default function FlippingClient() {
                       key={category.value}
                       type="button"
                       onClick={() => {
-                        setCategoryFilter(category.value);
+                        updateLocation({ category: category.value === "all" ? null : category.value });
                         setCategoryOpen(false);
                         setCategorySearch("");
                         categoryButtonRef.current?.focus();
@@ -201,7 +215,7 @@ export default function FlippingClient() {
           <select
             id="sortBy"
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as FlippingSortBy)}
+            onChange={(e) => updateLocation({ sort: e.target.value === "spread" ? null : e.target.value })}
             className="min-h-11 px-3 py-2 rounded-md bg-card border border-border text-foreground focus:outline-none focus:border-accent"
           >
             <option value="spread">Spread</option>
@@ -217,7 +231,7 @@ export default function FlippingClient() {
       ) : failed ? (
         <div className="surface p-6 text-center" role="alert"><p className="text-muted">Couldn’t load realm comparisons. Your filters are saved.</p><button type="button" className="mt-3 min-h-11 rounded-lg border border-border px-4 text-accent" onClick={() => setAttempt((value) => value + 1)}>Retry comparison</button></div>
       ) : data.length === 0 ? (
-        <div className="py-8 text-center"><p className="text-muted">No items match these comparison filters.</p><button type="button" className="mt-2 min-h-11 px-3 text-accent underline" onClick={() => { setMinSpreadGold(0); setCategoryFilter("all"); }}>Clear comparison filters</button></div>
+        <div className="py-8 text-center"><p className="text-muted">No items match these comparison filters.</p><button type="button" className="mt-2 min-h-11 px-3 text-accent underline" onClick={() => updateLocation({ minSpread: null, category: null })}>Clear comparison filters</button></div>
       ) : (
         <div>
           <p className="mb-2 text-xs text-muted lg:hidden">Scroll to compare all realm prices.</p>
@@ -238,7 +252,7 @@ export default function FlippingClient() {
             </thead>
             <tbody>
               {data.map((opp) => (
-                <FlipRow key={`${opp.itemId}-${opp.qualityRank ?? 0}`} opp={opp} />
+                <FlipRow key={`${opp.itemId}-${opp.qualityRank ?? 0}`} opp={opp} comparisonHref={comparisonHref} />
               ))}
             </tbody>
           </table>
@@ -249,11 +263,11 @@ export default function FlippingClient() {
   );
 }
 
-function FlipRow({ opp }: { opp: FlippingOpportunity }) {
+function FlipRow({ opp, comparisonHref }: { opp: FlippingOpportunity; comparisonHref: string }) {
   return (
     <tr className="border-b border-border/50 hover:bg-card-hover transition-colors">
       <td className="py-2 pr-4">
-        <WowheadLink href={`/items/${opp.itemId}`} type="item" id={opp.itemId} className={`${getItemQualityClass(opp.itemQuality)} hover:underline`}>
+        <WowheadLink href={`/items/${opp.itemId}?from=${encodeURIComponent(comparisonHref)}`} type="item" id={opp.itemId} className={`${getItemQualityClass(opp.itemQuality)} hover:underline`}>
           {opp.itemName}
         </WowheadLink>
       </td>

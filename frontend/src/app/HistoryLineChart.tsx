@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { isDailyHistoryRange, type HistoryRange } from "@/lib/time-ranges";
 import { ComposedChart, Line, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
 
 interface ChartPoint {
@@ -18,6 +19,7 @@ interface ChartSeries {
 }
 
 interface Props {
+  range: HistoryRange;
   data: ChartPoint[];
   series: ChartSeries[];
   formatValue: (value: number) => string;
@@ -33,25 +35,22 @@ function parseNumericValue(value: unknown): number | null {
   return null;
 }
 
-function formatChartValue(value: number, formatValue: (value: number) => string): string {
-  if (value === 0) return "0g 0s";
-  return formatValue(value);
-}
-
-function formatTimeLabel(input: string): string {
+function formatTimeLabel(input: string, range: HistoryRange): string {
   const date = new Date(input);
   if (Number.isNaN(date.getTime())) return input;
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  return `${day}.${month}.`;
+  const daily = isDailyHistoryRange(range);
+  const label = date.toLocaleDateString("en-GB", { timeZone: daily ? "UTC" : undefined }).replaceAll("/", ".");
+  return daily ? label : `${label} ${date.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}`;
 }
 
-function formatAxisDate(value: unknown): string {
+function formatAxisDate(value: unknown, range: HistoryRange): string {
   const date = new Date(String(value));
   if (Number.isNaN(date.getTime())) return String(value);
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  return `${day}.${month}.`;
+  if (range === "24h") return date.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+  return date.toLocaleDateString("en-GB", {
+    day: "2-digit", month: "2-digit", year: range === "all" || range === "1y" ? "numeric" : undefined,
+    timeZone: isDailyHistoryRange(range) ? "UTC" : undefined,
+  }).replaceAll("/", ".");
 }
 
 function CustomTooltipContent({
@@ -60,12 +59,14 @@ function CustomTooltipContent({
   label,
   formatValue,
   series,
+  range,
 }: {
   active?: boolean;
   payload?: Array<{ value?: unknown; name?: unknown; color?: string; dataKey?: unknown }>;
   label?: unknown;
   formatValue: (value: number) => string;
   series: ChartSeries[];
+  range: HistoryRange;
 }) {
   if (!active || !payload || payload.length === 0) {
     return null;
@@ -81,13 +82,13 @@ function CustomTooltipContent({
         padding: "8px 10px",
       }}
     >
-      <p style={{ color: "var(--muted)", marginBottom: 6 }}>{formatTimeLabel(String(label ?? ""))}</p>
+      <p style={{ color: "var(--muted)", marginBottom: 6 }}>{formatTimeLabel(String(label ?? ""), range)}</p>
       {payload.map((entry, index) => {
         const parsed = parseNumericValue(entry.value);
         const dataKey = typeof entry.dataKey === "string" ? entry.dataKey : "";
         const matchingSeries = series.find((item) => item.key === dataKey);
         const valueFormatter = matchingSeries?.formatValue ?? formatValue;
-        const valueLabel = parsed === null ? "—" : formatChartValue(parsed, valueFormatter);
+        const valueLabel = parsed === null ? "—" : valueFormatter(parsed);
         const nameLabel = entry.name ? String(entry.name) : "Value";
 
         return (
@@ -102,7 +103,7 @@ function CustomTooltipContent({
   );
 }
 
-export default function HistoryLineChart({ data, series, formatValue, title }: Props) {
+export default function HistoryLineChart({ data, series, formatValue, title, range }: Props) {
   const hasRightAxis = series.some((item) => (item.axis ?? "left") === "right");
   const legend: ReactNode = (
     <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
@@ -125,14 +126,14 @@ export default function HistoryLineChart({ data, series, formatValue, title }: P
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={data} margin={{ top: 8, right: hasRightAxis ? 28 : 16, left: 8, bottom: 4 }}>
             <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" />
-            <XAxis dataKey="time" tick={{ fill: "var(--muted)", fontSize: 12 }} tickFormatter={formatAxisDate} minTickGap={24} />
+            <XAxis dataKey="time" tick={{ fill: "var(--muted)", fontSize: 12 }} tickFormatter={(value) => formatAxisDate(value, range)} minTickGap={24} />
             <YAxis
               yAxisId="left"
               tick={{ fill: "var(--muted)", fontSize: 12 }}
               tickFormatter={(value) => {
                 const parsed = parseNumericValue(value);
                 if (parsed === null) return "—";
-                return formatChartValue(parsed, formatValue);
+                return formatValue(parsed);
               }}
               width={84}
             />
@@ -149,7 +150,7 @@ export default function HistoryLineChart({ data, series, formatValue, title }: P
                 width={66}
               />
             )}
-            <Tooltip content={<CustomTooltipContent formatValue={formatValue} series={series} />} />
+            <Tooltip content={<CustomTooltipContent formatValue={formatValue} series={series} range={range} />} />
             {series.map((item) => {
               const yAxisId = item.axis ?? "left";
 
@@ -157,7 +158,7 @@ export default function HistoryLineChart({ data, series, formatValue, title }: P
                 return <Bar key={item.key} yAxisId={yAxisId} dataKey={item.key} name={item.label} fill={item.color} fillOpacity={0.35} />;
               }
 
-              return <Line key={item.key} yAxisId={yAxisId} dataKey={item.key} name={item.label} stroke={item.color} strokeWidth={2} dot={false} connectNulls type="monotone" />;
+              return <Line key={item.key} yAxisId={yAxisId} dataKey={item.key} name={item.label} stroke={item.color} strokeWidth={2} dot={false} type="monotone" />;
             })}
           </ComposedChart>
         </ResponsiveContainer>

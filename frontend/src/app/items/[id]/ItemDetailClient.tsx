@@ -5,18 +5,18 @@ import { useState } from "react";
 import { formatPrice, type Item } from "@/lib/api";
 import TimeRangeTabs from "@/app/TimeRangeTabs";
 import HistoryLineChart from "@/app/HistoryLineChart";
-import type { HistoryRange } from "@/lib/time-ranges";
+import { isDailyHistoryRange, type HistoryRange } from "@/lib/time-ranges";
 import { useItemDetail } from "@/features/item-detail";
 import { useSelectedRealm } from "@/lib/selected-realm";
 import GearMarket from "./GearMarket";
 import styles from "./ItemMarket.module.css";
 
-export default function ItemDetailClient({ item, marketHref = "/items" }: { item: Item; marketHref?: string }) {
+export default function ItemDetailClient({ item, backHref = "/items" }: { item: Item; backHref?: string }) {
   const [view, setView] = useState<"offers" | "history">("offers");
   const hasRealmListings = item.marketType === "realm";
 
   return <div className={styles.page}>
-    <Link href={marketHref} className={styles.breadcrumb}>← Back to market</Link>
+    <Link href={backHref} className={styles.breadcrumb}>← Back to {backHref === "/flipping" || backHref.startsWith("/flipping?") ? "realm comparison" : "market"}</Link>
     <header className={styles.itemHeader}>
       <div><h1>{item.name}</h1><div className={styles.itemMeta}>
         <span>{[item.itemSubclass ?? item.itemClass, item.inventoryType].filter(Boolean).join(" · ") || "Auction item"}</span>
@@ -37,7 +37,7 @@ export default function ItemDetailClient({ item, marketHref = "/items" }: { item
 
 function ItemHistory({ item }: { item: Item }) {
   const [range, setRange] = useState<HistoryRange>("24h");
-  const dailyHistory = range === "6m" || range === "1y" || range === "all";
+  const dailyHistory = isDailyHistoryRange(range);
   const detail = useItemDetail(item, range);
   const realm = useSelectedRealm();
   const realmName = realm.options.find((option) => option.id === detail.connectedRealmId)?.label;
@@ -50,9 +50,16 @@ function ItemHistory({ item }: { item: Item }) {
     <div className={styles.historyHeader}><h2>Price history · {realmHistory ? realmName ?? "Select a realm" : "EU commodities"}</h2><TimeRangeTabs value={range} onChange={setRange} /></div>
     {realmHistory && <p className={styles.footnote}>History combines all item versions on this realm. The filters in Buyout listings don’t apply here.</p>}
     {detail.status === "selection-required" ? <div className={styles.empty}>Choose a realm in the navigation to view its price history.</div>
-      : detail.status === "error" ? <div className={styles.empty} role="alert">Couldn’t load price history. Try another time range or reload the page.</div>
+      : detail.status === "error" ? <div className={styles.empty} role="alert">
+        <p>Couldn’t load price history.</p>
+        <button type="button" className={`${styles.action} min-h-11`} onClick={detail.retry}>Retry history</button>
+      </div>
       : detail.status === "loading" ? <div className={styles.empty} role="status">Loading price history…</div>
       : <>
+        {detail.status === "refresh-error" && <div className="mt-4 flex flex-wrap items-center gap-3 text-sm" role="alert">
+          <p className="text-negative">Couldn’t refresh. Showing previously loaded history.</p>
+          <button type="button" className={`${styles.action} min-h-11`} onClick={detail.retry}>Retry history</button>
+        </div>}
         {latestPrice && (!realmHistory || chartData.length > 1) && <>
           <div className={styles.historyStats}>
             <PriceStat label={dailyHistory ? "Latest daily low" : "Latest low"} value={latestPrice.min_price} />
@@ -61,7 +68,7 @@ function ItemHistory({ item }: { item: Item }) {
             <div><span>{dailyHistory ? "Average units available" : "Units available"}</span><strong>{latestPrice.total_quantity?.toLocaleString() ?? "—"}</strong></div>
           </div>
         </>}{chartData.length > 1 ? <>
-          <HistoryLineChart data={chartData} series={[
+          <HistoryLineChart range={range} data={chartData} series={[
             ...(!dailyHistory && prices.some((point) => point.median_price !== null) ? [{ key: "median", label: "Median", color: "var(--accent)" }] : []),
             { key: "average", label: "Average", color: "#f59e0b" },
             { key: "min", label: "Min", color: "var(--positive)" },

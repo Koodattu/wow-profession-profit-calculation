@@ -16,6 +16,12 @@ export function useMarketDashboard(adapter: MarketDashboardAdapter = httpAdapter
   const key = `eu:${connectedRealmId ?? "none"}`;
   const [result, setResult] = useState<{ key: string; data: MarketSummary } | null>(null);
   const [failedKey, setFailedKey] = useState<string | null>(null);
+  const [attempt, setAttempt] = useState(0);
+
+  function retry() {
+    setFailedKey(null);
+    setAttempt((value) => value + 1);
+  }
 
   useEffect(() => {
     let active = true;
@@ -30,12 +36,13 @@ export function useMarketDashboard(adapter: MarketDashboardAdapter = httpAdapter
     return () => {
       active = false;
     };
-  }, [adapter, connectedRealmId, key]);
+  }, [adapter, attempt, connectedRealmId, key]);
 
   return {
     realm,
     summary: result?.key === key ? result.data : null,
     loading: result?.key !== key && failedKey !== key,
     failed: failedKey === key,
+    retry,
   };
 }

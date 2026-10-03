@@ -1,5 +1,9 @@
 export type HistoryRange = "24h" | "7d" | "14d" | "30d" | "6m" | "1y" | "all";
 
+export function isDailyHistoryRange(range: HistoryRange): boolean {
+  return range === "6m" || range === "1y" || range === "all";
+}
+
 export const HISTORY_RANGES: Array<{ value: HistoryRange; label: string }> = [
   { value: "24h", label: "24h" },
   { value: "7d", label: "7d" },

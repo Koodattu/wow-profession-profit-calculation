@@ -66,6 +66,7 @@ export default function RecipeClient({ recipe, historyRange, onHistoryRangeChang
               scenario={scenario}
               title={label}
               historyData={scenarioHistory}
+              historyRange={historyRange}
               historyLoading={historyLoading}
               historyFailed={historyFailed}
             />
@@ -80,12 +81,14 @@ function ScenarioCard({
   scenario,
   title,
   historyData,
+  historyRange,
   historyLoading,
   historyFailed,
 }: {
   scenario: RankScenario;
   title: string;
   historyData: RecipeHistoryPoint[];
+  historyRange: HistoryRange;
   historyLoading: boolean;
   historyFailed: boolean;
 }) {
@@ -160,6 +163,7 @@ function ScenarioCard({
         <ScenarioHistoryChart
           scenario={scenario}
           data={historyData}
+          range={historyRange}
           loading={historyLoading}
         />
       </div>}
@@ -176,10 +180,12 @@ function ScenarioHistoryChart({
   scenario,
   data,
   loading,
+  range,
 }: {
   scenario: RankScenario;
   data: RecipeHistoryPoint[];
   loading: boolean;
+  range: HistoryRange;
 }) {
 
   if (!scenario.outputItemId) {
@@ -196,6 +202,7 @@ function ScenarioHistoryChart({
 
   return (
     <HistoryLineChart
+      range={range}
       title="Cost vs Output History"
       data={data}
       series={[
