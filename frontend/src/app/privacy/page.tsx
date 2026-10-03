@@ -8,7 +8,7 @@ export default function PrivacyPage() {
         <section>
           <h2 className="font-semibold text-foreground">What Copper stores</h2>
           <p className="mt-2">
-            Copper does not require a user account. Your connected-realm and profession-tool preferences are stored in your browser. They are not part of the
+            Copper does not require a user account. Your craft plan, connected-realm and profession-tool preferences are stored in your browser. They are not part of the
             auction database.
           </p>
         </section>

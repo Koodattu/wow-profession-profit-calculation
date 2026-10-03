@@ -26,6 +26,8 @@ export interface ReagentValuation {
 export interface RecipeCostValuation {
   reagents: ReagentValuation[];
   totalCost: number | null;
+  // Known required item quantities, independently of quote availability.
+  reagentsComplete?: boolean;
 }
 
 export interface RecipeScenario {
@@ -66,7 +68,7 @@ export interface ProfessionRecipeValuation {
   scenarios: RecipeScenario[];
 }
 
-type RecipeSelection = { recipeId: number } | { professionId: number };
+type RecipeSelection = { recipeIds: number[] } | { professionId: number };
 
 function groupBy<T, K>(rows: T[], keyFor: (row: T) => K): Map<K, T[]> {
   const grouped = new Map<K, T[]>();
@@ -89,7 +91,7 @@ async function getMarketQuotes(regionId: string, itemIds: number[], connectedRea
 }
 
 async function valueRecipes(selection: RecipeSelection, regionId: string, connectedRealmId?: number): Promise<(RecipeValuation & { categoryId: number | null })[]> {
-  const recipeFilter = "recipeId" in selection ? eq(recipes.id, selection.recipeId) : eq(recipes.professionId, selection.professionId);
+  const recipeFilter = "recipeIds" in selection ? inArray(recipes.id, selection.recipeIds) : eq(recipes.professionId, selection.professionId);
   const selectedRecipes = await db
     .select({
       id: recipes.id,
@@ -160,6 +162,7 @@ async function valueRecipes(selection: RecipeSelection, regionId: string, connec
     const requiredSlots = (slotsByRecipe.get(recipeId) ?? []).filter((slot) => slot.reagentType !== 3 || slot.required);
     const reagents: ReagentValuation[] = [];
     let totalCost: number | null = requiredSlots.length > 0 ? 0 : null;
+    let reagentsComplete = requiredSlots.length > 0;
 
     for (const slot of requiredSlots) {
       const options = optionsBySlot.get(slot.id) ?? [];
@@ -170,6 +173,7 @@ async function valueRecipes(selection: RecipeSelection, regionId: string, connec
 
       if (!selected?.itemId) {
         totalCost = null;
+        reagentsComplete = false;
         continue;
       }
 
@@ -190,7 +194,7 @@ async function valueRecipes(selection: RecipeSelection, regionId: string, connec
       if (totalCost !== null && totalPrice !== null) totalCost += totalPrice;
     }
 
-    return { reagents, totalCost };
+    return { reagents, totalCost, reagentsComplete };
   }
 
   function outputItems(recipe: (typeof selectedRecipes)[number]): { rank1: number | null; rank2: number | null } {
@@ -255,6 +259,7 @@ async function valueRecipes(selection: RecipeSelection, regionId: string, connec
         const cost: RecipeCostValuation = {
           reagents: [reagent],
           totalCost: reagent.totalPrice,
+          reagentsComplete: true,
         };
 
         return {
@@ -308,10 +313,15 @@ async function valueRecipes(selection: RecipeSelection, regionId: string, connec
 }
 
 export async function getRecipeValuation(recipeId: number, regionId: string, connectedRealmId?: number): Promise<RecipeValuation> {
-  const [valuation] = await valueRecipes({ recipeId }, regionId, connectedRealmId);
+  const [valuation] = await getRecipeValuations([recipeId], regionId, connectedRealmId);
   if (!valuation) throw new Error(`Recipe ${recipeId} not found`);
+  return valuation;
+}
 
-  return {
+export async function getRecipeValuations(recipeIds: number[], regionId: string, connectedRealmId?: number): Promise<RecipeValuation[]> {
+  if (recipeIds.length === 0) return [];
+  const valuations = await valueRecipes({ recipeIds }, regionId, connectedRealmId);
+  return valuations.map((valuation) => ({
     recipeId: valuation.recipeId,
     recipeName: valuation.recipeName,
     qualityTierType: valuation.qualityTierType,
@@ -320,7 +330,7 @@ export async function getRecipeValuation(recipeId: number, regionId: string, con
     professionId: valuation.professionId,
     professionName: valuation.professionName,
     scenarios: valuation.scenarios,
-  };
+  }));
 }
 
 export async function getProfessionRecipeValuations(

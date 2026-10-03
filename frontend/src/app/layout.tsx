@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="antialiased">
       <body className={`${geistSans.variable} ${geistMono.variable} font-sans`}>
-        <header className="sticky top-0 z-40 border-b border-border/80 bg-background/90 backdrop-blur-xl">
+        <header className="top-0 z-40 border-b border-border/80 bg-background/90 backdrop-blur-xl sm:sticky">
           <div className="mx-auto flex min-h-16 max-w-[1440px] flex-wrap items-center gap-x-4 gap-y-1 px-4 py-2 sm:h-16 sm:flex-nowrap sm:px-6 sm:py-0">
             <Link href="/" className="shrink-0 text-base font-semibold tracking-tight text-foreground">
               Copper
@@ -40,6 +40,7 @@ export default function RootLayout({
               <NavLink href="/items">Market</NavLink>
               <NavLink href="/professions">Professions</NavLink>
               <NavLink href="/flipping">Realms</NavLink>
+              <NavLink href="/craft-plan">Craft plan</NavLink>
             </nav>
             <div className="ml-auto shrink-0 sm:ml-0">
               <NavSettings />

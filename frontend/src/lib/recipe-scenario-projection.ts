@@ -5,7 +5,7 @@ import type {
   RecipeProfitResult,
 } from "./api";
 
-const NORMAL_SCENARIOS = [
+export const NORMAL_SCENARIOS = [
   { scenarioKey: "rank:1:1", label: "Pure R1" },
   { scenarioKey: "rank:2:2", label: "Pure R2" },
   { scenarioKey: "rank:1:2", label: "Conc R1→R2" },
@@ -29,7 +29,7 @@ export interface RecipeSummaryProjection {
 
 function salvageLabel(scenario: RankScenario): string {
   const input = scenario.cost.reagents[0];
-  return input ? `${input.itemName} ×${input.quantity}` : `Input ${scenario.inputItemId ?? "unknown"}`;
+  return input ? `${input.itemName} ×${input.quantity} (item ${input.itemId})` : `Input ${scenario.inputItemId ?? "unknown"}`;
 }
 
 export function projectRecipeSummary(valuation: ProfessionRecipeCost): RecipeSummaryProjection {

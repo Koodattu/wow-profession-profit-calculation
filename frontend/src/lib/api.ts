@@ -38,6 +38,7 @@ export interface ReagentCost {
 export interface RecipeCostResult {
   reagents: ReagentCost[];
   totalCost: number | null;
+  reagentsComplete?: boolean;
 }
 
 export interface RankScenario {
@@ -295,6 +296,10 @@ export function fetchProfessionCostsForRealm(id: number, region = "eu", connecte
 
 export function fetchRecipeCost(id: number, region = "eu", connectedRealmId?: number): Promise<RecipeProfitResult> {
   return apiFetch(`/api/crafting/recipes/${id}${qs({ region, connectedRealmId: connectedRealmId?.toString() })}`);
+}
+
+export function fetchRecipeCosts(ids: number[], connectedRealmId: number): Promise<RecipeProfitResult[]> {
+  return apiFetch(`/api/crafting/recipes${qs({ ids: ids.join(","), region: "eu", connectedRealmId: String(connectedRealmId) })}`);
 }
 
 export function fetchRecipeHistory(

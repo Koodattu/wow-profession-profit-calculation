@@ -8,7 +8,17 @@ A fast, compact EU Retail auction-house tracker with profession cost calculation
 - **Price Tracking** — Hourly commodity and profession-item realm history, quantity-weighted daily rollups, and verified compressed archives
 - **Crafting Cost Calculator** — Calculate reagent costs and gross profit estimates across supported reagent/output rank scenarios
 - **Realm Arbitrage** — Find the best realms to buy and sell non-commodity items
-- **Profession Browser** — Browse Midnight professions, recipes, and reagents
+- **Recipe Finder** — Search Midnight recipes by name or category, focus a scenario, and sort by cost or gross profit; filters survive a trip to recipe details
+- **Craft Plan** — Save recipe scenarios and craft counts in your browser, adjust quantities, and copy one combined shopping list with exact reagent IDs
+
+Craft plans use fresh quotes for the selected connected realm and EU commodities.
+They support up to 50 recipe choices and 10,000 crafts per choice. Estimates use
+minimum output quantities and exclude auction fees, concentration costs and
+profession-stat procs. Owned inventory is not deducted. Missing prices remain
+unavailable; incomplete material requirements prevent copying a partial list.
+There is no account or cross-device sync, and clearing browser storage removes
+saved plans. See [backend/README.md](backend/README.md) for a local synthetic-data
+environment that needs no Blizzard credentials or production database.
 
 ## Architecture
 

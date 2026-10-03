@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import {
   formatPrice,
   type RecipeHistoryPoint,
@@ -13,9 +14,11 @@ import TimeRangeTabs from "@/app/TimeRangeTabs";
 import HistoryLineChart from "@/app/HistoryLineChart";
 import type { HistoryRange } from "@/lib/time-ranges";
 import { projectRecipeDetail } from "@/lib/recipe-scenario-projection";
+import { craftPlan, useCraftPlan, validCraftCount, MAX_CRAFTS } from "@/lib/craft-plan";
 
 interface Props {
   recipe: RecipeProfitResult;
+  returnTo?: string;
   historyRange: HistoryRange;
   onHistoryRangeChange(range: HistoryRange): void;
   history: Record<string, RecipeHistoryPoint[]>;
@@ -24,13 +27,27 @@ interface Props {
   onRetryHistory(): void;
 }
 
-export default function RecipeClient({ recipe, historyRange, onHistoryRangeChange, history, historyLoading, historyFailed, onRetryHistory }: Props) {
+export default function RecipeClient({ recipe, returnTo, historyRange, onHistoryRangeChange, history, historyLoading, historyFailed, onRetryHistory }: Props) {
   const projectedScenarios = projectRecipeDetail(recipe, history);
+  const plan = useCraftPlan();
+  const [crafts, setCrafts] = useState("1");
+  const [message, setMessage] = useState("");
+  const [planError, setPlanError] = useState("");
+  const count = Number(crafts);
+  const valid = validCraftCount(count);
+  const professionPath = `/professions/${recipe.professionId}`;
+  const backHref = returnTo?.split("?")[0] === professionPath ? returnTo : professionPath;
+
+  function addScenario(scenarioKey: string, label: string) {
+    const error = craftPlan.add({ recipeId: recipe.recipeId, scenarioKey, crafts: count });
+    setPlanError(error ?? "");
+    setMessage(error ? "" : `Added ${count.toLocaleString()} crafts of ${recipe.recipeName} (${label}).`);
+  }
 
   return (
     <div>
       <div className="mb-6">
-        <Link href={`/professions/${recipe.professionId}`} className="text-sm text-muted hover:text-accent transition-colors">
+        <Link href={backHref} className="text-sm text-muted hover:text-accent transition-colors">
           &larr; {recipe.professionName}
         </Link>
         <h1 className="text-2xl font-bold mt-2">
@@ -45,9 +62,24 @@ export default function RecipeClient({ recipe, historyRange, onHistoryRangeChang
           </a>
         </h1>
         <p className="text-sm text-muted">
-          Quality type: {recipe.qualityTierType} &middot; {recipe.professionName}
+          {recipe.professionName} &middot; Prices and quantities below are per craft.
         </p>
-        <p className="text-xs text-muted mt-1">Gross estimates exclude auction fees and profession-stat procs; tool stats are not yet configured.</p>
+        <p className="text-sm text-muted mt-2">Gross estimates exclude auction fees and profession-stat procs. Check the required skill and concentration in game.</p>
+      </div>
+
+      <div className="mb-6 flex flex-wrap items-end gap-4 border-y border-border py-4">
+        <label className="text-sm text-muted">Crafts to add
+          <input type="number" min={1} max={MAX_CRAFTS} step={1} value={crafts}
+            onChange={(event) => { setCrafts(event.target.value); setMessage(""); }}
+            aria-invalid={!valid} aria-describedby={!valid ? "craft-count-error" : undefined}
+            className="mt-1 block min-h-11 w-32 rounded-lg border border-border bg-card px-3 text-base text-foreground" />
+        </label>
+        <p className="max-w-sm pb-2 text-sm text-muted">Choose a scenario below to save its materials in your plan.</p>
+        <Link href="/craft-plan" className="inline-flex min-h-11 items-center text-accent hover:underline sm:ml-auto">View craft plan{plan.entries.length ? ` (${plan.entries.length})` : ""} →</Link>
+        {!valid && <p id="craft-count-error" className="w-full text-sm text-negative">Enter a whole number from 1 to 10,000.</p>}
+        {message && <p role="status" className="w-full text-sm text-positive">{message}</p>}
+        {planError && <p role="alert" className="w-full text-sm text-negative">{planError}</p>}
+        {plan.storage !== "saved" && <p className="w-full text-sm text-negative">{plan.storage === "session" ? "Browser storage is unavailable. Your plan lasts only for this session." : "The saved plan could not be read. Adding a recipe starts a new plan."}</p>}
       </div>
 
       <div className="border border-border rounded-lg bg-card p-4 mb-6">
@@ -69,6 +101,9 @@ export default function RecipeClient({ recipe, historyRange, onHistoryRangeChang
               historyRange={historyRange}
               historyLoading={historyLoading}
               historyFailed={historyFailed}
+              crafts={valid ? count : null}
+              canAdd={plan.ready && valid}
+              onAdd={() => addScenario(scenarioKey, label)}
             />
           );
         })}
@@ -84,6 +119,9 @@ function ScenarioCard({
   historyRange,
   historyLoading,
   historyFailed,
+  crafts,
+  canAdd,
+  onAdd,
 }: {
   scenario: RankScenario;
   title: string;
@@ -91,11 +129,21 @@ function ScenarioCard({
   historyRange: HistoryRange;
   historyLoading: boolean;
   historyFailed: boolean;
+  crafts: number | null;
+  canAdd: boolean;
+  onAdd(): void;
 }) {
   const profitColor = scenario.profit !== null ? (scenario.profit >= 0 ? "text-positive" : "text-negative") : "text-muted";
   return (
     <div className="border border-border rounded-lg bg-card p-4">
       <h2 className="font-semibold mb-4">{title}</h2>
+      <div className="mb-4 border-b border-border pb-4">
+        <button type="button" onClick={onAdd} disabled={!canAdd} aria-label={`Add ${title} to plan`}
+          className="min-h-11 w-full rounded-lg bg-accent px-4 font-semibold text-background hover:bg-accent-hover disabled:opacity-50">
+          Add {crafts?.toLocaleString() ?? ""} {crafts === 1 ? "craft" : "crafts"} to plan
+        </button>
+        {crafts !== null && <p className="mt-2 text-sm text-muted">At least {(crafts * scenario.outputQuantity).toLocaleString()} output items · {formatMaybePrice(scenario.cost.totalCost === null ? null : scenario.cost.totalCost * crafts)} material cost</p>}
+      </div>
 
       {/* Reagent breakdown */}
       <div className="mb-4">

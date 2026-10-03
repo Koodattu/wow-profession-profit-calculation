@@ -40,7 +40,7 @@ describe("Recipe Scenario projection interface", () => {
     expect(projection.scenarios.map((entry) => entry.scenario)).toEqual([null, rankTwo, null]);
   });
 
-  test("keeps every salvage scenario and derives its label from the input", () => {
+  test("keeps same-name salvage inputs distinct by item identity", () => {
     const salvage = scenario("salvage:40", {
       isSalvage: true,
       inputItemId: 40,
@@ -50,10 +50,16 @@ describe("Recipe Scenario projection interface", () => {
       },
     });
 
-    const projection = projectRecipeSummary(summary([salvage]));
+    const other = scenario("salvage:41", { ...salvage, scenarioKey: "salvage:41", inputItemId: 41,
+      cost: { ...salvage.cost, reagents: [{ ...salvage.cost.reagents[0], itemId: 41 }] },
+    });
+    const projection = projectRecipeSummary(summary([salvage, other]));
 
     expect(projection.kind).toBe("salvage");
-    expect(projection.scenarios).toEqual([{ scenarioKey: "salvage:40", label: "Scrap ×5", scenario: salvage }]);
+    expect(projection.scenarios).toEqual([
+      { scenarioKey: "salvage:40", label: "Scrap ×5 (item 40)", scenario: salvage },
+      { scenarioKey: "salvage:41", label: "Scrap ×5 (item 41)", scenario: other },
+    ]);
   });
 
   test("associates history only by Recipe Scenario Key", () => {

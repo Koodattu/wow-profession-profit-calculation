@@ -7,9 +7,10 @@ import RecipeClient from "./RecipeClient";
 
 interface Props {
   recipeId: number;
+  returnTo?: string;
 }
 
-export default function RecipeDetailClient({ recipeId }: Props) {
+export default function RecipeDetailClient({ recipeId, returnTo }: Props) {
   const [historyRange, setHistoryRange] = useState<HistoryRange>("24h");
   const valuation = useRecipeValuation(recipeId, historyRange);
 
@@ -39,6 +40,7 @@ export default function RecipeDetailClient({ recipeId }: Props) {
       )}
       <RecipeClient
         recipe={valuation.recipe}
+        returnTo={returnTo}
         historyRange={historyRange}
         onHistoryRangeChange={setHistoryRange}
         history={valuation.history}

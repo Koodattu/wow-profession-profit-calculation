@@ -20,7 +20,7 @@ bun run typecheck
 
 Current commodity quotes, selected-realm quotes, EU realm benchmarks, and cross-realm comparisons are owned by `src/services/current-market.ts`. Crafting and HTTP routes consume that module instead of defining price aggregation rules.
 
-Recipe rank, salvage-input, output-quality, and gross-profit rules are owned by `src/services/recipe-valuation.ts`. Single-recipe and profession views are projections of the same valuation implementation.
+Recipe rank, salvage-input, output-quality, and gross-profit rules are owned by `src/services/recipe-valuation.ts`. Single-recipe, profession and craft-plan views are projections of the same valuation implementation. The plan uses `GET /api/crafting/recipes?ids=1230864,1230860&connectedRealmId=1305` (EU only, 1–50 positive recipe IDs, explicit realm required). Duplicate IDs are deduplicated and missing catalog recipes are omitted. Scenario `cost.reagentsComplete` distinguishes unresolved required materials from known materials without market quotes.
 
 Raw and daily item history reads are owned by `src/services/market-history.ts`. `src/services/recipe-history.ts` batch-loads those item series once, aligns sparse timelines, and returns every canonical Recipe Scenario through one HTTP request.
 

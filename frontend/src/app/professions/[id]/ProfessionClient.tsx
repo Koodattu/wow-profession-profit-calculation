@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { formatPrice, type ProfessionRecipeCost, type ProfessionDetail, type RecipeCategory } from "@/lib/api";
+import { useSearchParams } from "next/navigation";
+import { formatPrice, type ProfessionRecipeCost, type ProfessionDetail } from "@/lib/api";
 import WowheadLink from "@/app/WowheadLink";
-import { projectRecipeSummary } from "@/lib/recipe-scenario-projection";
+import { NORMAL_SCENARIOS, projectRecipeSummary } from "@/lib/recipe-scenario-projection";
 import { useProfessionValuation } from "@/features/profession-valuation";
 
 interface Props {
@@ -13,16 +14,43 @@ interface Props {
 export default function ProfessionClient({ profession }: Props) {
   const valuation = useProfessionValuation(profession.id);
   const recipeCosts = valuation.data ?? [];
-
-  // Group recipes by category
-  const categoryMap = new Map<number, RecipeCategory>();
-  for (const cat of profession.categories) {
-    categoryMap.set(cat.id, cat);
+  const params = useSearchParams();
+  const query = (params.get("q") ?? "").slice(0, 160);
+  const scenarioKey = NORMAL_SCENARIOS.find((entry) => entry.scenarioKey === params.get("scenario"))?.scenarioKey ?? "rank:1:1";
+  const sort = ["profit", "cost", "name"].includes(params.get("sort") ?? "") ? params.get("sort")! : "category";
+  const positiveOnly = params.get("positive") === "1";
+  const compareAll = params.get("compare") === "1";
+  const returnTo = `/professions/${profession.id}${params.size ? `?${params.toString()}` : ""}`;
+  const recipeHref = (id: number) => `/recipes/${id}?from=${encodeURIComponent(returnTo)}`;
+  function changeFilter(key: string, value: string) {
+    const next = new URLSearchParams(params.toString());
+    if (value) next.set(key, value); else next.delete(key);
+    window.history.replaceState(null, "", `/professions/${profession.id}${next.size ? `?${next}` : ""}`);
   }
 
+  const categoryMap = new Map(profession.categories.map((category) => [category.id, category]));
+  const rows = recipeCosts.map((recipe) => {
+    const projection = projectRecipeSummary(recipe);
+    const choice = projection.kind === "salvage"
+      ? [...projection.scenarios].sort((a, b) => (a.scenario?.cost.totalCost ?? Infinity) - (b.scenario?.cost.totalCost ?? Infinity))[0]
+      : projection.scenarios.find((entry) => entry.scenarioKey === scenarioKey);
+    return { recipe, choice, category: categoryMap.get(recipe.categoryId ?? 0)?.name ?? "Other", salvage: projection.kind === "salvage" };
+  }).filter(({ recipe, category, choice }) => `${recipe.recipeName} ${category}`.toLowerCase().includes(query.trim().toLowerCase())
+    && (!positiveOnly || (choice?.scenario?.profit ?? 0) > 0));
+  rows.sort((a, b) => {
+    const left = sort === "profit" ? a.choice?.scenario?.profit : a.choice?.scenario?.cost.totalCost;
+    const right = sort === "profit" ? b.choice?.scenario?.profit : b.choice?.scenario?.cost.totalCost;
+    if (sort === "profit" || sort === "cost") {
+      if (left == null && right != null) return 1;
+      if (left != null && right == null) return -1;
+      if (left != null && right != null && left !== right) return sort === "profit" ? right - left : left - right;
+    }
+    return (sort === "category" ? a.category.localeCompare(b.category) : 0) || a.recipe.recipeName.localeCompare(b.recipe.recipeName) || a.recipe.recipeId - b.recipe.recipeId;
+  });
+
   const recipesByCategory = new Map<number | null, ProfessionRecipeCost[]>();
-  for (const recipe of recipeCosts) {
-    const key = recipe.categoryId;
+  for (const { recipe } of rows) {
+    const key = sort === "category" ? recipe.categoryId : null;
     let arr = recipesByCategory.get(key);
     if (!arr) {
       arr = [];
@@ -30,8 +58,6 @@ export default function ProfessionClient({ profession }: Props) {
     }
     arr.push(recipe);
   }
-
-  const sortedCategories = [...recipesByCategory.entries()].sort(([a], [b]) => (a ?? 0) - (b ?? 0));
 
   return (
     <div>
@@ -43,9 +69,35 @@ export default function ProfessionClient({ profession }: Props) {
           <div>
             <h1 className="text-2xl font-bold">{profession.name}</h1>
             {valuation.data && <p className="text-sm text-muted">{recipeCosts.length} recipes</p>}
-            <p className="text-xs text-muted mt-1">Gross estimates exclude auction fees and profession-stat procs.</p>
+            <p className="mt-2 text-sm leading-6 text-muted">Find a recipe, compare its scenarios, then add crafts to your plan. Gross estimates exclude auction fees and profession-stat procs.</p>
           </div>
         </div>
+      </div>
+
+      <div className="mb-6 border-y border-border py-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <label className="text-sm text-muted">Search recipes
+            <input value={query} maxLength={160} onChange={(event) => changeFilter("q", event.target.value)} placeholder="Recipe or category"
+              className="mt-1 min-h-11 w-full rounded-lg border border-border bg-card px-3 text-base text-foreground" />
+          </label>
+          <label className="text-sm text-muted">Scenario
+            <select value={scenarioKey} onChange={(event) => changeFilter("scenario", event.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-border bg-card px-3 text-base text-foreground">
+              {NORMAL_SCENARIOS.map((entry) => <option key={entry.scenarioKey} value={entry.scenarioKey}>{entry.label}</option>)}
+            </select>
+          </label>
+          <label className="text-sm text-muted">Sort recipes
+            <select value={sort} onChange={(event) => changeFilter("sort", event.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-border bg-card px-3 text-base text-foreground">
+              <option value="category">Category</option><option value="profit">Highest gross profit</option><option value="cost">Lowest material cost</option><option value="name">Recipe name</option>
+            </select>
+          </label>
+        </div>
+        <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-1 text-sm">
+          <label className="flex min-h-11 items-center gap-2"><input type="checkbox" checked={positiveOnly} onChange={(event) => changeFilter("positive", event.target.checked ? "1" : "")} className="size-4 accent-accent" />Positive gross profit only</label>
+          <label className="flex min-h-11 items-center gap-2"><input type="checkbox" checked={compareAll} onChange={(event) => changeFilter("compare", event.target.checked ? "1" : "")} className="size-4 accent-accent" />Compare all scenarios</label>
+          <button type="button" className="min-h-11 text-accent hover:underline" onClick={() => window.history.replaceState(null, "", `/professions/${profession.id}`)}>Reset filters</button>
+          <Link href="/craft-plan" className="inline-flex min-h-11 items-center text-accent hover:underline sm:ml-auto">View craft plan →</Link>
+        </div>
+        <p className="mt-2 text-sm text-muted">Sorting and profit filtering use the selected scenario. Salvage recipes use their lowest-cost input. All values are per craft.</p>
       </div>
 
       <div className="mb-4 text-sm text-muted">
@@ -59,14 +111,32 @@ export default function ProfessionClient({ profession }: Props) {
         ) : null}
       </div>
 
-      {sortedCategories.map(([categoryId, recipes]) => {
+      {valuation.data && <p role="status" className="mb-4 text-sm text-muted">Showing {rows.length} of {recipeCosts.length} recipes</p>}
+      {valuation.data && rows.length === 0 && <p className="my-8 text-muted">No recipes match these filters.</p>}
+
+      {!compareAll && <ul className="divide-y divide-border" aria-label="Recipe results">
+        {rows.map(({ recipe, choice, category, salvage }) => <li key={recipe.recipeId} className="grid gap-3 py-4 lg:grid-cols-2 lg:gap-8">
+          <div className="min-w-0">
+            <WowheadLink href={recipeHref(recipe.recipeId)} type="spell" id={recipe.recipeId} className="inline-flex min-h-11 items-center font-medium text-accent hover:underline">{recipe.recipeName}</WowheadLink>
+            <p className="text-sm text-muted">{category}{choice?.scenario ? ` · ${choice.scenario.outputQuantity} output per craft` : ""}</p>
+            {salvage && <p className="mt-1 text-sm text-muted">Lowest-cost input: {choice?.label ?? "Unavailable"}</p>}
+          </div>
+          <dl className="grid grid-cols-3 gap-3 self-center text-sm tabular-nums">
+            <div><dt className="text-xs text-muted">Material cost</dt><dd className="mt-1">{formatMaybePrice(choice?.scenario?.cost.totalCost ?? null)}</dd></div>
+            <div><dt className="text-xs text-muted">Output value</dt><dd className="mt-1">{formatMaybePrice(choice?.scenario?.outputTotalPrice ?? null)}</dd></div>
+            <div><dt className="text-xs text-muted">Gross profit</dt><dd className="mt-1 font-medium"><ProfitCell value={choice?.scenario?.profit ?? null} /></dd></div>
+          </dl>
+        </li>)}
+      </ul>}
+
+      {compareAll && [...recipesByCategory.entries()].map(([categoryId, recipes]) => {
         const category = categoryId ? categoryMap.get(categoryId) : null;
         return (
           <section key={categoryId ?? "uncategorized"} className="mb-8">
-            <h2 className="text-lg font-semibold text-muted">{category?.name ?? "Other"}</h2>
+            <h2 className="text-lg font-semibold text-muted">{sort === "category" ? category?.name ?? "Other" : "Scenario comparison"}</h2>
             <p className="my-2 text-xs text-muted lg:hidden">Scroll to compare all scenarios, or open a recipe for details.</p>
             <div className="overflow-x-auto" role="region" aria-label={`${category?.name ?? "Other"} recipe prices`} tabIndex={0}>
-              <RecipeTable recipes={recipes} />
+              <RecipeTable recipes={recipes} recipeHref={recipeHref} />
             </div>
           </section>
         );
@@ -75,7 +145,7 @@ export default function ProfessionClient({ profession }: Props) {
   );
 }
 
-function RecipeTable({ recipes }: { recipes: ProfessionRecipeCost[] }) {
+function RecipeTable({ recipes, recipeHref }: { recipes: ProfessionRecipeCost[]; recipeHref(id: number): string }) {
   const scenarioColSpan = 3;
   const metricColumnCount = 9;
   const recipeColumnWidth = "22%";
@@ -123,7 +193,7 @@ function RecipeTable({ recipes }: { recipes: ProfessionRecipeCost[] }) {
             return (
               <tr key={recipe.recipeId} className="border-b border-border/50 align-top">
                 <td className="py-3 pr-4">
-                  <WowheadLink href={`/recipes/${recipe.recipeId}`} type="spell" id={recipe.recipeId} className="text-accent hover:underline">
+                  <WowheadLink href={recipeHref(recipe.recipeId)} type="spell" id={recipe.recipeId} className="text-accent hover:underline">
                     {recipe.recipeName}
                   </WowheadLink>
                 </td>
@@ -145,7 +215,7 @@ function RecipeTable({ recipes }: { recipes: ProfessionRecipeCost[] }) {
           return (
             <tr key={recipe.recipeId} className="border-b border-border/50 hover:bg-card-hover transition-colors">
               <td className="py-2 pr-4">
-                <WowheadLink href={`/recipes/${recipe.recipeId}`} type="spell" id={recipe.recipeId} className="text-accent hover:underline">
+                <WowheadLink href={recipeHref(recipe.recipeId)} type="spell" id={recipe.recipeId} className="text-accent hover:underline">
                   {recipe.recipeName}
                 </WowheadLink>
                 {s1 && s1.outputQuantity > 1 && <span className="text-muted ml-1">×{s1.outputQuantity}</span>}

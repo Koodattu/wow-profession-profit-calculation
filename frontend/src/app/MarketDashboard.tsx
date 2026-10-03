@@ -65,7 +65,7 @@ export default function MarketDashboard() {
 
       <section className="mt-10 grid gap-3 md:grid-cols-3" aria-label="Tools">
         <ToolLink href="/items" title="Market" description="Search current prices and quantities." />
-        <ToolLink href="/professions" title="Professions" description="Compare material cost with sale value." />
+        <ToolLink href="/professions" title="Professions" description="Find recipes and build a craft plan." />
         <ToolLink href="/flipping" title="Realm comparison" description="See current price gaps between realms." />
       </section>
 
