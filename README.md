@@ -8,7 +8,7 @@ A fast, compact EU Retail auction-house tracker with profession cost calculation
 - **Price Tracking** — Focused price and supply timelines, shareable range/realm links, paged observations and complete CSV exports; hourly history, quantity-weighted daily rollups, and verified compressed archives
 - **Crafting Cost Calculator** — Calculate reagent costs and gross profit estimates across supported reagent/output rank scenarios
 - **Realm Arbitrage** — Find the best realms to buy and sell non-commodity items
-- **Recipe Finder** — Search Midnight recipes by name or category, focus a scenario, and sort by cost or gross profit; filters survive a trip to recipe details
+- **Recipe Finder** — Compare all crafting scenarios side by side, search Midnight recipes by name or category, and sort by cost or gross profit; filters survive a trip to recipe details
 - **Craft Plan** — Save recipe scenarios and craft counts in your browser, adjust quantities, and copy one combined shopping list with exact reagent IDs
 
 Craft plans use fresh quotes for the selected connected realm and EU commodities.

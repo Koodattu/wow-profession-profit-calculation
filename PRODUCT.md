@@ -1,6 +1,6 @@
 # Copper product context
 
-Agent-selected context, inferred from the repository, local browser journeys and first-party research on 2026-10-03. These are working decisions, not user interviews or confirmed demand.
+Working context from the repository, local browser journeys and first-party research on 2026-10-03, updated with the user's profession comparison feedback on 2026-10-04.
 
 ## Register
 
@@ -27,7 +27,7 @@ Quiet, precise, practical. Preserve the existing dark graphite surfaces, gold ac
 - Keep the selected realm visible; never substitute another realm's price for a missing quote.
 - Explain gross estimates, unknown values and craft versus output quantities where decisions happen.
 - Let people move from discovery to comparison to a reusable material list without re-entering their choices.
-- Use progressive detail: focused rows for browsing, full scenarios and history for inspection.
+- Keep profession recipes in a dense spreadsheet with every scenario visible side by side. Search and sorting must preserve that comparison; recipe details provide inputs and history.
 - Preserve useful state locally, disclose storage limitations, and make failure recoverable.
 
 ## Anti-references

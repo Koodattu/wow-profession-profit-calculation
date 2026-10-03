@@ -19,7 +19,6 @@ export default function ProfessionClient({ profession }: Props) {
   const scenarioKey = NORMAL_SCENARIOS.find((entry) => entry.scenarioKey === params.get("scenario"))?.scenarioKey ?? "rank:1:1";
   const sort = ["profit", "cost", "name"].includes(params.get("sort") ?? "") ? params.get("sort")! : "category";
   const positiveOnly = params.get("positive") === "1";
-  const compareAll = params.get("compare") === "1";
   const returnTo = `/professions/${profession.id}${params.size ? `?${params.toString()}` : ""}`;
   const recipeHref = (id: number) => `/recipes/${id}?from=${encodeURIComponent(returnTo)}`;
   function changeFilter(key: string, value: string) {
@@ -34,7 +33,7 @@ export default function ProfessionClient({ profession }: Props) {
     const choice = projection.kind === "salvage"
       ? [...projection.scenarios].sort((a, b) => (a.scenario?.cost.totalCost ?? Infinity) - (b.scenario?.cost.totalCost ?? Infinity))[0]
       : projection.scenarios.find((entry) => entry.scenarioKey === scenarioKey);
-    return { recipe, choice, category: categoryMap.get(recipe.categoryId ?? 0)?.name ?? "Other", salvage: projection.kind === "salvage" };
+    return { recipe, choice, category: categoryMap.get(recipe.categoryId ?? 0)?.name ?? "Other" };
   }).filter(({ recipe, category, choice }) => `${recipe.recipeName} ${category}`.toLowerCase().includes(query.trim().toLowerCase())
     && (!positiveOnly || (choice?.scenario?.profit ?? 0) > 0));
   rows.sort((a, b) => {
@@ -69,7 +68,7 @@ export default function ProfessionClient({ profession }: Props) {
           <div>
             <h1 className="text-2xl font-bold">{profession.name}</h1>
             {valuation.data && <p className="text-sm text-muted">{recipeCosts.length} recipes</p>}
-            <p className="mt-2 text-sm leading-6 text-muted">Find a recipe, compare its scenarios, then add crafts to your plan. Gross estimates exclude auction fees and profession-stat procs.</p>
+            <p className="mt-2 text-sm leading-6 text-muted">Compare every scenario side by side. Values are per craft; gross profit excludes auction fees and profession-stat procs.</p>
           </div>
         </div>
       </div>
@@ -80,24 +79,30 @@ export default function ProfessionClient({ profession }: Props) {
             <input value={query} maxLength={160} onChange={(event) => changeFilter("q", event.target.value)} placeholder="Recipe or category"
               className="mt-1 min-h-11 w-full rounded-lg border border-border bg-card px-3 text-base text-foreground" />
           </label>
-          <label className="text-sm text-muted">Scenario
-            <select value={scenarioKey} onChange={(event) => changeFilter("scenario", event.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-border bg-card px-3 text-base text-foreground">
-              {NORMAL_SCENARIOS.map((entry) => <option key={entry.scenarioKey} value={entry.scenarioKey}>{entry.label}</option>)}
-            </select>
-          </label>
           <label className="text-sm text-muted">Sort recipes
             <select value={sort} onChange={(event) => changeFilter("sort", event.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-border bg-card px-3 text-base text-foreground">
               <option value="category">Category</option><option value="profit">Highest gross profit</option><option value="cost">Lowest material cost</option><option value="name">Recipe name</option>
             </select>
           </label>
+          <fieldset className="min-w-0 text-sm sm:col-span-2 lg:col-span-1">
+            <legend className="text-muted">Sort and filter by</legend>
+            <div className="mt-1 flex flex-wrap gap-x-4">
+              {NORMAL_SCENARIOS.map((entry) => (
+                <label key={entry.scenarioKey} className="flex min-h-11 items-center gap-2">
+                  <input type="radio" name="sort-scenario" value={entry.scenarioKey} checked={scenarioKey === entry.scenarioKey}
+                    onChange={() => changeFilter("scenario", entry.scenarioKey)} className="size-4 accent-accent" />
+                  {entry.label}
+                </label>
+              ))}
+            </div>
+          </fieldset>
         </div>
         <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-1 text-sm">
           <label className="flex min-h-11 items-center gap-2"><input type="checkbox" checked={positiveOnly} onChange={(event) => changeFilter("positive", event.target.checked ? "1" : "")} className="size-4 accent-accent" />Positive gross profit only</label>
-          <label className="flex min-h-11 items-center gap-2"><input type="checkbox" checked={compareAll} onChange={(event) => changeFilter("compare", event.target.checked ? "1" : "")} className="size-4 accent-accent" />Compare all scenarios</label>
           <button type="button" className="min-h-11 text-accent hover:underline" onClick={() => window.history.replaceState(null, "", `/professions/${profession.id}`)}>Reset filters</button>
           <Link href="/craft-plan" className="inline-flex min-h-11 items-center text-accent hover:underline sm:ml-auto">View craft plan →</Link>
         </div>
-        <p className="mt-2 text-sm text-muted">Sorting and profit filtering use the selected scenario. Salvage recipes use their lowest-cost input. All values are per craft.</p>
+        <p className="mt-2 text-sm text-muted">The selected scenario controls cost/profit sorting and the profit filter. All scenarios stay visible. Salvage recipes use their lowest-cost input.</p>
       </div>
 
       <div className="mb-4 text-sm text-muted">
@@ -114,29 +119,15 @@ export default function ProfessionClient({ profession }: Props) {
       {valuation.data && <p role="status" className="mb-4 text-sm text-muted">Showing {rows.length} of {recipeCosts.length} recipes</p>}
       {valuation.data && rows.length === 0 && <p className="my-8 text-muted">No recipes match these filters.</p>}
 
-      {!compareAll && <ul className="divide-y divide-border" aria-label="Recipe results">
-        {rows.map(({ recipe, choice, category, salvage }) => <li key={recipe.recipeId} className="grid gap-3 py-4 lg:grid-cols-2 lg:gap-8">
-          <div className="min-w-0">
-            <WowheadLink href={recipeHref(recipe.recipeId)} type="spell" id={recipe.recipeId} className="inline-flex min-h-11 items-center font-medium text-accent hover:underline">{recipe.recipeName}</WowheadLink>
-            <p className="text-sm text-muted">{category}{choice?.scenario ? ` · ${choice.scenario.outputQuantity} output per craft` : ""}</p>
-            {salvage && <p className="mt-1 text-sm text-muted">Lowest-cost input: {choice?.label ?? "Unavailable"}</p>}
-          </div>
-          <dl className="grid grid-cols-3 gap-3 self-center text-sm tabular-nums">
-            <div><dt className="text-xs text-muted">Material cost</dt><dd className="mt-1">{formatMaybePrice(choice?.scenario?.cost.totalCost ?? null)}</dd></div>
-            <div><dt className="text-xs text-muted">Output value</dt><dd className="mt-1">{formatMaybePrice(choice?.scenario?.outputTotalPrice ?? null)}</dd></div>
-            <div><dt className="text-xs text-muted">Gross profit</dt><dd className="mt-1 font-medium"><ProfitCell value={choice?.scenario?.profit ?? null} /></dd></div>
-          </dl>
-        </li>)}
-      </ul>}
-
-      {compareAll && [...recipesByCategory.entries()].map(([categoryId, recipes]) => {
+      {[...recipesByCategory.entries()].map(([categoryId, recipes]) => {
         const category = categoryId ? categoryMap.get(categoryId) : null;
+        const title = sort === "category" ? category?.name ?? "Other" : "Scenario comparison";
         return (
           <section key={categoryId ?? "uncategorized"} className="mb-8">
-            <h2 className="text-lg font-semibold text-muted">{sort === "category" ? category?.name ?? "Other" : "Scenario comparison"}</h2>
+            <h2 className="text-lg font-semibold text-muted">{title}</h2>
             <p className="my-2 text-xs text-muted lg:hidden">Scroll to compare all scenarios, or open a recipe for details.</p>
-            <div className="overflow-x-auto" role="region" aria-label={`${category?.name ?? "Other"} recipe prices`} tabIndex={0}>
-              <RecipeTable recipes={recipes} recipeHref={recipeHref} />
+            <div className="overflow-x-auto" role="region" aria-label={`${title} recipe prices`} tabIndex={0}>
+              <RecipeTable recipes={recipes} recipeHref={recipeHref} title={title} />
             </div>
           </section>
         );
@@ -145,45 +136,50 @@ export default function ProfessionClient({ profession }: Props) {
   );
 }
 
-function RecipeTable({ recipes, recipeHref }: { recipes: ProfessionRecipeCost[]; recipeHref(id: number): string }) {
+function RecipeTable({ recipes, recipeHref, title }: { recipes: ProfessionRecipeCost[]; recipeHref(id: number): string; title: string }) {
   const scenarioColSpan = 3;
   const metricColumnCount = 9;
   const recipeColumnWidth = "22%";
   const metricColumnWidth = `${(100 - 22) / metricColumnCount}%`;
 
   return (
-    <table className="w-full min-w-[980px] text-sm border-collapse table-fixed">
+    <table className="w-full min-w-[980px] text-sm border-collapse tabular-nums">
+      <caption className="sr-only">{title} — scenario prices per craft</caption>
       <colgroup>
         <col style={{ width: recipeColumnWidth }} />
-        {Array.from({ length: metricColumnCount }).map((_, index) => (
-          <col key={index} style={{ width: metricColumnWidth }} />
-        ))}
       </colgroup>
+      {NORMAL_SCENARIOS.map(({ scenarioKey }) => (
+        <colgroup key={scenarioKey}>
+          {Array.from({ length: scenarioColSpan }).map((_, index) => (
+            <col key={index} style={{ width: metricColumnWidth }} />
+          ))}
+        </colgroup>
+      ))}
       <thead>
         <tr className="border-b border-border text-left text-muted">
-          <th rowSpan={2} className="py-2 pr-4 font-medium align-bottom">
+          <th scope="col" rowSpan={2} className="py-2 pr-4 font-medium align-bottom">
             Recipe
           </th>
-          <th colSpan={scenarioColSpan} className="py-2 pr-4 pl-4 font-medium border-l border-border/60 text-center">
+          <th scope="colgroup" colSpan={scenarioColSpan} className="py-2 pr-4 pl-4 font-medium border-l border-border/60 text-center">
             Pure R1
           </th>
-          <th colSpan={scenarioColSpan} className="py-2 pr-4 pl-4 font-medium border-l border-border/60 text-center">
+          <th scope="colgroup" colSpan={scenarioColSpan} className="py-2 pr-4 pl-4 font-medium border-l border-border/60 text-center">
             Pure R2
           </th>
-          <th colSpan={scenarioColSpan} className="py-2 pr-4 pl-4 font-medium border-l border-border/60 text-center">
+          <th scope="colgroup" colSpan={scenarioColSpan} className="py-2 pr-4 pl-4 font-medium border-l border-border/60 text-center">
             Conc R1→R2
           </th>
         </tr>
         <tr className="border-b border-border text-left text-muted">
-          <th className="py-2 pr-4 pl-4 font-medium text-right border-l border-border/60">Cost</th>
-          <th className="py-2 pr-4 font-medium text-right">Output</th>
-          <th className="py-2 pr-4 font-medium text-right">Gross Profit</th>
-          <th className="py-2 pr-4 pl-4 font-medium text-right border-l border-border/60">Cost</th>
-          <th className="py-2 pr-4 font-medium text-right">Output</th>
-          <th className="py-2 pr-4 font-medium text-right">Gross Profit</th>
-          <th className="py-2 pr-4 pl-4 font-medium text-right border-l border-border/60">Cost</th>
-          <th className="py-2 pr-4 font-medium text-right">Output</th>
-          <th className="py-2 pr-4 font-medium text-right">Gross Profit</th>
+          <th scope="col" className="py-2 pr-4 pl-4 font-medium text-right border-l border-border/60">Cost</th>
+          <th scope="col" className="py-2 pr-4 font-medium text-right">Output</th>
+          <th scope="col" className="py-2 pr-4 font-medium text-right">Gross Profit</th>
+          <th scope="col" className="py-2 pr-4 pl-4 font-medium text-right border-l border-border/60">Cost</th>
+          <th scope="col" className="py-2 pr-4 font-medium text-right">Output</th>
+          <th scope="col" className="py-2 pr-4 font-medium text-right">Gross Profit</th>
+          <th scope="col" className="py-2 pr-4 pl-4 font-medium text-right border-l border-border/60">Cost</th>
+          <th scope="col" className="py-2 pr-4 font-medium text-right">Output</th>
+          <th scope="col" className="py-2 pr-4 font-medium text-right">Gross Profit</th>
         </tr>
       </thead>
       <tbody>
@@ -192,17 +188,18 @@ function RecipeTable({ recipes, recipeHref }: { recipes: ProfessionRecipeCost[];
           if (projection.kind === "salvage") {
             return (
               <tr key={recipe.recipeId} className="border-b border-border/50 align-top">
-                <td className="py-3 pr-4">
-                  <WowheadLink href={recipeHref(recipe.recipeId)} type="spell" id={recipe.recipeId} className="text-accent hover:underline">
+                <th scope="row" className="pr-4 text-left font-normal">
+                  <WowheadLink href={recipeHref(recipe.recipeId)} type="spell" id={recipe.recipeId} className="inline-flex min-h-11 items-center text-accent hover:underline">
                     {recipe.recipeName}
                   </WowheadLink>
-                </td>
+                </th>
                 <td colSpan={9} className="py-3 pl-4 border-l border-border/60">
+                  <p className="mb-2 text-xs text-muted">Gross profit by salvage input</p>
                   <div className="grid gap-2 md:grid-cols-2">
                     {projection.scenarios.map(({ scenarioKey, label, scenario }) => (
                       <div key={scenarioKey} className="flex justify-between gap-4">
                         <span className="text-muted">{label}</span>
-                        <span>{scenario ? formatMaybePrice(scenario.profit) : "—"}</span>
+                        <span className="whitespace-nowrap"><ProfitCell value={scenario?.profit ?? null} /></span>
                       </div>
                     ))}
                   </div>
@@ -213,13 +210,13 @@ function RecipeTable({ recipes, recipeHref }: { recipes: ProfessionRecipeCost[];
           const [s1, s2, s3] = projection.scenarios.map((entry) => entry.scenario);
 
           return (
-            <tr key={recipe.recipeId} className="border-b border-border/50 hover:bg-card-hover transition-colors">
-              <td className="py-2 pr-4">
-                <WowheadLink href={recipeHref(recipe.recipeId)} type="spell" id={recipe.recipeId} className="text-accent hover:underline">
+            <tr key={recipe.recipeId} className="border-b border-border/50 hover:bg-card-hover transition-colors [&_td]:whitespace-nowrap">
+              <th scope="row" className="pr-4 text-left font-normal">
+                <WowheadLink href={recipeHref(recipe.recipeId)} type="spell" id={recipe.recipeId} className="inline-flex min-h-11 items-center text-accent hover:underline">
                   {recipe.recipeName}
                 </WowheadLink>
                 {s1 && s1.outputQuantity > 1 && <span className="text-muted ml-1">×{s1.outputQuantity}</span>}
-              </td>
+              </th>
               <td className="py-2 pr-4 pl-4 text-right border-l border-border/60">{s1 ? formatMaybePrice(s1.cost.totalCost) : "—"}</td>
               <td className="py-2 pr-4 text-right">{s1?.outputTotalPrice != null ? formatPrice(s1.outputTotalPrice) : "—"}</td>
               <td className="py-2 pr-4 text-right">
