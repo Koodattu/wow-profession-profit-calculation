@@ -50,15 +50,18 @@ export function valueCraftPlan(entries: CraftPlanEntry[], recipes: RecipeProfitR
     const scenario = choice?.scenario;
     if (!scenario) missingChoices++;
     else if (scenario.cost.reagentsComplete !== true) incompleteMaterials++;
-    cost = cost === null || scenario?.cost.totalCost == null ? null : cost + scenario.cost.totalCost * entry.crafts;
-    output = output === null || scenario?.outputTotalPrice == null ? null : output + scenario.outputTotalPrice * entry.crafts;
+    const rowCost = scenario?.cost.totalCost == null ? null : scenario.cost.totalCost * entry.crafts;
+    const rowOutput = scenario?.outputTotalPrice == null ? null : scenario.outputTotalPrice * entry.crafts;
+    cost = cost === null || rowCost === null ? null : cost + rowCost;
+    output = output === null || rowOutput === null ? null : output + rowOutput;
     for (const reagent of scenario?.cost.reagents ?? []) {
       const previous = materials.get(reagent.itemId);
       const quantity = (previous?.quantity ?? 0) + reagent.quantity * entry.crafts;
       const unitPrice = previous?.unitPrice === null ? null : reagent.unitPrice;
       materials.set(reagent.itemId, { ...reagent, quantity, unitPrice, totalPrice: unitPrice === null ? null : unitPrice * quantity });
     }
-    return { entry, recipe, choice };
+    return { entry, recipe, choice, cost: rowCost, output: rowOutput,
+      profit: rowCost === null || rowOutput === null ? null : rowOutput - rowCost };
   });
   return {
     rows, materials: [...materials.values()].sort((a, b) => a.itemName.localeCompare(b.itemName) || a.itemId - b.itemId),

@@ -48,6 +48,23 @@ beforeEach(async () => {
 });
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 
+test("each saved choice shows quantity-scaled cost, output and gross profit together", async () => {
+  render(<CraftPlanClient />);
+  await screen.findByText("45g 0s");
+  const first = within(screen.getByLabelText("Five potions (Pure R1) estimates"));
+  expect(first.getByText("12g 0s")).toBeVisible();
+  expect(first.getByText("20g 0s")).toBeVisible();
+  expect(first.getByText("8g 0s")).toBeVisible();
+  const second = within(screen.getByLabelText("Two potions (Pure R1) estimates"));
+  expect(second.getByText("24g 0s")).toBeVisible();
+  expect(second.getByText("30g 0s")).toBeVisible();
+  expect(second.getByText("6g 0s")).toBeVisible();
+  fireEvent.change(screen.getByRole("spinbutton", { name: "Crafts for Five potions (Pure R1)" }), { target: { value: "4" } });
+  expect(first.getByText("24g 0s")).toBeVisible();
+  expect(first.getByText("40g 0s")).toBeVisible();
+  expect(first.getByText("16g 0s")).toBeVisible();
+});
+
 test("combined materials preserve ranks, multiply craft counts, persist edits and copy usable quantities", async () => {
   const view = render(<CraftPlanClient />);
   await screen.findByText("45g 0s");
@@ -71,6 +88,31 @@ test("combined materials preserve ranks, multiply craft counts, persist edits an
   act(() => { window.dispatchEvent(new StorageEvent("storage", { key: storageKey })); });
   render(<CraftPlanClient />);
   expect(await screen.findByRole("spinbutton", { name: "Crafts for Five potions (Pure R1)" })).toHaveValue(4);
+});
+
+test("losses, zero output and missing quotes stay distinct in each choice's estimates", async () => {
+  const mixed = structuredClone(recipes);
+  mixed[0].scenarios[0].outputTotalPrice = 0;
+  mixed[1].scenarios[0].outputTotalPrice = 50000;
+  mixed[0].scenarios[1].outputTotalPrice = null;
+  loadPrices.mockImplementation(async () => Response.json(mixed));
+  render(<CraftPlanClient />);
+  await screen.findByText(/Some prices or recipe choices are unavailable/);
+  const zero = within(screen.getByLabelText("Five potions (Pure R1) estimates"));
+  expect(zero.getByText("0g 0s")).toBeVisible();
+  expect(zero.getByText("−12g 0s")).toBeVisible();
+  expect(within(screen.getByLabelText("Two potions (Pure R1) estimates")).getByText("−9g 0s")).toBeVisible();
+  const missing = within(screen.getByLabelText("Five potions (Pure R2) estimates"));
+  expect(missing.getByText("9g 0s")).toBeVisible();
+  expect(missing.getAllByText("Unavailable")).toHaveLength(2);
+});
+
+test("recipe and shopping links carry their plan section as return context", async () => {
+  render(<CraftPlanClient />);
+  const recipe = (await screen.findAllByRole("link", { name: "Five potions" }))[0];
+  expect(new URL(recipe.getAttribute("href")!, "https://copper.test").searchParams.get("from")).toBe("/craft-plan#plan-recipes");
+  const material = within(screen.getByRole("list", { name: "Combined reagents" })).getAllByRole("link", { name: "Test herb" })[0];
+  expect(new URL(material.getAttribute("href")!, "https://copper.test").searchParams.get("from")).toBe("/craft-plan#plan-shopping");
 });
 
 test("invalid quantities retain the last valid totals, and removal can be undone", async () => {

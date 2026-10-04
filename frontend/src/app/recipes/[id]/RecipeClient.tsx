@@ -41,7 +41,15 @@ export default function RecipeClient({ recipe, returnTo, historyRange, onHistory
   const count = Number(crafts);
   const valid = validCraftCount(count);
   const professionPath = `/professions/${recipe.professionId}`;
-  const backHref = returnTo?.split("?")[0] === professionPath ? returnTo : professionPath;
+  const fromPlan = returnTo === "/craft-plan" || returnTo === "/craft-plan#plan-recipes";
+  const backHref = returnTo && (fromPlan || returnTo.split("?")[0] === professionPath) ? returnTo : professionPath;
+  const recipeQuery = new URLSearchParams({ range: historyRange, from: backHref });
+  const itemQuery = new URLSearchParams();
+  if (realmId !== null) {
+    recipeQuery.set("realm", String(realmId));
+    itemQuery.set("realm", String(realmId));
+  }
+  itemQuery.set("from", `/recipes/${recipe.recipeId}?${recipeQuery}`);
 
   function addScenario(scenarioKey: string, label: string) {
     const error = craftPlan.add({ recipeId: recipe.recipeId, scenarioKey, crafts: count });
@@ -52,8 +60,8 @@ export default function RecipeClient({ recipe, returnTo, historyRange, onHistory
   return (
     <div>
       <div className="mb-6">
-        <Link href={backHref} className="text-sm text-muted hover:text-accent transition-colors">
-          &larr; {recipe.professionName}
+        <Link href={backHref} className="inline-flex min-h-11 items-center text-sm text-muted hover:text-accent transition-colors">
+          &larr; {fromPlan ? "Craft plan" : recipe.professionName}
         </Link>
         <h1 className="text-2xl font-bold mt-2">
           <a
@@ -119,6 +127,7 @@ export default function RecipeClient({ recipe, returnTo, historyRange, onHistory
               recipeId={recipe.recipeId}
               scenarioKey={scenarioKey}
               realmId={realmId}
+              itemLinkQuery={itemQuery.toString()}
             />
           );
         })}
@@ -140,6 +149,7 @@ function ScenarioCard({
   recipeId,
   scenarioKey,
   realmId,
+  itemLinkQuery,
 }: {
   scenario: RankScenario;
   title: string;
@@ -153,6 +163,7 @@ function ScenarioCard({
   recipeId: number;
   scenarioKey: string;
   realmId: number | null;
+  itemLinkQuery: string;
 }) {
   const profitColor = scenario.profit !== null ? (scenario.profit >= 0 ? "text-positive" : "text-negative") : "text-muted";
   return (
@@ -174,7 +185,7 @@ function ScenarioCard({
             {scenario.cost.reagents.map((r) => (
               <tr key={r.slotIndex} className="border-b border-border/30">
                 <td className="py-1">
-                  <WowheadLink href={`/items/${r.itemId}`} type="item" id={r.itemId} className={`${getItemQualityClass(r.itemQuality)} hover:underline`}>
+                  <WowheadLink href={`/items/${r.itemId}?${itemLinkQuery}`} type="item" id={r.itemId} className={`${getItemQualityClass(r.itemQuality)} hover:underline`}>
                     {r.itemName}
                   </WowheadLink>
                 </td>
@@ -206,7 +217,7 @@ function ScenarioCard({
           <span>
             {scenario.outputItemName ? (
               <WowheadLink
-                href={`/items/${scenario.outputItemId}`}
+                href={`/items/${scenario.outputItemId}?${itemLinkQuery}`}
                 type="item"
                 id={scenario.outputItemId!}
                 className={`${getItemQualityClass(scenario.outputItemQuality)} hover:underline`}

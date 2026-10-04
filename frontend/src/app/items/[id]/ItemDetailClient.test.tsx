@@ -15,6 +15,7 @@ vi.mock("@/lib/selected-realm", () => ({ useSelectedRealm: () => ({ status: "rea
 vi.mock("./GearMarket", () => ({ default: () => <div>Current gear offers</div> }));
 vi.mock("@/app/HistoryLineChart", () => ({ default: () => <div>History chart</div> }));
 import ItemDetailClient from "./ItemDetailClient";
+import ItemDetailPage from "./page";
 
 const item: Item = { id: 271434, name: "Venom Rite Mantle", itemQuality: 4, qualityRank: null, isReagent: false, isCraftedOutput: false, marketType: "realm", itemClass: "Armor", itemSubclass: "Cloth", inventoryType: "Shoulder" };
 beforeEach(() => {
@@ -23,7 +24,24 @@ beforeEach(() => {
   const pushState = window.history.pushState.bind(window.history);
   vi.spyOn(window.history, "pushState").mockImplementation((...args) => { pushState(...args); window.dispatchEvent(new PopStateEvent("popstate")); });
 });
-afterEach(() => { cleanup(); vi.restoreAllMocks(); });
+afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); });
+
+test.each([
+  ["/craft-plan#plan-shopping", "craft plan"],
+  ["/recipes/101?range=7d&realm=2&from=%2Fcraft-plan%23plan-recipes", "recipe"],
+  ["/items?q=herb&page=2", "market"],
+  ["/flipping?minSpread=50", "realm comparison"],
+])("item inspection returns to its originating view: %s", async (from, label) => {
+  vi.stubGlobal("fetch", vi.fn(async () => Response.json(item)));
+  render(await ItemDetailPage({ params: Promise.resolve({ id: String(item.id) }), searchParams: Promise.resolve({ from }) }));
+  expect(screen.getByRole("link", { name: `← Back to ${label}` })).toHaveAttribute("href", from);
+});
+
+test.each(["https://other.test", "//other.test", "/recipes/101/../../other", "/craft-plan?from=other"])("unsafe or unsupported item return context falls back to Market: %s", async (from) => {
+  vi.stubGlobal("fetch", vi.fn(async () => Response.json(item)));
+  render(await ItemDetailPage({ params: Promise.resolve({ id: String(item.id) }), searchParams: Promise.resolve({ from }) }));
+  expect(screen.getByRole("link", { name: "← Back to market" })).toHaveAttribute("href", "/items");
+});
 
 test("loads history only when requested and explains absent non-profession history", () => {
   state.history.mockReturnValue({ status: "ready", connectedRealmId: 1, prices: [] });

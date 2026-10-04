@@ -11,7 +11,11 @@ export default async function ItemDetailPage({ params, searchParams }: {
   const itemId = Number(id);
   const item = await fetchItem(itemId);
   const { from } = await searchParams;
-  const backHref = typeof from === "string" && ["/items", "/flipping"].some((path) => from === path || from.startsWith(`${path}?`)) ? from : "/items";
+  const backHref = typeof from === "string" && (
+    ["/items", "/flipping"].some((path) => from === path || from.startsWith(`${path}?`))
+    || from === "/craft-plan" || from === "/craft-plan#plan-shopping"
+    || /^\/recipes\/[1-9]\d*(?:\?|$)/.test(from)
+  ) ? from : "/items";
 
   return <ItemDetailClient item={item} backHref={backHref} />;
 }

@@ -101,25 +101,30 @@ export default function CraftPlanClient() {
           <section aria-labelledby="plan-recipes">
             <h2 ref={recipesHeading} id="plan-recipes" tabIndex={-1} className="scroll-mt-6 text-xl font-semibold sm:scroll-mt-32">Recipes</h2>
             <p className="mt-1 text-sm text-muted">{plan.entries.length} {plan.entries.length === 1 ? "choice" : "choices"} · {plan.entries.reduce((sum, entry) => sum + entry.crafts, 0).toLocaleString()} crafts</p>
+            <p className="mt-1 text-sm text-muted">Estimates below cover each choice’s full craft count.</p>
             <ol className="mt-2 divide-y divide-border">
-              {valuation.rows.map(({ entry, recipe, choice }) => {
+              {valuation.rows.map(({ entry, recipe, choice, cost, output, profit }) => {
                 const key = planEntryKey(entry);
                 const name = recipe?.recipeName ?? `Recipe ${entry.recipeId}`;
                 const label = choice?.label ?? NORMAL_SCENARIOS.find((scenario) => scenario.scenarioKey === entry.scenarioKey)?.label ?? "Salvage input";
-                return <li key={key} className="py-5">
+                return <li key={key} className="py-4">
                   <div className="flex flex-col items-start justify-between gap-3 sm:flex-row">
                     <div className="min-w-0 flex-1">
-                      <Link href={`/recipes/${entry.recipeId}`} className="inline-flex min-h-11 items-center font-medium text-accent hover:underline">{name}</Link>
+                      <Link href={`/recipes/${entry.recipeId}?from=${encodeURIComponent("/craft-plan#plan-recipes")}`} className="inline-flex min-h-11 items-center font-medium text-accent hover:underline">{name}</Link>
                       <p className="text-sm text-muted">{label}</p>
                       {choice ? <p className="mt-2 text-sm text-muted">{entry.crafts.toLocaleString()} crafts × {choice.scenario.outputQuantity} items = at least {(entry.crafts * choice.scenario.outputQuantity).toLocaleString()} output items</p>
                         : <p className="mt-2 text-sm text-muted">{prices.recipes ? "This recipe or scenario is no longer available. Remove it or choose a new scenario." : "Waiting for recipe details and prices."}</p>}
                     </div>
-                    <QuantityInput crafts={entry.crafts} label={`Crafts for ${name} (${label})`} onChange={(count) => craftPlan.update(key, count)} />
+                    <div className="flex max-w-full shrink-0 flex-wrap items-end gap-1">
+                      <QuantityInput crafts={entry.crafts} label={`Crafts for ${name} (${label})`} onChange={(count) => craftPlan.update(key, count)} />
+                      <button type="button" aria-label={`Remove ${name} (${label})`} className="min-h-11 px-3 text-sm text-muted hover:text-negative" onClick={() => remove(entry)}>Remove</button>
+                    </div>
                   </div>
-                  <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
-                    <p className="text-sm text-muted">Material cost <span className="ml-2 text-foreground tabular-nums">{choice?.scenario.cost.totalCost == null ? "Unavailable" : formatPrice(choice.scenario.cost.totalCost * entry.crafts)}</span></p>
-                    <button type="button" aria-label={`Remove ${name} (${label})`} className="min-h-11 px-3 text-sm text-muted hover:text-negative" onClick={() => remove(entry)}>Remove</button>
-                  </div>
+                  <dl aria-label={`${name} (${label}) estimates`} className="mt-4 grid gap-x-4 gap-y-2 sm:grid-cols-3">
+                    <Total label="Material cost" value={cost} compact />
+                    <Total label="Output value" value={output} compact />
+                    <Total label="Gross profit" value={profit} compact profit />
+                  </dl>
                 </li>;
               })}
             </ol>
@@ -132,9 +137,9 @@ export default function CraftPlanClient() {
             </div>
             {prices.recipes && valuation.incompleteChoices > 0 && <p className="mt-4 text-sm text-negative">Incomplete list: {valuation.incompleteChoices} recipe choices have unavailable or incomplete material requirements. Remove or replace them before copying.</p>}
             <ul aria-label="Combined reagents" className="mt-2 divide-y divide-border">
-              {valuation.materials.map((material) => <li key={material.itemId} className="flex items-start justify-between gap-4 py-4">
-                <div className="min-w-0">
-                  <WowheadLink type="item" id={material.itemId} href={`/items/${material.itemId}`} className="inline-flex min-h-11 items-center text-accent hover:underline">{material.itemName}</WowheadLink>
+              {valuation.materials.map((material) => <li key={material.itemId} className="flex flex-wrap items-start justify-between gap-4 py-4">
+                <div className="min-w-0 flex-1 basis-40">
+                  <WowheadLink type="item" id={material.itemId} href={`/items/${material.itemId}?from=${encodeURIComponent("/craft-plan#plan-shopping")}`} className="inline-flex min-h-11 items-center text-accent hover:underline">{material.itemName}</WowheadLink>
                   <p className="text-xs text-muted">Item {material.itemId}</p>
                 </div>
                 <div className="shrink-0 py-2 text-right tabular-nums">
@@ -156,9 +161,9 @@ export default function CraftPlanClient() {
   </div>;
 }
 
-function Total({ label, value, profit = false }: { label: string; value: number | null; profit?: boolean }) {
+function Total({ label, value, profit = false, compact = false }: { label: string; value: number | null; profit?: boolean; compact?: boolean }) {
   const color = profit && value !== null ? value >= 0 ? "text-positive" : "text-negative" : "text-foreground";
-  return <div className="flex flex-wrap items-baseline justify-between gap-x-4 sm:block"><dt className="text-sm text-muted">{label}</dt><dd className={`mt-2 text-2xl font-semibold tabular-nums ${color}`}>{value === null ? "Unavailable" : formatPrice(value)}</dd></div>;
+  return <div className="min-w-0 flex flex-wrap items-baseline justify-between gap-x-4 sm:block"><dt className="text-sm text-muted">{label}</dt><dd className={`${compact ? "text-base sm:mt-1" : "mt-2 text-2xl"} font-semibold tabular-nums ${color}`}>{value === null ? "Unavailable" : formatPrice(value)}</dd></div>;
 }
 
 function QuantityInput({ crafts, label, onChange }: { crafts: number; label: string; onChange(value: number): void }) {
@@ -166,7 +171,7 @@ function QuantityInput({ crafts, label, onChange }: { crafts: number; label: str
   const [draft, setDraft] = useState({ count: crafts, value: String(crafts) });
   const value = draft.count === crafts ? draft.value : String(crafts);
   const valid = validCraftCount(Number(value));
-  return <label className="w-32 shrink-0 text-sm text-muted">Crafts
+  return <label className="w-24 shrink-0 text-sm text-muted">Crafts
     <input type="number" min={1} max={MAX_CRAFTS} step={1} value={value} aria-label={label} aria-invalid={!valid} aria-describedby={!valid ? errorId : undefined}
       onChange={(event) => {
         const next = event.target.value;

@@ -13,13 +13,16 @@ export default function ItemDetailClient({ item, backHref = "/items" }: { item: 
   const query = useSearchParams();
   const view = query?.get("view") === "history" ? "history" : "offers";
   const linked = useLinkedHistoryRealm(hasRealmListings);
+  const backLabel = backHref.startsWith("/craft-plan") ? "craft plan"
+    : backHref.startsWith("/recipes/") ? "recipe"
+      : backHref === "/flipping" || backHref.startsWith("/flipping?") ? "realm comparison" : "market";
   function setView(next: "offers" | "history") {
     updateHistoryQuery({ view: next === "history" ? next : null,
       ...(linked.realm.status === "ready" ? { realm: String(linked.realm.selectedId) } : {}) });
   }
 
   return <div className={styles.page}>
-    <Link href={backHref} className={styles.breadcrumb}>← Back to {backHref === "/flipping" || backHref.startsWith("/flipping?") ? "realm comparison" : "market"}</Link>
+    <Link href={backHref} className={styles.breadcrumb}>← Back to {backLabel}</Link>
     <header className={styles.itemHeader}>
       <div><h1>{item.name}</h1><div className={styles.itemMeta}>
         <span>{[item.itemSubclass ?? item.itemClass, item.inventoryType].filter(Boolean).join(" · ") || "Auction item"}</span>
