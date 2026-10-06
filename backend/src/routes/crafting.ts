@@ -2,7 +2,7 @@ import { isDatabaseId } from "./validation";
 import { Hono } from "hono";
 import { isHistoryRange } from "../services/market-history";
 import { getRecipeHistory } from "../services/recipe-history";
-import { getProfessionRecipeValuations, getRecipeValuation, getRecipeValuations } from "../services/recipe-valuation";
+import { getProfessionRecipeValuations, getRecipeValuation, getRecipeValuations, RecipeNotFoundError } from "../services/recipe-valuation";
 
 const craftingRoutes = new Hono();
 
@@ -68,6 +68,7 @@ craftingRoutes.get("/recipes/:recipeId/history", async (c) => {
     c.header("Cache-Control", "public, max-age=60, stale-while-revalidate=300");
     return c.json(result);
   } catch (err) {
+    if (err instanceof RecipeNotFoundError) return c.json({ error: "Recipe not found" }, 404);
     console.error(`[Crafting] Error building history for recipe ${recipeId}:`, err);
     return c.json({ error: "Failed to build recipe history" }, 500);
   }
@@ -91,6 +92,7 @@ craftingRoutes.get("/recipes/:recipeId", async (c) => {
     const result = await getRecipeValuation(recipeId, region, connectedRealmId);
     return c.json(result);
   } catch (err) {
+    if (err instanceof RecipeNotFoundError) return c.json({ error: "Recipe not found" }, 404);
     console.error(`[Crafting] Error computing cost for recipe ${recipeId}:`, err);
     return c.json({ error: "Failed to compute recipe cost" }, 500);
   }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import {
+  ApiError,
   fetchRecipeCost,
   fetchRecipeHistory,
   type RecipeHistoryPoint,
@@ -32,13 +33,13 @@ export function useRecipeValuation(
   const historyKey = valuationKey === null ? null : `${valuationKey}:${range}`;
   const [valuation, setValuation] = useState<{ key: string; data: RecipeProfitResult } | null>(null);
   const [history, setHistory] = useState<{ key: string; data: Record<string, RecipeHistoryPoint[]> } | null>(null);
-  const [failedKey, setFailedKey] = useState<string | null>(null);
+  const [failure, setFailure] = useState<{ key: string; notFound: boolean } | null>(null);
   const [failedHistoryKey, setFailedHistoryKey] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
   const [historyAttempt, setHistoryAttempt] = useState(0);
   function retry() {
     if (realm.status === "error") { void selectedRealm.retry(); return; }
-    setFailedKey(null);
+    setFailure(null);
     setAttempt((value) => value + 1);
   }
   function retryHistory() {
@@ -55,9 +56,9 @@ export function useRecipeValuation(
       .then((data) => {
         if (!active) return;
         setValuation({ key: valuationKey, data });
-        setFailedKey(null);
+        setFailure(null);
       })
-      .catch(() => active && setFailedKey(valuationKey));
+      .catch((error: unknown) => active && setFailure({ key: valuationKey, notFound: error instanceof ApiError && error.status === 404 }));
     return () => {
       active = false;
     };
@@ -80,13 +81,16 @@ export function useRecipeValuation(
   }, [adapter, connectedRealmId, historyAttempt, historyKey, range, recipeId]);
 
   if (realm.status !== "ready") return { ...controls, status: realm.status, recipe: null, history: {}, historyLoading: false } as const;
-  if (failedKey === valuationKey && valuation?.key !== valuationKey) {
+  if (failure?.key === valuationKey && failure.notFound) {
+    return { ...controls, status: "not-found", recipe: null, history: {}, historyLoading: false } as const;
+  }
+  if (failure?.key === valuationKey && valuation?.key !== valuationKey) {
     return { ...controls, status: "error", recipe: null, history: {}, historyLoading: false } as const;
   }
   if (valuation?.key !== valuationKey) return { ...controls, status: "loading", recipe: null, history: {}, historyLoading: true } as const;
   return {
     ...controls,
-    status: failedKey === valuationKey ? "refresh-error" : "ready",
+    status: failure?.key === valuationKey ? "refresh-error" : "ready",
     recipe: valuation.data,
     history: history?.key === historyKey ? history.data : {},
     historyLoading: history?.key !== historyKey && !controls.historyFailed,

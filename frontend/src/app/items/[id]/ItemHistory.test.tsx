@@ -3,6 +3,7 @@ import { afterEach, beforeEach, expect, test, vi } from "vitest";
 import type { Item } from "@/lib/api";
 import { selectedRealm } from "@/lib/selected-realm";
 import NavSettings from "@/app/NavSettings";
+import { chooseRealm } from "@/test/choose-realm";
 import ItemDetailClient from "./ItemDetailClient";
 import ItemDetailPage from "./page";
 
@@ -67,8 +68,8 @@ test("linked realm history applies scope before loading and keeps navigation, ba
   await screen.findByRole("heading", { name: "Price history · Realm 2" });
   await screen.findByText("1g 0s");
   expect(historyRequest.mock.calls.map(([url]) => url.searchParams.get("connectedRealmId"))).toEqual(["2"]);
-  expect(screen.getByRole("combobox", { name: "Connected realm" })).toHaveValue("2");
-  fireEvent.change(screen.getByRole("combobox", { name: "Connected realm" }), { target: { value: "1" } });
+  expect(screen.getByRole("button", { name: "Connected realm: Realm 2" })).toBeVisible();
+  chooseRealm("Realm 1");
   await screen.findByRole("heading", { name: "Price history · Realm 1" });
   await screen.findByText("1g 0s");
   expect(new URLSearchParams(window.location.search).get("realm")).toBe("1");
@@ -130,7 +131,7 @@ test("EU commodity history stays loaded when the connected realm changes", async
   render(<><NavSettings /><ItemDetailClient item={item} /></>);
   await screen.findByText("1g 0s");
   for (const realmId of [2, 1]) {
-    fireEvent.change(screen.getByRole("combobox", { name: "Connected realm" }), { target: { value: String(realmId) } });
+    chooseRealm(`Realm ${realmId}`);
     await waitFor(() => expect(screen.getByText("1g 0s")).toBeVisible());
   }
   expect(historyRequest).toHaveBeenCalledTimes(1);

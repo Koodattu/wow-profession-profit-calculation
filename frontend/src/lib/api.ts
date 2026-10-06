@@ -287,13 +287,20 @@ export interface MarketSummary {
 
 // --- Fetch helpers ---
 
+export class ApiError extends Error {
+  constructor(public readonly status: number, message: string) {
+    super(message);
+    this.name = "ApiError";
+  }
+}
+
 async function apiFetch<T>(path: string): Promise<T> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(new Error("Request timed out")), 15_000);
   try {
     const res = await fetch(`${API_BASE}${path}`, { signal: controller.signal });
     if (!res.ok) {
-      throw new Error(`API ${res.status}: ${res.statusText} — ${path}`);
+      throw new ApiError(res.status, `API ${res.status}: ${res.statusText} — ${path}`);
     }
     // Keep the deadline active while reading the body, not just the headers.
     return await res.json() as T;

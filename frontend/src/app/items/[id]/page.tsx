@@ -1,4 +1,5 @@
-import { fetchItem } from "@/lib/api";
+import { notFound } from "next/navigation";
+import { ApiError, fetchItem } from "@/lib/api";
 import ItemDetailClient from "./ItemDetailClient";
 
 export const dynamic = "force-dynamic";
@@ -9,7 +10,11 @@ export default async function ItemDetailPage({ params, searchParams }: {
 }) {
   const { id } = await params;
   const itemId = Number(id);
-  const item = await fetchItem(itemId);
+  if (!Number.isInteger(itemId) || itemId < 1 || itemId > 2147483647) notFound();
+  const item = await fetchItem(itemId).catch((error: unknown) => {
+    if (error instanceof ApiError && error.status === 404) notFound();
+    throw error;
+  });
   const { from } = await searchParams;
   const backHref = typeof from === "string" && (
     ["/items", "/flipping"].some((path) => from === path || from.startsWith(`${path}?`))

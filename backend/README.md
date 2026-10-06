@@ -55,6 +55,12 @@ For market-filter QA, `bun run --no-env-file test/seed-market-filters.ts` adds 3
 
 The runtime and lockfile are maintained with Bun 1.3.14.
 
+For realm-picker QA, `bun run --no-env-file test/seed-realm-picker.ts` adds 90
+synthetic connected markets to the same guarded disposable database. This covers
+secondary names, accents and long connections without fetching real data. Search
+for `tarrenmill` or `confrerie` in the header's realm picker. Reload with browser
+caching disabled after seeding because the realm catalog has a one-hour cache.
+
 Market filtering also accepts `expansion=1` through `12` (Classic through Midnight)
 or `expansion=unknown`. Startup publishes the offline item-era reference only when
 its checksum changes. See [item expansion data](../docs/item-expansions.md) for

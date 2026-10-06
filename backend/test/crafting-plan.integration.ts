@@ -12,6 +12,17 @@ afterAll(async () => {
   await sql.end();
 });
 
+test("missing recipe prices and history return not-found instead of a retryable server error", async () => {
+  for (const path of [
+    "/api/crafting/recipes/2147483647?connectedRealmId=1",
+    "/api/crafting/recipes/2147483647/history?connectedRealmId=1",
+  ]) {
+    const response = await app.request(path);
+    expect(response.status, path).toBe(404);
+    expect(await response.json()).toEqual({ error: "Recipe not found" });
+  }
+});
+
 test("a bounded recipe batch returns the canonical valuations once per existing recipe", async () => {
   const ids = [1230864, 1230860];
   const response = await app.request(`/api/crafting/recipes?ids=${ids.join(",")},1230864,2147483647&connectedRealmId=1`);

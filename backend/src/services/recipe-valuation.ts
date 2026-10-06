@@ -312,9 +312,16 @@ async function valueRecipes(selection: RecipeSelection, regionId: string, connec
   });
 }
 
+export class RecipeNotFoundError extends Error {
+  constructor(recipeId: number) {
+    super(`Recipe ${recipeId} not found`);
+    this.name = "RecipeNotFoundError";
+  }
+}
+
 export async function getRecipeValuation(recipeId: number, regionId: string, connectedRealmId?: number): Promise<RecipeValuation> {
   const [valuation] = await getRecipeValuations([recipeId], regionId, connectedRealmId);
-  if (!valuation) throw new Error(`Recipe ${recipeId} not found`);
+  if (!valuation) throw new RecipeNotFoundError(recipeId);
   return valuation;
 }
 

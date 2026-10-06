@@ -2,6 +2,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-libra
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 import ItemsClient from "./ItemsClient";
 import NavSettings from "../NavSettings";
+import { chooseRealm } from "@/test/choose-realm";
 import { selectedRealm } from "@/lib/selected-realm";
 
 vi.mock("next/navigation", async () => {
@@ -171,9 +172,9 @@ test("a failed refresh labels retained prices and can be retried after switching
   render(<><NavSettings /><ItemsClient /></>);
   await screen.findByRole("link", { name: "Fixture ore" });
   offline = true;
-  fireEvent.change(screen.getByRole("combobox", { name: "Connected realm" }), { target: { value: "2" } });
+  chooseRealm("Two");
   await screen.findByRole("button", { name: "Retry market" });
-  fireEvent.change(screen.getByRole("combobox", { name: "Connected realm" }), { target: { value: "1" } });
+  chooseRealm("One");
   expect(await screen.findByRole("alert")).toHaveTextContent("Showing the last loaded prices");
   expect(screen.getByRole("link", { name: "Fixture ore" })).toBeVisible();
   offline = false;

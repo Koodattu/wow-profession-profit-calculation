@@ -4,6 +4,7 @@ import { useRecipeValuation } from "@/features/recipe-valuation";
 import type { HistoryRange } from "@/lib/time-ranges";
 import { updateHistoryQuery, useHistoryRange, useLinkedHistoryRealm } from "@/lib/history-view";
 import RecipeClient from "./RecipeClient";
+import NotFound from "@/app/not-found";
 
 interface Props {
   recipeId: number;
@@ -25,6 +26,8 @@ function RecipeDetailContent({ recipeId, returnTo, historyRange, setHistoryRange
   setHistoryRange(range: HistoryRange): void;
 }) {
   const valuation = useRecipeValuation(recipeId, historyRange);
+
+  if (valuation.status === "not-found") return <NotFound />;
 
   if (valuation.status === "loading") {
     return <p className="text-muted">Loading recipe prices...</p>;

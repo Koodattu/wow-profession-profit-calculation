@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { fetchProfessions, formatPrice } from "./api";
+import { ApiError, fetchProfessions, formatPrice } from "./api";
 
 afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
 
@@ -12,6 +12,12 @@ describe("displayed market values", () => {
 });
 
 describe("HTTP request deadline", () => {
+  test("HTTP failures retain their status for catalog recovery", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => Response.json({ error: "Missing" }, { status: 404 })));
+    const result = await fetchProfessions().catch((error: unknown) => error);
+    expect(result).toBeInstanceOf(ApiError);
+    expect(result).toMatchObject({ status: 404 });
+  });
   test.each(["headers", "body"])("a stalled response %s rejects after 15 seconds", async (stage) => {
     vi.useFakeTimers();
     vi.stubGlobal("fetch", vi.fn((_input: RequestInfo | URL, init?: RequestInit) => {

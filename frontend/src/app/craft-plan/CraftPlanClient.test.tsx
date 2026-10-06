@@ -4,6 +4,7 @@ import type { RankScenario, RecipeProfitResult } from "@/lib/api";
 import { craftPlan } from "@/lib/craft-plan";
 import { selectedRealm } from "@/lib/selected-realm";
 import NavSettings from "@/app/NavSettings";
+import { chooseRealm } from "@/test/choose-realm";
 import CraftPlanClient from "./CraftPlanClient";
 
 const storageKey = "copper-craft-plan-v1";
@@ -152,7 +153,7 @@ test("a stalled old realm response cannot replace the new realm; failed refresh 
   loadPrices.mockImplementationOnce(() => new Promise((resolve) => { finishOld = resolve; }));
   render(<><NavSettings /><CraftPlanClient /></>);
   await waitFor(() => expect(loadPrices).toHaveBeenCalledTimes(1));
-  fireEvent.change(screen.getByRole("combobox", { name: "Connected realm" }), { target: { value: "2" } });
+  chooseRealm("Realm 2");
   await screen.findByText("45g 0s");
   await act(async () => finishOld(Response.json([])));
   expect(screen.getByText("45g 0s")).toBeVisible();
@@ -178,9 +179,9 @@ test("returning to a realm recovers after its earlier request failed", async () 
   loadPrices.mockRejectedValueOnce(new Error("offline"));
   render(<><NavSettings /><CraftPlanClient /></>);
   await screen.findByRole("alert");
-  fireEvent.change(screen.getByRole("combobox", { name: "Connected realm" }), { target: { value: "2" } });
+  chooseRealm("Realm 2");
   await screen.findByText("45g 0s");
-  fireEvent.change(screen.getByRole("combobox", { name: "Connected realm" }), { target: { value: "1" } });
+  chooseRealm("Realm 1");
   await screen.findByText("45g 0s");
   expect(screen.queryByRole("alert")).toBeNull();
 });
