@@ -1,6 +1,6 @@
 # Copper frontend
 
-Next.js / React interface for EU Retail auction prices, realm comparisons, and crafting scenarios. Requires Node.js 24 or newer and npm. Install the locked dependencies with `npm ci`.
+Next.js / React interface for EU Retail auction prices, realm comparisons, and crafting scenarios. Requires Node.js 24.22.1 or newer and npm. Install the locked dependencies with `npm ci`.
 
 ## Local development with synthetic data
 

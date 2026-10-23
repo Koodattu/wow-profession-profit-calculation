@@ -32,7 +32,7 @@
   "dependencies": {
     "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
-    "hono": "^4.13.1",
+    "hono": "^4.13.11",
     "node-cron": "^4.6.0",
     "postgres": "^3.4.9"
   }

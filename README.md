@@ -52,7 +52,7 @@ wow-tools/
 
 ### Prerequisites
 
-- [Node.js 24](https://nodejs.org/) for the frontend
+- [Node.js 24.22.1 or newer](https://nodejs.org/) for the frontend
 - [Bun](https://bun.sh) for the backend
 - [Docker](https://www.docker.com/) for PostgreSQL
 - Blizzard API credentials in `.env`:

@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 
-FROM node:24.18.0-alpine3.23 AS dependencies
+FROM node:24.22.1-alpine3.23 AS dependencies
 
 WORKDIR /app
 
@@ -10,7 +10,7 @@ COPY package.json package-lock.json ./
 RUN --mount=type=cache,target=/root/.npm \
     npm ci
 
-FROM node:24.18.0-alpine3.23 AS builder
+FROM node:24.22.1-alpine3.23 AS builder
 
 WORKDIR /app
 
@@ -24,7 +24,7 @@ COPY . .
 
 RUN npm run build
 
-FROM node:24.18.0-alpine3.23 AS runner
+FROM node:24.22.1-alpine3.23 AS runner
 
 WORKDIR /app
 
