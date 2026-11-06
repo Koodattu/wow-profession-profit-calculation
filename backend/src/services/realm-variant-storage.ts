@@ -26,6 +26,14 @@ export async function storeRealmVariants(
   }
   await tx.execute(sql`CREATE UNIQUE INDEX ON incoming_realm_variants (variant_key)`);
   await tx.execute(sql`ANALYZE incoming_realm_variants`);
+  // Realm workers share returning definitions. Lock them in one order before
+  // inserting new definitions, so workers cannot acquire the two sets in opposite orders.
+  // NO KEY UPDATE remains compatible with current listings' foreign-key checks.
+  await tx.execute(sql`
+    SELECT v.id FROM realm_variants v JOIN incoming_realm_variants i USING (variant_key)
+    WHERE v.unreferenced_at IS NOT NULL
+    ORDER BY v.variant_key FOR NO KEY UPDATE OF v
+  `);
   const names = sql.join(columns.map(([, column]) => sql.identifier(column.name)), sql`, `);
   await tx.execute(sql`
     INSERT INTO realm_variants (${names}) SELECT ${names} FROM incoming_realm_variants i

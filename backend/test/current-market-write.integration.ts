@@ -1,10 +1,12 @@
 import { afterAll, describe, expect, test } from "bun:test";
+import { sql as query } from "drizzle-orm";
 import { db, sql } from "../src/db";
-import { commodityLatest, realmLatest, regions } from "../src/db/schema";
+import { commodityLatest, realmLatest, realmVariants, regions } from "../src/db/schema";
+import { normalizeRealmVariant } from "../src/services/auction-aggregation";
 import { createAuctionRefreshModule, type CommodityAuctionInput, type RealmAuctionInput } from "../src/services/auction-refresh";
 import { getCurrentItemMarkets, getCurrentRealmComparison } from "../src/services/current-market";
 import { writeCurrentMarket } from "../src/services/current-market-write";
-import { unpackRealmListings } from "../src/services/realm-variant-storage";
+import { unpackRealmListings, type RealmMarketInput } from "../src/services/realm-variant-storage";
 import { pruneUnusedRealmVariants } from "../src/services/price-maintenance";
 
 const region = "writetest";
@@ -19,6 +21,83 @@ async function clean() {
 afterAll(async () => { await clean(); await sql.end(); });
 
 describe.serial("incremental current market", () => {
+  test.each([false, true])("concurrent realms restore retired variants without a deadlock (new variant: %s)", async (includeNewVariant) => {
+    await clean();
+    await db.insert(regions).values({ id: region, name: "Write test", apiHost: "invalid.local", oauthHost: "invalid.local" });
+    await sql`INSERT INTO items(id,name) VALUES (${item},'Concurrent variant fixture')`;
+    const variants = [1, 2, 3].map((suffix) => normalizeRealmVariant({ bonus_lists: [item, suffix] }))
+      .sort((a, b) => a.key.localeCompare(b.key));
+    // Both heap and incoming order oppose the canonical lock order. The third
+    // variant is new, exercising discovery alongside returning definitions.
+    await db.insert(realmVariants).values(variants.slice(0, 2).reverse().map(({ key, ...variant }) => ({
+      ...variant, variantKey: key, unreferencedAt: new Date("2026-09-01T00:00:00Z"),
+    })));
+    const original = [...await sql`SELECT id,variant_key FROM realm_variants WHERE variant_key IN (${variants[0]!.key},${variants[1]!.key}) ORDER BY variant_key`];
+    const sequenceBefore = [...await sql`SELECT last_value FROM realm_variants_id_seq`];
+    const incoming = variants.slice(0, includeNewVariant ? 3 : 2);
+    const observedAt = new Date();
+    const rows = (realmId: number): RealmMarketInput[] => incoming.toReversed().map(({ key, ...variant }, index) => ({
+      ...variant, variantKey: key, regionId: region, connectedRealmId: realmId, itemId: item,
+      syncRunId: realmId, observedAt, minBuyout: 100, avgBuyout: 100, medianBuyout: 100,
+      maxBuyout: 100, totalQuantity: 1, numAuctions: 1, totalValue: "100",
+      listings: [{ id: String(realmId * 10 + index), buyout: 100, quantity: 1, bid: null, timeLeft: "LONG" }],
+    }));
+    const locked = Promise.withResolvers<number>();
+    const publish = Promise.withResolvers<void>();
+    const waiting = Promise.withResolvers<number>();
+    const first = db.transaction(async (tx) => {
+      await tx.execute(query`SET LOCAL statement_timeout = '8s'`);
+      await tx.execute(query`SELECT id FROM realm_variants WHERE variant_key=${variants[0]!.key} FOR NO KEY UPDATE`);
+      const [connection] = await tx.execute(query`SELECT pg_backend_pid() AS pid`);
+      locked.resolve(Number(connection!.pid));
+      await publish.promise;
+      await writeCurrentMarket(tx, realmLatest, rows(123), region, 123, 123, observedAt);
+    });
+    const second = (async () => {
+      await locked.promise;
+      await db.transaction(async (tx) => {
+        await tx.execute(query`SET LOCAL statement_timeout = '8s'`);
+        // Exercise the legal sequential/nested-loop plan that previously locked
+        // returning definitions in heap/input order instead of variant-key order.
+        await tx.execute(query`SET LOCAL enable_hashjoin = off`);
+        await tx.execute(query`SET LOCAL enable_mergejoin = off`);
+        await tx.execute(query`SET LOCAL enable_indexscan = off`);
+        await tx.execute(query`SET LOCAL enable_bitmapscan = off`);
+        const [connection] = await tx.execute(query`SELECT pg_backend_pid() AS pid`);
+        waiting.resolve(Number(connection!.pid));
+        await writeCurrentMarket(tx, realmLatest, rows(124), region, 124, 124, observedAt);
+      });
+    })();
+    const completed = Promise.allSettled([first, second]);
+    try {
+      const [holderPid, waiterPid] = await Promise.all([locked.promise, waiting.promise]);
+      let blocked = false;
+      const deadline = Date.now() + 4_000;
+      while (!blocked && Date.now() < deadline) {
+        const [state] = await sql`SELECT ${holderPid} = ANY(pg_blocking_pids(${waiterPid})) AS blocked`;
+        blocked = Boolean(state?.blocked);
+        if (!blocked) await Bun.sleep(10);
+      }
+      expect(blocked).toBe(true);
+      publish.resolve();
+      expect(await completed).toEqual([{ status: "fulfilled", value: undefined }, { status: "fulfilled", value: undefined }]);
+      expect([...await sql`SELECT id,variant_key FROM realm_variants WHERE variant_key IN (${variants[0]!.key},${variants[1]!.key}) ORDER BY variant_key`]).toEqual(original);
+      expect((await sql`SELECT count(*)::int AS n FROM realm_variants WHERE variant_key IN (${variants[0]!.key},${variants[1]!.key},${variants[2]!.key}) AND unreferenced_at IS NULL`)[0]?.n).toBe(incoming.length);
+      if (!includeNewVariant) expect([...await sql`SELECT last_value FROM realm_variants_id_seq`]).toEqual(sequenceBefore);
+      for (const realmId of [123, 124]) {
+        const stored = await sql`SELECT listings FROM realm_latest WHERE region_id=${region} AND connected_realm_id=${realmId}`;
+        expect(stored).toHaveLength(incoming.length);
+        expect(stored.flatMap((row) => unpackRealmListings(row.listings)).sort((a, b) => a.id.localeCompare(b.id)))
+          .toEqual(rows(realmId).flatMap((row) => row.listings!).sort((a, b) => a.id.localeCompare(b.id)));
+      }
+    } finally {
+      publish.resolve();
+      await completed;
+      await clean();
+      await sql`DELETE FROM realm_variants WHERE variant_key IN (${variants[0]!.key},${variants[1]!.key},${variants[2]!.key})`;
+    }
+  }, 15_000);
+
   test("variant retirement preserves live listings, waits 30 days, and resets when a version returns", async () => {
     await clean();
     await db.insert(regions).values({ id: region, name: "Write test", apiHost: "invalid.local", oauthHost: "invalid.local" });
