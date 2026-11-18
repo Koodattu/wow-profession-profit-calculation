@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:16.10-alpine3.22
+    image: postgres:16.16-alpine3.24
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-wowtools}
@@ -73,7 +73,7 @@ services:
 
   db-backup:
     profiles: ["backup"]
-    image: postgres:16.10-alpine3.22
+    image: postgres:16.16-alpine3.24
     restart: "no"
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-wowtools}

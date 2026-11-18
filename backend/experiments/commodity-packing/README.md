@@ -211,9 +211,9 @@ From the repository root, create the container once (the credentials are disposa
 local test values):
 
 ```powershell
-docker pull postgres:16.10-alpine3.22
-docker pull oven/bun:1.3.14-alpine
-docker run --detach --name copper-commodity-packing-20261005 --label purpose=commodity-packing-benchmark --cpus=2 --memory=1g -p 127.0.0.1:55435:5432 -e POSTGRES_USER=copper_bench -e POSTGRES_PASSWORD=copper_bench -e POSTGRES_DB=copper_commodity_packing_test postgres:16.10-alpine3.22
+docker pull postgres:16.16-alpine3.24
+docker pull oven/bun:1.4.4-alpine
+docker run --detach --name copper-commodity-packing-20261005 --label purpose=commodity-packing-benchmark --cpus=2 --memory=1g -p 127.0.0.1:55435:5432 -e POSTGRES_USER=copper_bench -e POSTGRES_PASSWORD=copper_bench -e POSTGRES_DB=copper_commodity_packing_test postgres:16.16-alpine3.24
 ```
 
 For an existing stopped benchmark container, use

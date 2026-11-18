@@ -2,6 +2,7 @@
   "compilerOptions": {
     // Environment setup & latest features
     "lib": ["ESNext"],
+    "types": ["bun"],
     "target": "ESNext",
     "module": "ESNext",
     "moduleDetection": "force",
@@ -15,7 +16,6 @@
     "noEmit": true,
 
     // Path aliases
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },

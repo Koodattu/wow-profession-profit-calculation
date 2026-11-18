@@ -3,7 +3,7 @@
   "module": "src/index.ts",
   "type": "module",
   "private": true,
-  "packageManager": "bun@1.3.14",
+  "packageManager": "bun@1.4.4",
   "scripts": {
     "dev": "bun run --hot src/index.ts",
     "start": "bun run src/index.ts",
@@ -25,15 +25,15 @@
     "db:studio": "bunx drizzle-kit studio"
   },
   "devDependencies": {
-    "@types/bun": "^1.3.14",
-    "drizzle-kit": "^0.31.10",
-    "typescript": "^5.9.3"
+    "@types/bun": "^1.4.4",
+    "drizzle-kit": "^0.31.11",
+    "typescript": "^7.0.2"
   },
   "dependencies": {
-    "dotenv": "^17.4.2",
-    "drizzle-orm": "^0.45.2",
-    "hono": "^4.13.11",
+    "dotenv": "^18.0.10",
+    "drizzle-orm": "^0.45.4",
+    "hono": "^4.13.19",
     "node-cron": "^4.6.0",
-    "postgres": "^3.4.9"
+    "postgres": "^4.1.1"
   }
 }

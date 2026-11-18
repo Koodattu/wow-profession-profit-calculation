@@ -1,6 +1,6 @@
-# syntax=docker/dockerfile:1.7
+# syntax=docker/dockerfile:1.29.0
 
-FROM oven/bun:1.3.14-alpine AS dependencies
+FROM oven/bun:1.4.4-alpine AS dependencies
 
 WORKDIR /app/backend
 
@@ -8,7 +8,7 @@ COPY backend/package.json backend/bun.lock ./
 RUN --mount=type=cache,target=/root/.bun/install/cache \
     bun install --frozen-lockfile --production
 
-FROM oven/bun:1.3.14-alpine AS runner
+FROM oven/bun:1.4.4-alpine AS runner
 
 WORKDIR /app
 

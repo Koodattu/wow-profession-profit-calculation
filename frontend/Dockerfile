@@ -1,16 +1,16 @@
-# syntax=docker/dockerfile:1.7
+# syntax=docker/dockerfile:1.29.0
 
-FROM node:24.22.1-alpine3.23 AS dependencies
+FROM node:26.13.1-alpine3.24 AS dependencies
 
 WORKDIR /app
 
-RUN npm install --global npm@12.0.2
+RUN npm install --global npm@12.2.3
 
 COPY package.json package-lock.json ./
 RUN --mount=type=cache,target=/root/.npm \
     npm ci
 
-FROM node:24.22.1-alpine3.23 AS builder
+FROM node:26.13.1-alpine3.24 AS builder
 
 WORKDIR /app
 
@@ -24,7 +24,7 @@ COPY . .
 
 RUN npm run build
 
-FROM node:24.22.1-alpine3.23 AS runner
+FROM node:26.13.1-alpine3.24 AS runner
 
 WORKDIR /app
 

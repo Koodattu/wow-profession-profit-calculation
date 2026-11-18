@@ -25,6 +25,6 @@ $dockerArguments = @(
     '-e', 'BENCH_OUTPUT=/results'
 )
 if ($Dataset -eq 'sample') { $dockerArguments += @('-e', 'BENCH_SAMPLE=/results/production.ndjson') }
-$dockerArguments += @('oven/bun:1.3.14-alpine', 'bun', 'run', '--no-env-file', 'experiments/commodity-packing/benchmark.ts')
+$dockerArguments += @('oven/bun:1.4.4-alpine', 'bun', 'run', '--no-env-file', 'experiments/commodity-packing/benchmark.ts')
 & docker @dockerArguments
 if ($LASTEXITCODE -ne 0) { throw "Benchmark failed with exit code $LASTEXITCODE" }
